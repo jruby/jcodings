@@ -26,18 +26,21 @@ import org.jcodings.exception.InternalException;
 import org.jcodings.util.BytesHash;
 
 public abstract class Encoding {
+    private static int count;
 
     protected final int minLength, maxLength;
     protected final boolean isFixedWidth, isSingleByte;
 
     protected byte[]name;
     protected int hashCode;
+    private final int index;
 
     protected Encoding(int minLength, int maxLength) {
         this.minLength = minLength;
         this.maxLength = maxLength;
         this.isFixedWidth = minLength == maxLength;
         this.isSingleByte = isFixedWidth && minLength == 1;
+        this.index = count++;
     }
     
     @Override
@@ -52,6 +55,10 @@ public abstract class Encoding {
     public final int hashCode() {
         if (name == null) getName();
         return hashCode;
+    }
+
+    public final int getIndex() {
+        return index;
     }
 
     public final byte[]getName() {

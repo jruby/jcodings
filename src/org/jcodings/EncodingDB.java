@@ -24,9 +24,67 @@ import org.jcodings.exception.InternalException;
 import org.jcodings.util.CaseInsensitiveBytesHash;
 
 public class EncodingDB {
+    public static final class Entry {
+        private static int count;
+
+        private final Entry base;
+        private Encoding encoding;
+        private final String encodingClass;
+        private final int index;
+        private final boolean isDummy;
+
+        Entry(String encodingClass) {
+            this.encodingClass = encodingClass;
+            this.base = null;
+            isDummy = false;
+            index = count++;
+        }
+
+        Entry(Entry base) {
+            this.encodingClass = base.encodingClass;
+            this.base = base;
+            isDummy = false;
+            index = count++;
+        }
+
+        Entry() {
+            this.encodingClass = ascii.encodingClass;
+            this.base = ascii;
+            isDummy = true;
+            index = count++;
+        }
+
+        @Override
+        public int hashCode() {
+            return encodingClass.hashCode();
+        }
+
+        public Entry getBase() {
+            return base;
+        }
+
+        public Encoding getEncoding() {
+            if (encoding == null) encoding = Encoding.load(encodingClass);
+            return encoding;
+        }
+
+        public String getEncodingClass() {
+            return encodingClass;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public boolean isDummy() {
+            return isDummy;
+        }
+    }
 
     static void boot() {
         declareBuiltins();
+
+        ascii = encodings.get("ASCII-8BIT".getBytes());
 
         alias("BINARY", "ASCII-8BIT");
         replicate("IBM437", "ASCII-8BIT");
@@ -141,28 +199,6 @@ public class EncodingDB {
         alias("CP1251", "Windows-1251");
     }
 
-    public static final class Entry {
-        private Entry base;
-        private Encoding encoding;
-        private String encodingClass;
-        private Object userData;
-
-        private boolean dummy;
-
-        public Entry(String encodingClass) {
-            this.encodingClass = encodingClass;
-        }
-
-        public Entry(Entry base) {
-            this.encodingClass = base.encodingClass;
-            this.base = base;
-        }
-
-        public Entry() {
-            dummy = true;
-        }
-    }
-
     private static String[] builtin = {
         "ASCII-8BIT",   "ASCII",
         "Big5",         "BIG5",
@@ -184,7 +220,7 @@ public class EncodingDB {
         "ISO-8859-9",   "ISO8859_9",
         "ISO-8859-10",  "ISO8859_10",
         "ISO-8859-11",  "ISO8859_11",
-        "ISO-8859-12",  "ISO8859_12",
+        // "ISO-8859-12",  "ISO8859_12",
         "ISO-8859-13",  "ISO8859_13",
         "ISO-8859-14",  "ISO8859_14",
         "ISO-8859-15",  "ISO8859_15",
@@ -198,12 +234,22 @@ public class EncodingDB {
         "UTF-16LE",     "UTF16LE",
         "UTF-32BE",     "UTF32BE",
         "UTF-32LE",     "UTF32LE",
-        "Windows-1251", "WINDOWS1251",
+        "Windows-1251", "CP1251",
         "GB2312",       "EUCKR"         // should be done via rb_enc_register
     };
 
+    static Entry ascii;
+
     static final CaseInsensitiveBytesHash<Entry> encodings = new CaseInsensitiveBytesHash<Entry>(builtin.length);
     static final CaseInsensitiveBytesHash<Entry> aliases = new CaseInsensitiveBytesHash<Entry>(builtin.length);
+
+    public static final CaseInsensitiveBytesHash<Entry> getEncodings() {
+        return encodings;
+    }
+
+    public static final CaseInsensitiveBytesHash<Entry> getAliases() {
+        return aliases;
+    }
 
     public static void declare(String name, String encodingClass) {
         byte[]bytes = name.getBytes();
@@ -228,11 +274,11 @@ public class EncodingDB {
         if (encodings.get(replicaBytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_REPLICA_ALREADY_REGISTERED, replica);
         encodings.putDirect(replicaBytes, new Entry(originalEntry));
     }
-    
+
     public static void dummy(String name) {
         byte[]bytes = name.getBytes();
         if (encodings.get(bytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_ALREADY_REGISTERED, name);
-        encodings.putDirect(bytes, encodings.get("ASCII-8BIT".getBytes()));
+        encodings.putDirect(bytes, new Entry());
     }
 
     static {

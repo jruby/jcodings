@@ -32,22 +32,22 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
     }
 
     protected void init() {
-        head = new BytesCaseInsensitiveHashEntry<V>();
+        head = new CaseInsensitiveBytesHashEntry<V>();
     }
 
-    public final static class BytesCaseInsensitiveHashEntry<V> extends HashEntry<V> {
+    public final static class CaseInsensitiveBytesHashEntry<V> extends HashEntry<V> {
         public final byte[]bytes;
         public final int p;
         public final int end;
 
-        public BytesCaseInsensitiveHashEntry(int hash, HashEntry<V> next, V value, byte[]bytes, int p, int end, HashEntry<V> head) {
+        public CaseInsensitiveBytesHashEntry(int hash, HashEntry<V> next, V value, byte[]bytes, int p, int end, HashEntry<V> head) {
             super(hash, next, value, head);
             this.bytes = bytes;
             this.p = p;
             this.end = end;
         }
 
-        public BytesCaseInsensitiveHashEntry() {
+        public CaseInsensitiveBytesHashEntry() {
             super();
             bytes = null;
             p = end = 0;            
@@ -78,14 +78,14 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
         int hash = hashValue(hashCode(bytes, p, end));
         int i = bucketIndex(hash, table.length);
         
-        for (BytesCaseInsensitiveHashEntry<V> entry = (BytesCaseInsensitiveHashEntry<V>)table[i]; entry != null; entry = (BytesCaseInsensitiveHashEntry<V>)entry.next) {
+        for (CaseInsensitiveBytesHashEntry<V> entry = (CaseInsensitiveBytesHashEntry<V>)table[i]; entry != null; entry = (CaseInsensitiveBytesHashEntry<V>)entry.next) {
             if (entry.hash == hash && entry.equals(bytes, p, end)) {                
                 entry.value = value;                
                 return value;
             }
         }
 
-        table[i] = new BytesCaseInsensitiveHashEntry<V>(hash, table[i], value, bytes, p, end, head);
+        table[i] = new CaseInsensitiveBytesHashEntry<V>(hash, table[i], value, bytes, p, end, head);
         size++;        
         return null;        
     }
@@ -98,7 +98,7 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
         checkResize();
         final int hash = hashValue(hashCode(bytes, p, end));
         final int i = bucketIndex(hash, table.length);
-        table[i] = new BytesCaseInsensitiveHashEntry<V>(hash, table[i], value, bytes, p, end, head);
+        table[i] = new CaseInsensitiveBytesHashEntry<V>(hash, table[i], value, bytes, p, end, head);
         size++;
     }
 
@@ -108,7 +108,7 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
     
     public V get(byte[]bytes, int p, int end) {
         int hash = hashValue(hashCode(bytes, p, end));
-         for (BytesCaseInsensitiveHashEntry<V> entry = (BytesCaseInsensitiveHashEntry<V>)table[bucketIndex(hash, table.length)]; entry != null; entry = (BytesCaseInsensitiveHashEntry<V>)entry.next) {
+         for (CaseInsensitiveBytesHashEntry<V> entry = (CaseInsensitiveBytesHashEntry<V>)table[bucketIndex(hash, table.length)]; entry != null; entry = (CaseInsensitiveBytesHashEntry<V>)entry.next) {
              if (entry.hash == hash && entry.equals(bytes, p, end)) return entry.value;
          }
          return null;
@@ -122,7 +122,7 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
         int hash = hashValue(hashCode(bytes, p, end));
         int i = bucketIndex(hash, table.length);
 
-        BytesCaseInsensitiveHashEntry<V> entry = (BytesCaseInsensitiveHashEntry<V>)table[i];
+        CaseInsensitiveBytesHashEntry<V> entry = (CaseInsensitiveBytesHashEntry<V>)table[i];
 
         if (entry == null) return null;
 
@@ -133,7 +133,7 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
             return entry.value;
         }
         
-        for (; entry.next != null; entry = (BytesCaseInsensitiveHashEntry<V>)entry.next) {
+        for (; entry.next != null; entry = (CaseInsensitiveBytesHashEntry<V>)entry.next) {
             HashEntry<V> tmp = entry.next;
             if (tmp.hash == hash && entry.equals(bytes, p, end)) {
                 entry.next = entry.next.next;

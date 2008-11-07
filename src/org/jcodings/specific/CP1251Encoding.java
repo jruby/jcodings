@@ -30,7 +30,7 @@ final public class CP1251Encoding extends CaseFoldMapEncoding {
     
     @Override
     public String toString() {
-        return "CP1251";
+        return "Windows-1251";
     }
     
     @Override
@@ -47,7 +47,7 @@ final public class CP1251Encoding extends CaseFoldMapEncoding {
     public boolean isCodeCType(int code, int ctype) {
         return code < 256 ? isCodeCTypeInternal(code, ctype) : false;
     }
-    
+
     static final short CP1251_CtypeTable[] = {
         0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008,
         0x4008, 0x428c, 0x4209, 0x4208, 0x4208, 0x4208, 0x4008, 0x4008,
