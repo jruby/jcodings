@@ -23,6 +23,7 @@ import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
+import org.jcodings.specific.ASCIIEncoding;
 import org.jcodings.util.BytesHash;
 
 public abstract class Encoding {
@@ -67,6 +68,10 @@ public abstract class Encoding {
             hashCode = BytesHash.hashCode(name, 0, name.length);
         }
         return name;
+    }
+
+    public final boolean isDummy() {
+        return this == ASCIIEncoding.DUMMY;
     }
 
     /**

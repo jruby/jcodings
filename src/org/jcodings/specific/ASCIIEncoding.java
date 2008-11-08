@@ -19,6 +19,7 @@
  */
 package org.jcodings.specific;
 
+import org.jcodings.Encoding;
 import org.jcodings.SingleByteEncoding;
 import org.jcodings.ascii.AsciiTables;
 
@@ -46,4 +47,5 @@ public final class ASCIIEncoding extends SingleByteEncoding {
     }
 
     public static final ASCIIEncoding INSTANCE = new ASCIIEncoding();
+    public static final ASCIIEncoding DUMMY = new ASCIIEncoding();
 }
