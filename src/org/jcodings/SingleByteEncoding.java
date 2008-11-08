@@ -48,6 +48,10 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
         return end - p;
     }    
 
+    @Override
+    public int strCodeAt(byte[]bytes, int p, int end, int index) {
+        return bytes[index] & 0xff;
+    }
     // onigenc_is_mbc_newline_0x0a here
     
     /** onigenc_single_byte_mbc_to_code

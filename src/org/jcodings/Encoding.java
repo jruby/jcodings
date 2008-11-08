@@ -261,7 +261,7 @@ public abstract class Encoding {
         }
         return s;
     }
-    
+
     /* onigenc_step */
     public final int step(byte[]bytes, int p, int end, int n) {
         int q = p;
@@ -270,18 +270,12 @@ public abstract class Encoding {
         }
         return q <= end ? q : -1;
     }
-    
+
     /* onigenc_strlen */
-    public int strLength(byte[]bytes, int p, int end) {
-        int n = 0;
-        int q = p;
-        while (q < end) {
-            q += length(bytes, q, end);
-            n++;
-        }
-        return n;
-    }
-    
+    public abstract int strLength(byte[]bytes, int p, int end);
+
+    public abstract int strCodeAt(byte[]bytes, int p, int end, int index);
+
     /* onigenc_strlen_null */
     public final int strLengthNull(byte[]bytes, int p, int end) {
         int n = 0;

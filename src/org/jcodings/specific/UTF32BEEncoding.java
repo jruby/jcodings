@@ -51,6 +51,11 @@ public final class UTF32BEEncoding extends UnicodeEncoding {
     }
 
     @Override
+    public int strCodeAt(byte[]bytes, int p, int end, int index) {
+        return mbcToCode(bytes, p + (index << 2), end);
+    }
+
+    @Override
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p + 3 < end) {
             if (bytes[p + 3] == (byte)0x0a && bytes[p + 2] == 0 && bytes[p + 1] == 0 && bytes[p] == 0) return true;

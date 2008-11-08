@@ -23,7 +23,6 @@ import org.jcodings.ascii.AsciiTables;
 import org.jcodings.exception.EncodingException;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.IllegalCharacterException;
-import org.jcodings.specific.ASCIIEncoding;
 
 public abstract class MultiByteEncoding extends AbstractEncoding {
 
@@ -208,5 +207,27 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
 
     protected final boolean mb4IsCodeCType(int code, int ctype) {
         return mb2IsCodeCType(code, ctype);
+    }
+
+    /* onigenc_strlen */
+    public int strLength(byte[]bytes, int p, int end) {
+        int n = 0;
+        int q = p;
+        while (q < end) {
+            q += length(bytes, q, end);
+            n++;
+        }
+        return n;
+    }
+
+    public int strCodeAt(byte[]bytes, int p, int end, int index) {
+        int n = 0;
+        int q = p;
+        while (q < end) {
+            if (n == index) return mbcToCode(bytes, q, end);
+            q += length(bytes, q, end);
+            n++;
+        }
+        return -1;
     }
 }
