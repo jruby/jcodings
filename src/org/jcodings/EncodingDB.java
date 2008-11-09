@@ -21,6 +21,7 @@ package org.jcodings;
 
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
+import org.jcodings.specific.ASCIIEncoding;
 import org.jcodings.util.CaseInsensitiveBytesHash;
 
 public class EncodingDB {
@@ -64,7 +65,7 @@ public class EncodingDB {
         }
 
         public Encoding getEncoding() {
-            if (encoding == null) encoding = Encoding.load(encodingClass);
+            if (encoding == null) encoding = isDummy ? ASCIIEncoding.DUMMY : Encoding.load(encodingClass);
             return encoding;
         }
 

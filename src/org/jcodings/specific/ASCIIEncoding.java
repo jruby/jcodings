@@ -19,7 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Encoding;
 import org.jcodings.SingleByteEncoding;
 import org.jcodings.ascii.AsciiTables;
 
