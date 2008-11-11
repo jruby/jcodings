@@ -74,6 +74,10 @@ public abstract class Encoding {
         return this == ASCIIEncoding.DUMMY;
     }
 
+    public final boolean isAsciiCompatible() {
+        return minLength == 1 && !isDummy();
+    }
+
     /**
      * Returns character length given character head
      * returns <code>1</code> for singlebyte encodings or performs direct length table lookup for multibyte ones.   
