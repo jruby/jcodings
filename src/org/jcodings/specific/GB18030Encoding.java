@@ -23,7 +23,6 @@ import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.MultiByteEncoding;
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.exception.IllegalCharacterException;
 
 public final class GB18030Encoding extends MultiByteEncoding {
 
@@ -46,36 +45,26 @@ public final class GB18030Encoding extends MultiByteEncoding {
             return 2;
         } else {
             int s = TransZero[bytes[p] & 0xff];
-            if (s < 0) {
-                if (s == A) return 1;
-                throw IllegalCharacterException.INSTANCE;
-            }
+            if (s < 0) return s == A ? 1 : CHAR_INVALID;
             return lengthForTwoUptoFour(bytes, p, end, s);
         }
     }
 
     private int lengthForTwoUptoFour(byte[]bytes, int p, int end, int s) {
-        if (++p == end) return -1;
+        if (++p == end) return missing(1);
         s = Trans[s][bytes[p] & 0xff];
-        if (s < 0) {
-            if (s == A) return 2;
-            throw IllegalCharacterException.INSTANCE;
-        }
+        if (s < 0) return s == A ? 2 : CHAR_INVALID;
         return lengthForThreeUptoFour(bytes, p, end, s);
     }
 
     private int lengthForThreeUptoFour(byte[]bytes, int p, int end, int s) {
-        if (++p == end) return -2;
+        if (++p == end) return missing(2);
         s = Trans[s][bytes[p] & 0xff];
-        if (s < 0) {
-            if (s == A) return 3;
-            throw IllegalCharacterException.INSTANCE;
-        }
-        if (++p == end) return -1;
+        if (s < 0) return s == A ? 3 : CHAR_INVALID;
+        if (++p == end) return missing(1);
         s = Trans[s][bytes[p] & 0xff];
-        if (s == A) return 4;
-        throw IllegalCharacterException.INSTANCE;  
-    }    
+        return s == A ? 4 : CHAR_INVALID;  
+    }
 
     @Override
     public int mbcToCode(byte[]bytes, int p, int end) {

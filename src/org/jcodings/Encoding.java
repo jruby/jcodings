@@ -27,6 +27,7 @@ import org.jcodings.specific.ASCIIEncoding;
 import org.jcodings.util.BytesHash;
 
 public abstract class Encoding {
+    public static final int CHAR_INVALID = -1;
     private static int count;
 
     protected final int minLength, maxLength;
@@ -94,11 +95,13 @@ public abstract class Encoding {
      * Returns character length given stream, character position and stream end
      * returns <code>1</code> for singlebyte encodings or performs sanity validations for multibyte ones 
      * and returns the character length, missing characters in the stream otherwise
-     * 
-     * Throws IllegalCharacterLengthException if bad sequence is discovered
-     * 
-     * @param   c
-     *          Character head
+     *
+     * @return
+     *  0               Never
+     *  > 0             Valid character, length returned
+     *  -1              Illegal/malformed character
+     *  < -1 (-1 - n)   Number of missing bytes for character in p...end range
+     *
      * Oniguruma equivalent: <code>mbc_enc_len</code>
      * modified for 1.9 purposes, 
      */

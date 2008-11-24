@@ -42,16 +42,16 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
             return length(bytes[p]);
         } else {
             int length = end - p;
-            if (length < 2) return -1;
+            if (length < 2) return missing(1);
 
-            int b = bytes[p] & 0xff;
+            int b = bytes[p + 1] & 0xff;
             if (!isSurrogate(b)) return 2;
 
             if (isSurrogateFirst(b)) {
-                if (length < 4) return -(4 - length);
+                if (length < 4) return missing(4 - length);
                 if (isSurrogateSecond(bytes[p + 3] & 0xff)) return 4;
             }
-            throw IllegalCharacterException.INSTANCE;
+            return CHAR_INVALID;
         }
     }
 

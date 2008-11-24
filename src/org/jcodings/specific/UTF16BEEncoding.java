@@ -43,18 +43,18 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
         } else {
             int b = bytes[p] & 0xff;
             if (!isSurrogate(b)) {
-                return end - p >= 2 ? 2 : 1;
+                return end - p >= 2 ? 2 : missing(1);
             }
             if (isSurrogateFirst(b)) {
                 switch (end - p) {   
-                case 1:     return -3;
-                case 2:     return -2;
-                case 3:     if (isSurrogateSecond(bytes[2] & 0xff)) return -1;
-                default:    if (isSurrogateSecond(bytes[2] & 0xff)) return -4;
+                case 1:     return missing(3);
+                case 2:     return missing(2);
+                case 3:     if (isSurrogateSecond(bytes[p + 2] & 0xff)) return missing(1);
+                default:    if (isSurrogateSecond(bytes[p + 2] & 0xff)) return 4;
                 }
             }
         }
-        throw IllegalCharacterException.INSTANCE;
+        return CHAR_INVALID;
     }
 
     @Override
