@@ -22,7 +22,6 @@ package org.jcodings.specific;
 import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.exception.IllegalCharacterException;
 import org.jcodings.unicode.UnicodeEncoding;
 
 public final class UTF16LEEncoding extends UnicodeEncoding {

@@ -22,7 +22,6 @@ package org.jcodings;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.exception.EncodingException;
 import org.jcodings.exception.ErrorMessages;
-import org.jcodings.exception.IllegalCharacterException;
 
 public abstract class MultiByteEncoding extends AbstractEncoding {
 

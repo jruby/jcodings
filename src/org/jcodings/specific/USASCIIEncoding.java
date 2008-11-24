@@ -21,7 +21,6 @@ package org.jcodings.specific;
 
 import org.jcodings.SingleByteEncoding;
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.exception.IllegalCharacterException;
 
 public final class USASCIIEncoding extends SingleByteEncoding {
 
@@ -36,8 +35,7 @@ public final class USASCIIEncoding extends SingleByteEncoding {
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        if ((bytes[p] & 0x80) != 0) throw IllegalCharacterException.INSTANCE;
-        return 1;
+        return (bytes[p] & 0x80) == 0 ? 1 : -1; 
     }
 
     @Override
