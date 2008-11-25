@@ -445,16 +445,20 @@ public abstract class Encoding {
     public static boolean isMbcAscii(byte b) {
         return (b & 0xff) < 128; // b > 0 ? 
     }
-    
+
     // ONIGENC_IS_CODE_ASCII
     public static boolean isAscii(int code) {
         return code < 128; 
     }
-    
+
+    public static boolean isAscii(byte b) {
+        return b >= 0;
+    }
+
     public static byte asciiToLower(int c) {
         return AsciiTables.ToLowerCaseTable[c];
     }
-    
+
     public static byte asciiToUpper(int c) {
         return AsciiTables.ToUpperCaseTable[c];
     }
