@@ -22,37 +22,17 @@ package org.jcodings.specific;
 import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.unicode.UnicodeEncoding;
+import org.jcodings.unicode.FixedWidthUnicodeEncoding;
 
-public final class UTF32BEEncoding extends UnicodeEncoding {
+public final class UTF32BEEncoding extends FixedWidthUnicodeEncoding {
 
     protected UTF32BEEncoding() {
-        super(4, 4, null);
+        super(4);
     }
 
     @Override
     public String toString() {
         return "UTF-32BE";
-    }
-
-    @Override
-    public int length(byte c) { 
-        return 4;       
-    }
-
-    @Override
-    public int length(byte[]bytes, int p, int end) { 
-        return 4;
-    }
-
-    @Override
-    public int strLength(byte[]bytes, int p, int end) {
-        return (end - p) >>> 2;
-    }
-
-    @Override
-    public int strCodeAt(byte[]bytes, int p, int end, int index) {
-        return mbcToCode(bytes, p + (index << 2), end);
     }
 
     @Override
@@ -71,17 +51,12 @@ public final class UTF32BEEncoding extends UnicodeEncoding {
         }
         return false;
     }
-    
+
     @Override
     public int mbcToCode(byte[]bytes, int p, int end) {
         return (((bytes[p] & 0xff) * 256 + (bytes[p + 1] & 0xff)) * 256 + (bytes[p + 2] & 0xff)) * 256 + (bytes[p + 3] & 0xff);
     }    
-    
-    @Override
-    public int codeToMbcLength(int code) {
-        return 4; 
-    }
-    
+
     @Override
     public int codeToMbc(int code, byte[]bytes, int p) {    
         int p_ = p;
@@ -119,26 +94,6 @@ public final class UTF32BEEncoding extends UnicodeEncoding {
             return super.mbcCaseFold(flag, bytes, pp, end, fold);
         }
     }
-    
-    /** onigenc_utf16_32_get_ctype_code_range
-     */
-    @Override
-    public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
-        sbOut.value = 0x00;
-        return super.ctypeCodeRange(ctype);
-    }
-    
-    @Override
-    public int leftAdjustCharHead(byte[]bytes, int p, int s, int end) {
-        if (s <= p) return s;
 
-        return s - ((s - p) % 4); 
-    }    
-    
-    @Override
-    public boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
-        return false;
-    }    
-    
     public static UTF32BEEncoding INSTANCE = new UTF32BEEncoding();
 }
