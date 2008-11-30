@@ -20,7 +20,7 @@
 package org.jcodings;
 
 public interface Config {
-    final boolean VANILLA = true;
+    final boolean VANILLA = false;
     
     final int ENC_CASE_FOLD_TURKISH_AZERI = (1<<20);
     final int INTERNAL_ENC_CASE_FOLD_MULTI_CHAR = (1<<30);
