@@ -24,8 +24,8 @@ import org.jcodings.IntHolder;
 public abstract class FixedWidthUnicodeEncoding extends UnicodeEncoding {
     protected final int shift;
 
-    protected FixedWidthUnicodeEncoding(int width) {
-        super(width, width, null);
+    protected FixedWidthUnicodeEncoding(String name, int width) {
+        super(name, width, width, null);
         shift = log2(width);
     }
 

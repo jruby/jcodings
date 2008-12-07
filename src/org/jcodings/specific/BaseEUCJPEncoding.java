@@ -33,12 +33,7 @@ import org.jcodings.util.BytesHash;
 abstract class BaseEUCJPEncoding extends EucEncoding {
 
     protected BaseEUCJPEncoding(int[][]Trans) {
-        super(1, 3, EUCJPEncLen, Trans, AsciiTables.AsciiCtypeTable);
-    }
-    
-    @Override
-    public String toString() {
-        return "EUC-JP";
+        super("EUC-JP", 1, 3, EUCJPEncLen, Trans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override

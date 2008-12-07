@@ -20,13 +20,13 @@
 package org.jcodings;
 
 public abstract class ISOEncoding extends CaseFoldMapEncoding {
-    
-    protected ISOEncoding(short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap) {
-        this(CTypeTable, LowerCaseTable, CaseFoldMap, true);
+
+    protected ISOEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap) {
+        this(name, CTypeTable, LowerCaseTable, CaseFoldMap, true);
     }
-    
-    protected ISOEncoding(short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap, boolean foldFlag) {
-        super(CTypeTable, LowerCaseTable, CaseFoldMap, foldFlag);
+
+    protected ISOEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap, boolean foldFlag) {
+        super(name, CTypeTable, LowerCaseTable, CaseFoldMap, foldFlag);
     }
 
     /** iso_*_mbc_case_fold

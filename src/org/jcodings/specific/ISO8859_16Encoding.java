@@ -24,14 +24,9 @@ import org.jcodings.ISOEncoding;
 public final class ISO8859_16Encoding extends ISOEncoding {
 
     protected ISO8859_16Encoding() {
-        super(ISO8859_16CtypeTable, ISO8859_16ToLowerCaseTable, ISO8859_16CaseFoldMap);        
+        super("ISO-8859-16", ISO8859_16CtypeTable, ISO8859_16ToLowerCaseTable, ISO8859_16CaseFoldMap);        
     }
-    
-    @Override
-    public String toString() {
-        return "ISO-8859-16";
-    }
-        
+
     static final short ISO8859_16CtypeTable[] = {
         0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008,
         0x4008, 0x420c, 0x4209, 0x4208, 0x4208, 0x4208, 0x4008, 0x4008,

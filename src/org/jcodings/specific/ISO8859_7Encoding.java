@@ -25,14 +25,9 @@ import org.jcodings.IntHolder;
 public final class ISO8859_7Encoding extends ISOEncoding {
 
     protected ISO8859_7Encoding() {
-        super(ISO8859_7CtypeTable, ISO8859_7ToLowerCaseTable, ISO8859_7CaseFoldMap, false); 
+        super("ISO-8859-7", ISO8859_7CtypeTable, ISO8859_7ToLowerCaseTable, ISO8859_7CaseFoldMap, false); 
     }
-    
-    @Override
-    public String toString() {
-        return "ISO-8859-7";
-    }
-    
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         int p = pp.value;

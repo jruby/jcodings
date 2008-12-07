@@ -27,12 +27,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class BIG5Encoding extends CanBeTrailTableEncoding {
 
     protected BIG5Encoding() {
-        super(1, 2, Big5EncLen, BIG5Trans, AsciiTables.AsciiCtypeTable, BIG5_CAN_BE_TRAIL_TABLE);
-    }
-
-    @Override
-    public String toString() {
-        return "Big5";
+        super("Big5", 1, 2, Big5EncLen, BIG5Trans, AsciiTables.AsciiCtypeTable, BIG5_CAN_BE_TRAIL_TABLE);
     }
 
     @Override

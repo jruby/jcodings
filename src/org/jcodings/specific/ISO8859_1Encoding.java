@@ -26,14 +26,9 @@ import org.jcodings.ISOEncoding;
 public final class ISO8859_1Encoding extends ISOEncoding {
 
     protected ISO8859_1Encoding() {
-        super(ISO8859_1CtypeTable, ISO8859_1ToLowerCaseTable, ISO8859_1CaseFoldMap);
+        super("ISO-8859-1", ISO8859_1CtypeTable, ISO8859_1ToLowerCaseTable, ISO8859_1CaseFoldMap);
     }
-    
-    @Override
-    public String toString() {
-        return "ISO-8859-1";
-    }
-    
+
     @Override
     public void applyAllCaseFold(int flag, ApplyAllCaseFoldFunction fun, Object arg) {
         applyAllCaseFoldWithMap(CaseFoldMap.length, CaseFoldMap, true, flag, fun, arg);      

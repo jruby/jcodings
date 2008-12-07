@@ -28,14 +28,9 @@ import org.jcodings.ascii.AsciiTables;
 public final class ISO8859_11Encoding extends ISOEncoding {
 
     protected ISO8859_11Encoding() {
-        super(ISO8859_11CtypeTable, AsciiTables.ToLowerCaseTable, null); 
+        super("ISO-8859-11", ISO8859_11CtypeTable, AsciiTables.ToLowerCaseTable, null); 
     }
-    
-    @Override
-    public String toString() {
-        return "ISO-8859-11";
-    }
-    
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         return asciiMbcCaseFold(flag, bytes, pp, end, lower);

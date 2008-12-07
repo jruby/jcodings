@@ -23,8 +23,8 @@ public abstract class CanBeTrailTableEncoding extends MultiByteEncoding {
 
     protected final boolean[] CanBeTrailTable;
 
-    protected CanBeTrailTableEncoding(int minLength, int maxLength, int[]EncLen, int[][]Trans, short[]CTypeTable, boolean[]CanBeTrailTable) {
-        super(minLength, maxLength, EncLen, Trans, CTypeTable);
+    protected CanBeTrailTableEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans, short[]CTypeTable, boolean[]CanBeTrailTable) {
+        super(name, minLength, maxLength, EncLen, Trans, CTypeTable);
         this.CanBeTrailTable = CanBeTrailTable;
     }
 

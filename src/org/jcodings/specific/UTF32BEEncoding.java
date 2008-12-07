@@ -27,12 +27,7 @@ import org.jcodings.unicode.FixedWidthUnicodeEncoding;
 public final class UTF32BEEncoding extends FixedWidthUnicodeEncoding {
 
     protected UTF32BEEncoding() {
-        super(4);
-    }
-
-    @Override
-    public String toString() {
-        return "UTF-32BE";
+        super("UTF-32BE", 4);
     }
 
     @Override

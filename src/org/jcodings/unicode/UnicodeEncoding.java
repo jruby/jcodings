@@ -33,14 +33,14 @@ import org.jcodings.exception.ErrorMessages;
 public abstract class UnicodeEncoding extends MultiByteEncoding {
     private static final int PROPERTY_NAME_MAX_SIZE = 20;
 
-    protected UnicodeEncoding(int minLength, int maxLength, int[]EncLen) {
+    protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen) {
         // ASCII type tables for all Unicode encodings
-        super(minLength, maxLength, EncLen, null, UNICODE_ISO_8859_1_CTypeTable);
+        super(name, minLength, maxLength, EncLen, null, UNICODE_ISO_8859_1_CTypeTable);
     }
 
-    protected UnicodeEncoding(int minLength, int maxLength, int[]EncLen, int[][]Trans) {
+    protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans) {
         // ASCII type tables for all Unicode encodings        
-        super(minLength, maxLength, EncLen, Trans, UNICODE_ISO_8859_1_CTypeTable);
+        super(name, minLength, maxLength, EncLen, Trans, UNICODE_ISO_8859_1_CTypeTable);
     }
 
     // onigenc_unicode_is_code_ctype

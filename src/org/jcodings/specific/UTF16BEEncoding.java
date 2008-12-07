@@ -27,14 +27,9 @@ import org.jcodings.unicode.UnicodeEncoding;
 public final class UTF16BEEncoding extends UnicodeEncoding {
 
     protected UTF16BEEncoding() {
-        super(2, 4, UTF16EncLen);
+        super("UTF-16BE", 2, 4, UTF16EncLen);
     }
-    
-    @Override
-    public String toString() {
-        return "UTF-16BE";
-    }
-    
+
     @Override
     public int length(byte[]bytes, int p, int end) {
         if (Config.VANILLA) {

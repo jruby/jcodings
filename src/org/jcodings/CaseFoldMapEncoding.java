@@ -23,17 +23,17 @@ public abstract class CaseFoldMapEncoding extends SingleByteEncoding {
 
     protected final int[][]CaseFoldMap;
     protected final boolean foldFlag;    
-    
-    protected CaseFoldMapEncoding(short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap) {
-        this(CTypeTable, LowerCaseTable, CaseFoldMap, true);
+
+    protected CaseFoldMapEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap) {
+        this(name, CTypeTable, LowerCaseTable, CaseFoldMap, true);
     }
-    
-    protected CaseFoldMapEncoding(short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap, boolean foldFlag) {
-        super(CTypeTable, LowerCaseTable);
+
+    protected CaseFoldMapEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap, boolean foldFlag) {
+        super(name, CTypeTable, LowerCaseTable);
         this.CaseFoldMap = CaseFoldMap;
         this.foldFlag = foldFlag;
     }
-    
+
     /** onigenc_apply_all_case_fold_with_map
      */
     protected final int applyAllCaseFoldWithMap(int mapSize, int[][]map, boolean essTsettFlag, int flag,

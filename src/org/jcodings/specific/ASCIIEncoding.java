@@ -25,12 +25,11 @@ import org.jcodings.ascii.AsciiTables;
 public final class ASCIIEncoding extends SingleByteEncoding {
 
     protected ASCIIEncoding() {
-        super(AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable);
+        super("ASCII-8BIT", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable);
     }
 
-    @Override
-    public String toString() {
-        return "ASCII-8BIT";
+    protected ASCIIEncoding(boolean isDummy) {
+        super(isDummy ? "DUMMY" : "ASCII-8BIT", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable, isDummy);
     }
 
     @Override
@@ -46,5 +45,5 @@ public final class ASCIIEncoding extends SingleByteEncoding {
     }
 
     public static final ASCIIEncoding INSTANCE = new ASCIIEncoding();
-    public static final ASCIIEncoding DUMMY = new ASCIIEncoding();
+    public static final ASCIIEncoding DUMMY = new ASCIIEncoding(true);
 }

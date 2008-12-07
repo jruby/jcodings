@@ -26,11 +26,16 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
 
     protected final byte[]LowerCaseTable; 
     
-    protected SingleByteEncoding(short[]CTypeTable, byte[]LowerCaseTable) {
-        super(1, 1, CTypeTable);
+    protected SingleByteEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable) {
+        super(name, 1, 1, CTypeTable);
         this.LowerCaseTable = LowerCaseTable;
     }
-    
+
+    protected SingleByteEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, boolean isDummy) {
+        super(name, 1, 1, CTypeTable, isDummy);
+        this.LowerCaseTable = LowerCaseTable;
+    }
+
     /** onigenc_single_byte_mbc_enc_len
      */
     @Override

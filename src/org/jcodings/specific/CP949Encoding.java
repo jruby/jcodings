@@ -27,12 +27,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class CP949Encoding extends CanBeTrailTableEncoding {
 
     protected CP949Encoding() {
-        super(1, 2, CP949EncLen, CP949Trans, AsciiTables.AsciiCtypeTable, CP949_CAN_BE_TRAIL_TABLE);
-    }
-    
-    @Override
-    public String toString() {
-        return "CP949";
+        super("CP949", 1, 2, CP949EncLen, CP949Trans, AsciiTables.AsciiCtypeTable, CP949_CAN_BE_TRAIL_TABLE);
     }
 
     @Override

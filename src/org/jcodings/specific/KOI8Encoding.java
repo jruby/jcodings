@@ -25,14 +25,9 @@ import org.jcodings.IntHolder;
 final public class KOI8Encoding extends CaseFoldMapEncoding {
 
     protected KOI8Encoding() {
-        super(KOI8_CtypeTable, KOI8_ToLowerCaseTable, KOI8_CaseFoldMap, false);
+        super("KOI8", KOI8_CtypeTable, KOI8_ToLowerCaseTable, KOI8_CaseFoldMap, false);
     }
-    
-    @Override
-    public String toString() {
-        return "KOI8";
-    }
-    
+
     private static final int ENC_CASE_FOLD_ASCII_CASE           = 0; 
     private static final int ONIGENC_CASE_FOLD_NONASCII_CASE    = 0;
     

@@ -27,14 +27,14 @@ import org.jcodings.unicode.UnicodeEncoding;
 public final class UTF16LEEncoding extends UnicodeEncoding {
 
     protected UTF16LEEncoding() {
-        super(2, 4, UTF16BEEncoding.UTF16EncLen);
+        super("UTF-16LE", 2, 4, UTF16BEEncoding.UTF16EncLen);
     }
 
     @Override
     public int length(byte c) { 
         return EncLen[(c & 0xff) + 1];       
     }
-    
+
     @Override
     public int length(byte[]bytes, int p, int end) {
         if (Config.VANILLA) {
@@ -55,11 +55,6 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
     }
 
     @Override
-    public String toString() {
-        return "UTF-16LE";
-    }
-
-    @Override
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p + 1 < end) {
             if (bytes[p] == (byte)0x0a && bytes[p + 1] == (byte)0x00) return true;
@@ -73,7 +68,7 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
         }
         return false;
     }
-    
+
     @Override
     public int mbcToCode(byte[]bytes, int p, int end) {
         int code;
@@ -88,12 +83,12 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
         }
         return code;
     }
-    
+
     @Override
     public int codeToMbcLength(int code) {
         return code > 0xffff ? 4 : 2; 
     }
-    
+
     @Override    
     public int codeToMbc(int code, byte[]bytes, int p) {    
         int p_ = p;

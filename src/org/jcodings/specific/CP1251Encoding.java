@@ -25,12 +25,7 @@ import org.jcodings.IntHolder;
 final public class CP1251Encoding extends CaseFoldMapEncoding {
 
     protected CP1251Encoding() {
-        super(CP1251_CtypeTable, CP1251_ToLowerCaseTable, CP1251_CaseFoldMap, false);
-    }
-    
-    @Override
-    public String toString() {
-        return "Windows-1251";
+        super("Windows-1251", CP1251_CtypeTable, CP1251_ToLowerCaseTable, CP1251_CaseFoldMap, false);
     }
     
     @Override

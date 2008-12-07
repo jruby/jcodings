@@ -27,12 +27,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class EUCTWEncoding extends EucEncoding {
 
     protected EUCTWEncoding() {
-        super(1, 4, EUCTWEncLen, EUCTWTrans, AsciiTables.AsciiCtypeTable);
-    }
-    
-    @Override
-    public String toString() {
-        return "EUC-TW";
+        super("EUC-TW", 1, 4, EUCTWEncLen, EUCTWTrans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override

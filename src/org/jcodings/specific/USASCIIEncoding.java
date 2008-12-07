@@ -25,12 +25,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class USASCIIEncoding extends SingleByteEncoding {
 
     protected USASCIIEncoding() {
-        super(AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable);
-    }
-
-    @Override
-    public String toString() {
-        return "US-ASCII";
+        super("US-ASCII", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable);
     }
 
     @Override

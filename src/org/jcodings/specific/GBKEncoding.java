@@ -27,12 +27,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class GBKEncoding extends CanBeTrailTableEncoding {
 
     protected GBKEncoding() {
-        super(1, 2, GBKEncLen, GBKTrans, AsciiTables.AsciiCtypeTable, GBK_CAN_BE_TRAIL_TABLE);
-    }
-
-    @Override
-    public String toString() {
-        return "GBK";
+        super("GBK", 1, 2, GBKEncLen, GBKTrans, AsciiTables.AsciiCtypeTable, GBK_CAN_BE_TRAIL_TABLE);
     }
 
     @Override

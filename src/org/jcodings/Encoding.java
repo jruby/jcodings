@@ -21,41 +21,61 @@ package org.jcodings;
 
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
+import org.jcodings.exception.EncodingException;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
-import org.jcodings.specific.ASCIIEncoding;
 import org.jcodings.util.BytesHash;
 
-public abstract class Encoding {
+public abstract class Encoding implements Cloneable {
     public static final int CHAR_INVALID = -1;
     private static int count;
 
     protected final int minLength, maxLength;
-    protected final boolean isFixedWidth, isSingleByte;
+    protected final boolean isFixedWidth, isSingleByte, isDummy, isAsciiCompatible;
 
     protected byte[]name;
     protected int hashCode;
-    private final int index;
+    private int index;
 
-    protected Encoding(int minLength, int maxLength) {
+    protected Encoding(String name, int minLength, int maxLength, boolean isDummy) {
+        setName(name);
+
         this.minLength = minLength;
         this.maxLength = maxLength;
         this.isFixedWidth = minLength == maxLength;
         this.isSingleByte = isFixedWidth && minLength == 1;
         this.index = count++;
+
+        this.isDummy = isDummy;
+        this.isAsciiCompatible = minLength == 1 && !isDummy; 
     }
-    
+
+    protected Encoding(String name, int minLength, int maxLength) {
+        this(name, minLength, maxLength, false);
+    }
+
+    protected final void setName(String name) {
+        this.name = name.getBytes();
+        this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
+    }
+
+    protected final void setName(byte[]name) {
+        this.name = name;
+        this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
+    }
+
     @Override
-    public abstract String toString();
+    public final String toString() {
+        return new String(name);
+    }
 
     @Override
     public final boolean equals(Object other) {
         return this == other;       
     }
-    
+
     @Override
     public final int hashCode() {
-        if (name == null) getName();
         return hashCode;
     }
 
@@ -64,19 +84,26 @@ public abstract class Encoding {
     }
 
     public final byte[]getName() {
-        if (name == null) {
-            name = toString().getBytes();
-            hashCode = BytesHash.hashCode(name, 0, name.length);
-        }
         return name;
     }
 
     public final boolean isDummy() {
-        return this == ASCIIEncoding.DUMMY;
+        return isDummy;
     }
 
     public final boolean isAsciiCompatible() {
-        return minLength == 1 && !isDummy();
+        return isAsciiCompatible;
+    }
+
+    public Encoding replicate(byte[]name) {
+        try {
+            Encoding clone = (Encoding)clone();
+            clone.setName(name);
+            clone.index = count++;
+            return clone;
+        } catch (CloneNotSupportedException cnse){
+            throw new EncodingException(ErrorMessages.ERR_COULD_NOT_REPLICATE, new String(name));
+        }
     }
 
     /**

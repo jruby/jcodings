@@ -21,8 +21,8 @@ package org.jcodings;
 
 public abstract class EucEncoding extends MultiByteEncoding {
 
-    protected EucEncoding(int minLength, int maxLength, int[]EncLen, int[][]Trans, short[]CTypeTable) {
-        super(minLength, maxLength, EncLen, Trans, CTypeTable);
+    protected EucEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans, short[]CTypeTable) {
+        super(name, minLength, maxLength, EncLen, Trans, CTypeTable);
     }
 
     protected abstract boolean isLead(int c);

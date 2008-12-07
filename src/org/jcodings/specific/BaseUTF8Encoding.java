@@ -30,12 +30,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     static final boolean USE_INVALID_CODE_SCHEME = true; 
 
     protected BaseUTF8Encoding(int[]EncLen, int[][]Trans) {
-        super(1, 6, EncLen, Trans);
-    }
-
-    @Override
-    public String toString() {
-        return "UTF-8";
+        super("UTF-8", 1, 6, EncLen, Trans);
     }
 
     @Override

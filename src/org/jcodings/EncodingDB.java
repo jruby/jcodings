@@ -33,26 +33,29 @@ public class EncodingDB {
         private final String encodingClass;
         private final int index;
         private final boolean isDummy;
+        private final byte[]name;
 
-        Entry(String encodingClass) {
+        private Entry (byte[]name, String encodingClass, Entry base, boolean isDummy) {
+            this.name = name;
             this.encodingClass = encodingClass;
-            this.base = null;
-            isDummy = false;
-            index = count++;
-        }
-
-        Entry(Entry base) {
-            this.encodingClass = base.encodingClass;
             this.base = base;
-            isDummy = false;
+            this.isDummy = isDummy;
             index = count++;
         }
 
-        Entry() {
-            this.encodingClass = ascii.encodingClass;
-            this.base = ascii;
-            isDummy = true;
-            index = count++;
+        // declare
+        Entry(String encodingClass) {
+            this(null, encodingClass, null, false);
+        }
+
+        // replicate
+        Entry(byte[]name, Entry base) {
+            this(name, base.encodingClass, base, false);
+        }
+
+        // dummy
+        Entry(byte[]name) {
+            this(name, ascii.encodingClass, ascii, true);
         }
 
         @Override
@@ -65,7 +68,17 @@ public class EncodingDB {
         }
 
         public Encoding getEncoding() {
-            if (encoding == null) encoding = isDummy ? ASCIIEncoding.DUMMY : Encoding.load(encodingClass);
+            if (encoding == null) {
+                if (name == null) {
+                    encoding = Encoding.load(encodingClass);
+                } else {
+                    if (isDummy) {
+                        encoding = ASCIIEncoding.DUMMY.replicate(name);
+                    } else {
+                        encoding = Encoding.load(encodingClass).replicate(name);
+                    }
+                }
+            }
             return encoding;
         }
 
@@ -273,13 +286,13 @@ public class EncodingDB {
         if (originalEntry == null) throw new InternalException(ErrorMessages.ERR_NO_SUCH_ENCODNG, original);
         byte[]replicaBytes = replica.getBytes();
         if (encodings.get(replicaBytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_REPLICA_ALREADY_REGISTERED, replica);
-        encodings.putDirect(replicaBytes, new Entry(originalEntry));
+        encodings.putDirect(replicaBytes, new Entry(replicaBytes, originalEntry));
     }
 
     public static void dummy(String name) {
         byte[]bytes = name.getBytes();
         if (encodings.get(bytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_ALREADY_REGISTERED, name);
-        encodings.putDirect(bytes, new Entry());
+        encodings.putDirect(bytes, new Entry(bytes));
     }
 
     static {

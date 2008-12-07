@@ -33,8 +33,8 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     protected final int Trans[][];
     protected final int TransZero[];
 
-    protected MultiByteEncoding(int minLength, int maxLength, int[]EncLen, int[][]Trans, short[]CTypeTable) {
-        super(minLength, maxLength, CTypeTable);
+    protected MultiByteEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans, short[]CTypeTable) {
+        super(name, minLength, maxLength, CTypeTable);
         this.EncLen = EncLen;
         this.Trans = Trans;
         this.TransZero = Trans != null ? Trans[0] : null;

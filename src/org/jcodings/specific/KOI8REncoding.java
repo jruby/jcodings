@@ -25,12 +25,7 @@ import org.jcodings.IntHolder;
 final public class KOI8REncoding extends CaseFoldMapEncoding {
 
     protected KOI8REncoding() {
-        super(KOI8R_CtypeTable, KOI8R_ToLowerCaseTable, KOI8R_CaseFoldMap, false);
-    }
-    
-    @Override
-    public String toString() {
-        return "KOI8-R";
+        super("KOI8-R", KOI8R_CtypeTable, KOI8R_ToLowerCaseTable, KOI8R_CaseFoldMap, false);
     }
 
     @Override

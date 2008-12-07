@@ -27,12 +27,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class EUCKREncoding extends EucEncoding {
 
     protected EUCKREncoding() {
-        super(1, 2, EUCKREncLen, EUCKRTrans, AsciiTables.AsciiCtypeTable);
-    }
-    
-    @Override
-    public String toString() {
-        return "EUC-KR";
+        super("EUC-KR", 1, 2, EUCKREncLen, EUCKRTrans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override

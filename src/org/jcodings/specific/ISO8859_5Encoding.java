@@ -25,14 +25,9 @@ import org.jcodings.IntHolder;
 public final class ISO8859_5Encoding extends ISOEncoding {
 
     protected ISO8859_5Encoding() {
-        super(ISO8859_5CtypeTable, ISO8859_5ToLowerCaseTable, ISO8859_5CaseFoldMap, false); 
+        super("ISO-8859-5", ISO8859_5CtypeTable, ISO8859_5ToLowerCaseTable, ISO8859_5CaseFoldMap, false); 
     }
-    
-    @Override
-    public String toString() {
-        return "ISO-8859-5";
-    }
-    
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         int p = pp.value;

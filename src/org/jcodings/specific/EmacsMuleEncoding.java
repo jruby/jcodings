@@ -29,12 +29,7 @@ import org.jcodings.exception.ErrorMessages;
 public final class EmacsMuleEncoding extends MultiByteEncoding {
 
     protected EmacsMuleEncoding() {
-        super(1, 4, EmacsMuleEncLen, EmacsMuleTrans, AsciiTables.AsciiCtypeTable);
-    }
-    
-    @Override
-    public String toString() {
-        return "Emacs-Mule";
+        super("Emacs-Mule", 1, 4, EmacsMuleEncLen, EmacsMuleTrans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override

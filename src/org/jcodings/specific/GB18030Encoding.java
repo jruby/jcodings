@@ -27,12 +27,7 @@ import org.jcodings.ascii.AsciiTables;
 public final class GB18030Encoding extends MultiByteEncoding {
 
     protected GB18030Encoding() {
-        super(1, 4, null, GB18030Trans, AsciiTables.AsciiCtypeTable);
-    }
-
-    @Override
-    public String toString() {
-        return "GB18030";
+        super("GB18030", 1, 4, null, GB18030Trans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override

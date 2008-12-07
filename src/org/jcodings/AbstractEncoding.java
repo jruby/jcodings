@@ -28,8 +28,13 @@ abstract class AbstractEncoding extends Encoding {
 
     private final short CTypeTable[];
 
-    protected AbstractEncoding(int minLength, int maxLength, short[]CTypeTable) {
-        super(minLength, maxLength);
+    protected AbstractEncoding(String name, int minLength, int maxLength, short[]CTypeTable) {
+        super(name, minLength, maxLength);
+        this.CTypeTable = CTypeTable;
+    }
+
+    protected AbstractEncoding(String name, int minLength, int maxLength, short[]CTypeTable, boolean isDummy) {
+        super(name, minLength, maxLength, isDummy);
         this.CTypeTable = CTypeTable;
     }
 

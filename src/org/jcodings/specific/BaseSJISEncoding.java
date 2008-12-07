@@ -33,12 +33,7 @@ import org.jcodings.util.BytesHash;
 abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
 
     protected BaseSJISEncoding(int[][]Trans) {
-        super(1, 2, SjisEncLen, Trans, AsciiTables.AsciiCtypeTable, SJIS_CAN_BE_TRAIL_TABLE);
-    }
-
-    @Override
-    public String toString() {
-        return "Shift_JIS";
+        super("Shift_JIS", 1, 2, SjisEncLen, Trans, AsciiTables.AsciiCtypeTable, SJIS_CAN_BE_TRAIL_TABLE);
     }
 
     @Override

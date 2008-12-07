@@ -37,4 +37,5 @@ public interface ErrorMessages {
     final String ERR_ENCODING_ALIAS_ALREADY_REGISTERED = "encoding alias already registerd <%n>";
     final String ERR_ENCODING_REPLICA_ALREADY_REGISTERED = "encoding replica already registerd <%n>";
     final String ERR_NO_SUCH_ENCODNG = "no such encoding <%n>";
+    final String ERR_COULD_NOT_REPLICATE = "could not replicate <%n> encoding";
 }
