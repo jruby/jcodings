@@ -55,7 +55,7 @@ public final class UTF8Encoding extends BaseUTF8Encoding {
         4, 4, 4, 4, 4, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
     };
 
-    private static final int UTF8Trans[][] = Config.VANILLA ? null : new int[][]{
+    static final int UTF8Trans[][] = Config.VANILLA ? null : new int[][]{
         { /* S0   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* 1 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,

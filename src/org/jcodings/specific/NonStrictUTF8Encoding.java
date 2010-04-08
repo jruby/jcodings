@@ -22,12 +22,13 @@ package org.jcodings.specific;
 public final class NonStrictUTF8Encoding extends BaseUTF8Encoding {
 
     protected NonStrictUTF8Encoding() {
-        super(UTF8EncLen, null);
+        super(UTF8EncLen, UTF8Encoding.UTF8Trans);
     }
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        return length(bytes[p]);
+        int len = safeLengthForUptoFour(bytes, p, end); 
+        return len == -1 ? 1 : len; 
     }
 
     private static final int UTF8EncLen[] = {
