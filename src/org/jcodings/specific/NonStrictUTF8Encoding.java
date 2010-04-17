@@ -51,4 +51,10 @@ public final class NonStrictUTF8Encoding extends BaseUTF8Encoding {
     };
 
     public static final NonStrictUTF8Encoding INSTANCE = new NonStrictUTF8Encoding();
+
+    @Override
+    public boolean isCodeCType(int code, int ctype) {
+        return code >= 0 && super.isCodeCType(code, ctype);
+    }
+
 }

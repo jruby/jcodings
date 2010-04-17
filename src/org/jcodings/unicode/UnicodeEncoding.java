@@ -45,7 +45,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
     // onigenc_unicode_is_code_ctype
     @Override
-    public final boolean isCodeCType(int code, int ctype) {
+    public boolean isCodeCType(int code, int ctype) {
         if (Config.USE_UNICODE_PROPERTIES) {
             if (ctype <= CharacterType.MAX_STD_CTYPE && code < 256)
                 return isCodeCTypeInternal(code, ctype); 
