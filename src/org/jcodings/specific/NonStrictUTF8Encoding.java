@@ -28,7 +28,7 @@ public final class NonStrictUTF8Encoding extends BaseUTF8Encoding {
     @Override
     public int length(byte[]bytes, int p, int end) {
         int len = safeLengthForUptoFour(bytes, p, end); 
-        return len == -1 ? 1 : len; 
+        return len < 0 ? 1 : len; 
     }
 
     private static final int UTF8EncLen[] = {
