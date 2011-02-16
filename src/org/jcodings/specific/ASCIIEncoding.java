@@ -23,7 +23,6 @@ import org.jcodings.SingleByteEncoding;
 import org.jcodings.ascii.AsciiTables;
 
 public final class ASCIIEncoding extends SingleByteEncoding {
-
     protected ASCIIEncoding() {
         super("ASCII-8BIT", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable);
     }
@@ -35,8 +34,13 @@ public final class ASCIIEncoding extends SingleByteEncoding {
     @Override
     public final byte[]toLowerCaseTable() {
         return LowerCaseTable;
-    }    
+    }
 
+    @Override
+    public String getCharsetName() {
+        return "ISO-8859-1";
+    }
+    
     /** ascii_is_code_ctype / ONIGENC_IS_ASCII_CODE_CTYPE
      */
     @Override

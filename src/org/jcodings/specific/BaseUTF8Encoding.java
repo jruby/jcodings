@@ -34,6 +34,11 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     }
 
     @Override
+    public String getCharsetName() {
+        return "UTF-8";
+    }
+
+    @Override
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p < end) {
             if (bytes[p] == (byte)0x0a) return true;

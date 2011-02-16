@@ -43,6 +43,11 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         super(name, minLength, maxLength, EncLen, Trans, UNICODE_ISO_8859_1_CTypeTable);
     }
 
+    @Override
+    public String getCharsetName() {
+        return new String(getName());
+    }
+    
     // onigenc_unicode_is_code_ctype
     @Override
     public boolean isCodeCType(int code, int ctype) {

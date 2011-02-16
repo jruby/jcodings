@@ -29,6 +29,11 @@ public abstract class ISOEncoding extends CaseFoldMapEncoding {
         super(name, CTypeTable, LowerCaseTable, CaseFoldMap, foldFlag);
     }
 
+    @Override
+    public String getCharsetName() {
+        return new String(getName());
+    }
+
     /** iso_*_mbc_case_fold
      */
     @Override

@@ -37,6 +37,11 @@ abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
     }
 
     @Override
+    public String getCharsetName() {
+        return "windows-31j";
+    }
+
+    @Override
     public int mbcToCode(byte[]bytes, int p, int end) {
         return mbnMbcToCode(bytes, p, end);
     }

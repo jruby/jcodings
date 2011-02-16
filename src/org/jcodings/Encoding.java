@@ -19,6 +19,7 @@
  */
 package org.jcodings;
 
+import java.nio.charset.Charset;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.EncodingException;
@@ -36,6 +37,7 @@ public abstract class Encoding implements Cloneable {
     protected byte[]name;
     protected int hashCode;
     private int index;
+    protected Charset charset = null;
 
     protected Encoding(String name, int minLength, int maxLength, boolean isDummy) {
         setName(name);
@@ -93,6 +95,27 @@ public abstract class Encoding implements Cloneable {
 
     public final boolean isAsciiCompatible() {
         return isAsciiCompatible;
+    }
+    
+    /**
+     * If this encoding is capable of being represented by a Java Charset
+     * then provide it.
+     */
+    public Charset getCharset() {
+        if (charset == null && getCharsetName() != null) {
+            charset = Charset.forName(getCharsetName());
+        }
+        
+        return charset;
+    }
+    
+    public String getCharsetName() {
+        // Enebo: I thought about just defaulting this to getName(), but then
+        // for encodings which are unlikely to have charsets will constantly be
+        // Charset.forName(), which seems like it would dramatically slow down
+        // in that case over just getting a null back.  So we are only overriding
+        // based on very likely charsets.
+        return null;
     }
 
     public Encoding replicate(byte[]name) {

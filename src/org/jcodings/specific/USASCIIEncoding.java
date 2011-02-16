@@ -36,8 +36,13 @@ public final class USASCIIEncoding extends SingleByteEncoding {
     @Override
     public final byte[]toLowerCaseTable() {
         return LowerCaseTable;
+    }
+    
+    @Override
+    public String getCharsetName() {
+        return "US-ASCII";
     }    
-
+    
     /** ascii_is_code_ctype / ONIGENC_IS_ASCII_CODE_CTYPE
      */
     @Override
