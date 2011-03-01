@@ -102,7 +102,7 @@ public abstract class Encoding implements Cloneable {
      * then provide it.
      */
     public Charset getCharset() {
-        if (charset == null && getCharsetName() != null) {
+        if (!isDummy() && charset == null && getCharsetName() != null) {
             charset = Charset.forName(getCharsetName());
         }
         
