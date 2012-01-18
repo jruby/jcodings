@@ -1,0 +1,112 @@
+/*
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of 
+ * this software and associated documentation files (the "Software"), to deal in 
+ * the Software without restriction, including without limitation the rights to 
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * of the Software, and to permit persons to whom the Software is furnished to do
+ * so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * SOFTWARE.
+ */
+package org.jcodings.unicode;
+
+import org.jcodings.Config;
+
+public class CR_N {
+    static final int Table[] = Config.USE_UNICODE_PROPERTIES ? new int[] {
+        83,
+        0x0030, 0x0039,
+        0x00b2, 0x00b3,
+        0x00b9, 0x00b9,
+        0x00bc, 0x00be,
+        0x0660, 0x0669,
+        0x06f0, 0x06f9,
+        0x07c0, 0x07c9,
+        0x0966, 0x096f,
+        0x09e6, 0x09ef,
+        0x09f4, 0x09f9,
+        0x0a66, 0x0a6f,
+        0x0ae6, 0x0aef,
+        0x0b66, 0x0b6f,
+        0x0b72, 0x0b77,
+        0x0be6, 0x0bf2,
+        0x0c66, 0x0c6f,
+        0x0c78, 0x0c7e,
+        0x0ce6, 0x0cef,
+        0x0d66, 0x0d75,
+        0x0e50, 0x0e59,
+        0x0ed0, 0x0ed9,
+        0x0f20, 0x0f33,
+        0x1040, 0x1049,
+        0x1090, 0x1099,
+        0x1369, 0x137c,
+        0x16ee, 0x16f0,
+        0x17e0, 0x17e9,
+        0x17f0, 0x17f9,
+        0x1810, 0x1819,
+        0x1946, 0x194f,
+        0x19d0, 0x19da,
+        0x1a80, 0x1a89,
+        0x1a90, 0x1a99,
+        0x1b50, 0x1b59,
+        0x1bb0, 0x1bb9,
+        0x1c40, 0x1c49,
+        0x1c50, 0x1c59,
+        0x2070, 0x2070,
+        0x2074, 0x2079,
+        0x2080, 0x2089,
+        0x2150, 0x2182,
+        0x2185, 0x2189,
+        0x2460, 0x249b,
+        0x24ea, 0x24ff,
+        0x2776, 0x2793,
+        0x2cfd, 0x2cfd,
+        0x3007, 0x3007,
+        0x3021, 0x3029,
+        0x3038, 0x303a,
+        0x3192, 0x3195,
+        0x3220, 0x3229,
+        0x3251, 0x325f,
+        0x3280, 0x3289,
+        0x32b1, 0x32bf,
+        0xa620, 0xa629,
+        0xa6e6, 0xa6ef,
+        0xa830, 0xa835,
+        0xa8d0, 0xa8d9,
+        0xa900, 0xa909,
+        0xa9d0, 0xa9d9,
+        0xaa50, 0xaa59,
+        0xabf0, 0xabf9,
+        0xff10, 0xff19,
+        0x10107, 0x10133,
+        0x10140, 0x10178,
+        0x1018a, 0x1018a,
+        0x10320, 0x10323,
+        0x10341, 0x10341,
+        0x1034a, 0x1034a,
+        0x103d1, 0x103d5,
+        0x104a0, 0x104a9,
+        0x10858, 0x1085f,
+        0x10916, 0x1091b,
+        0x10a40, 0x10a47,
+        0x10a7d, 0x10a7e,
+        0x10b58, 0x10b5f,
+        0x10b78, 0x10b7f,
+        0x10e60, 0x10e7e,
+        0x11052, 0x1106f,
+        0x12400, 0x12462,
+        0x1d360, 0x1d371,
+        0x1d7ce, 0x1d7ff,
+        0x1f100, 0x1f10a,
+    } : null; 
+
+}

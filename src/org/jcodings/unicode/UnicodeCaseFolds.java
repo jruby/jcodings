@@ -14,7 +14,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.unicode;
@@ -23,8 +23,7 @@ import org.jcodings.util.IntArrayHash;
 import org.jcodings.util.IntHash;
 
 public class UnicodeCaseFolds {
-
-    private static final int CaseFold1_From[]  = new int[] {
+    static final int CaseFold_From[] = {
         0x0041,
         0x0042,
         0x0043,
@@ -1003,10 +1002,10 @@ public class UnicodeCaseFolds {
         0x10424,
         0x10425,
         0x10426,
-        0x10427,
-    };
-    
-    private static final int CaseFold1_To[][]  = new int[][] {
+        0x10427
+    }; /* CaseFold_From */
+
+    static final int CaseFold_To[][] = new int[][] {
         {0x0061},
         {0x0062},
         {0x0063},
@@ -1986,19 +1985,19 @@ public class UnicodeCaseFolds {
         {0x1044d},
         {0x1044e},
         {0x1044f}
-    };
-    
-    private static final int[] CaseFold_Locale_From = new int[] {
+    }; /* CaseFold_To */
+
+    static final int CaseFold_Locale_From[] = {
         0x0049,
         0x0130
-    };
+    }; /* CaseFold_Locale_From */
 
-    private static final int[][] CaseFold_Locale_To = new int[][] {
+    static final int CaseFold_Locale_To[][] = new int[][] {
         {0x0069},
         {0x0069, 0x0307}
-    };
-    
-    static final int[] CaseUnfold_11_From = new int[] {
+    }; /* CaseFold_Locale_To */
+
+    static final int CaseUnfold_11_From[] = {
         0x0061,
         0x0062,
         0x0063,
@@ -2855,8 +2854,8 @@ public class UnicodeCaseFolds {
         0x1044d,
         0x1044e,
         0x1044f
-    };
-    
+    }; /* CaseUnfold_11_From */
+
     static final int CaseUnfold_11_To[][] = new int[][] {
         {0x0041},
         {0x0042},
@@ -3714,16 +3713,16 @@ public class UnicodeCaseFolds {
         {0x10425},
         {0x10426},
         {0x10427}
-    };
+    }; /* CaseUnfold_11_To */
 
-    static final int CaseUnfold_11_Locale_From[] = new int[] {
+    static final int CaseUnfold_11_Locale_From[] = {
         0x0069
-    };
+    }; /* CaseUnfold_11_Locale_From */
 
-    static final int CaseUnfold_11_Locale_To[][]= new int[][] {
+    static final int CaseUnfold_11_Locale_To[][] = new int[][] {
         {0x0049}
-    };
-    
+    }; /* CaseUnfold_11_Locale_To */
+
     static final int CaseUnfold_12[][] = new int[][] {
         {0x0061, 0x02be}, {0x1e9a},
         {0x0066, 0x0066}, {0xfb00},
@@ -3783,12 +3782,12 @@ public class UnicodeCaseFolds {
         {0x1f70, 0x03b9}, {0x1fb2},
         {0x1f74, 0x03b9}, {0x1fc2},
         {0x1f7c, 0x03b9}, {0x1ff2}
-    };
-    
+    }; /* CaseUnfold_12 */
+
     static final int CaseUnfold_12_Locale[][] = new int[][] {
         {0x0069, 0x0307}, {0x0130}
-    };
-    
+    }; /* CaseUnfold_12_Locale */
+
     static final int CaseUnfold_13[][] = new int[][] {
         {0x0066, 0x0066, 0x0069}, {0xfb03},
         {0x0066, 0x0066, 0x006c}, {0xfb04},
@@ -3804,12 +3803,13 @@ public class UnicodeCaseFolds {
         {0x03c5, 0x0313, 0x0301}, {0x1f54},
         {0x03c5, 0x0313, 0x0342}, {0x1f56},
         {0x03c9, 0x0342, 0x03b9}, {0x1ff7}
-    };
+    }; /* CaseUnfold_13 */
+
 
     private static IntHash<int[]> initializeFoldHash() {
         IntHash<int[]> fold = new IntHash<int[]>(1200);
-        for (int i=0; i<CaseFold1_From.length; i++)
-            fold.putDirect(CaseFold1_From[i], CaseFold1_To[i]);
+        for (int i=0; i<CaseFold_From.length; i++)
+            fold.putDirect(CaseFold_From[i], CaseFold_To[i]);
         for (int i=0; i<CaseFold_Locale_From.length; i++) 
             fold.putDirect(CaseFold_Locale_From[i], CaseFold_Locale_To[i]);
         return fold;

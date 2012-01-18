@@ -58,17 +58,17 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             if (code < 256) return isCodeCTypeInternal(code, ctype);
         }
 
-        if (ctype > UnicodeCodeRanges.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
+        if (ctype > UnicodeProperties.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
 
-        return CodeRange.isInCodeRange(UnicodeCodeRanges.CodeRangeTable[ctype], code);
+        return CodeRange.isInCodeRange(UnicodeProperties.CodeRangeTable[ctype], code);
         
     }
     
     // onigenc_unicode_ctype_code_range
     protected final int[]ctypeCodeRange(int ctype) {
-        if (ctype >= UnicodeCodeRanges.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
+        if (ctype >= UnicodeProperties.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
         
-        return UnicodeCodeRanges.CodeRangeTable[ctype];
+        return UnicodeProperties.CodeRangeTable[ctype];
     }
     
     // onigenc_unicode_property_name_to_ctype
@@ -87,7 +87,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             p_ += length(name, p_, end);
         }
 
-        Integer ctype = UnicodeCTypeNames.CTypeNameHash.get(buf, 0, len);
+        Integer ctype = UnicodeProperties.CTypeNameHash.get(buf, 0, len);
         if (ctype == null) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
         return ctype;       
     }
