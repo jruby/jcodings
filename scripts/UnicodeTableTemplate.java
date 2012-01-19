@@ -22,12 +22,5 @@ package org.jcodings.unicode;
 import org.jcodings.Config;
 
 public class %{class} {
-    static final int[][]CodeRangeTable = Config.USE_UNICODE_PROPERTIES ?
-            new int[][] {
-%{stdcrs}
-}           } :
-            new int[][] {
-%{extcrs}
-}           };                                      
-
+%{body}
 }
