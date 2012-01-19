@@ -81,6 +81,7 @@
 
   <build>
     <sourceDirectory>src</sourceDirectory>
+    <scriptSourceDirectory>scripts</scriptSourceDirectory> 
     <testSourceDirectory>test</testSourceDirectory>
     <finalName>jcodings</finalName>
     <plugins>
