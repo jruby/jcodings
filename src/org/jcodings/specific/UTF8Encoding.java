@@ -32,7 +32,11 @@ public final class UTF8Encoding extends BaseUTF8Encoding {
         if (Config.VANILLA) {
             return length(bytes[p]);
         } else {
-            return safeLengthForUptoFour(bytes, p, end);
+            int b = bytes[p] & 0xff;
+            if (b <= 127) return 1;
+            int s = TransZero[b];
+            if (s < 0) return CHAR_INVALID;
+            return lengthForTwoUptoFour(bytes, p, end, b, s);
         }
     }
 
