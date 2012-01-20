@@ -18,9 +18,9 @@ end
 
 open("UnicodeCaseFolds.java", "wb"){|f| f << open("UnicodeCaseFoldsTemplate.java", "rb").read.sub(/%\{body\}/, folds.join)}
 
-unicode = unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
-    foo = "#{INDENT}static final int Table[] = Config.USE_UNICODE_PROPERTIES ? new int[] {" + tab.gsub("\t", INDENT * 2) + "#{INDENT}} : null; \n"
-    open("cr/#{name}.java", "wb"){|f| f << open("UnicodeTableTemplate.java", "rb").read.sub(/%\{class\}/, name).sub(/%\{body\}/, foo)}
+unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
+    unicode = "#{INDENT}static final int Table[] = Config.USE_UNICODE_PROPERTIES ? new int[] {" + tab.gsub("\t", INDENT * 2) + "#{INDENT}} : null; \n"
+    open("cr/#{name}.java", "wb"){|f| f << open("UnicodeTableTemplate.java", "rb").read.sub(/%\{class\}/, name).sub(/%\{body\}/, unicode)}
 end
 
 cr_map =  unicode_src.scan(/#define (CR_.*?) (.*)/).inject(Hash.new{|h, k|k}){|h, (k,v)| h[k] = v;h}
