@@ -81,7 +81,7 @@
 
   <build>
     <sourceDirectory>src</sourceDirectory>
-    <scriptSourceDirectory>scripts</scriptSourceDirectory> 
+    <scriptSourceDirectory>scripts</scriptSourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
     <finalName>jcodings</finalName>
     <plugins>
@@ -108,6 +108,9 @@
             </goals>
           </execution>
         </executions>
+        <configuration>
+            <skip>true</skip>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
