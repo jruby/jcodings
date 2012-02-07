@@ -146,5 +146,5 @@ public final class GBKEncoding extends CanBeTrailTableEncoding {
           }
     };
     
-    public static final CP949Encoding INSTANCE = new CP949Encoding();
+    public static final GBKEncoding INSTANCE = new GBKEncoding();
 }
