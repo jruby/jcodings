@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.util;
@@ -26,14 +26,14 @@ import org.jcodings.exception.InternalException;
 public abstract class Hash<V> implements Iterable<V> {
     protected HashEntry<V>[]table;
     protected int size;
-        
+
     private static final int PRIMES[] = {
         8 + 3, 16 + 3, 32 + 5, 64 + 3, 128 + 3, 256 + 27, 512 + 9, 1024 + 9, 2048 + 5, 4096 + 3,
         8192 + 27, 16384 + 43, 32768 + 3, 65536 + 45, 131072 + 29, 262144 + 3, 524288 + 21, 1048576 + 7,
         2097152 + 17, 4194304 + 15, 8388608 + 9, 16777216 + 43, 33554432 + 35, 67108864 + 15,
         134217728 + 29, 268435456 + 3, 536870912 + 11, 1073741824 + 85, 0
-    }; 
-    
+    };
+
     private static final int INITIAL_CAPACITY = PRIMES[0];
     private static final int MAXIMUM_CAPACITY = 1 << 30;
 
@@ -46,7 +46,7 @@ public abstract class Hash<V> implements Iterable<V> {
     protected abstract void init();
 
     public Hash(int size) {
-        for (int i=0, n=MIN_CAPA; i<PRIMES.length; i++, n <<=1) { 
+        for (int i=0, n=MIN_CAPA; i<PRIMES.length; i++, n <<=1) {
             if (n > size) {
                 table = new HashEntry[PRIMES[i]];
                 init();
@@ -60,16 +60,16 @@ public abstract class Hash<V> implements Iterable<V> {
         return size;
     }
 
-    static class HashEntry<V> {
+    public static class HashEntry<V> {
         final int hash;
-        HashEntry<V> next, before, after;
+        protected HashEntry<V> next, before, after;
         public V value;
 
         HashEntry(int hash, HashEntry<V> next, V value, HashEntry<V> head) {
             this.hash = hash;
             this.next = next;
             this.value = value;
-            
+
             after = head;
             before = head.before;
             before.after = this;
@@ -96,11 +96,11 @@ public abstract class Hash<V> implements Iterable<V> {
     // private static final int DENSITY = 5;
     protected final void checkResize() {
         if (size == table.length) { // size / table.length > DENSITY
-            int forSize = table.length + 1; // size + 1;         
+            int forSize = table.length + 1; // size + 1;
             for (int i=0, newCapacity = MIN_CAPA; i < PRIMES.length; i++, newCapacity <<= 1) {
-                if (newCapacity > forSize) {                  
-                    resize(PRIMES[i]);                  
-                    return;                 
+                if (newCapacity > forSize) {
+                    resize(PRIMES[i]);
+                    return;
                 }
             }
             return;
@@ -123,20 +123,20 @@ public abstract class Hash<V> implements Iterable<V> {
         }
         table = newTable;
     }
-    
+
     protected static int bucketIndex(final int h, final int length) {
-        return (h % length); 
+        return (h % length);
     }
-    
+
     private static final int HASH_SIGN_BIT_MASK = ~(1 << 31);
     protected static int hashValue(int h) {
         return h & HASH_SIGN_BIT_MASK;
     }
-    
+
     public Iterator<V> iterator() {
         return new HashIterator();
     }
-    
+
     public class HashIterator implements Iterator<V> {
         HashEntry<V> next;
 
@@ -163,11 +163,17 @@ public abstract class Hash<V> implements Iterable<V> {
         return new HashEntryIterator();
     }
 
-    public class HashEntryIterator implements Iterator<HashEntry<V>> {
+    public class HashEntryIterator implements Iterator<HashEntry<V>>, Iterable<HashEntry<V>> {
         HashEntry<V> next;
 
         public HashEntryIterator() {
-            next = head.after;        }
+            next = head.after;
+        }
+
+        @Override
+        public Iterator<HashEntry<V>> iterator() {
+            return this;
+        }
 
         public boolean hasNext() {
             return next != head;
@@ -182,5 +188,6 @@ public abstract class Hash<V> implements Iterable<V> {
         public void remove() {
             throw new InternalException("not supported operation exception");
         }
-    }    
+
+    }
 }

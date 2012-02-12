@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.specific;
@@ -40,7 +40,7 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
                 return end - p >= 2 ? 2 : missing(1);
             }
             if (isSurrogateFirst(b)) {
-                switch (end - p) {   
+                switch (end - p) {
                 case 1:     return missing(3);
                 case 2:     return missing(2);
                 case 3:     if (isSurrogateSecond(bytes[p + 2] & 0xff)) return missing(1);
@@ -55,11 +55,11 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p + 1 < end) {
             if (bytes[p + 1] == (byte)0x0a && bytes[p] == (byte)0x00) return true;
-            
+
             if (Config.USE_UNICODE_ALL_LINE_TERMINATORS) {
                 if ((!Config.USE_CRNL_AS_LINE_TERMINATOR && bytes[p+1] == (byte)0x0d) ||
                         bytes[p+1] == (byte)0x85 && bytes[p] == (byte)0x00) return true;
-                
+
                 if (bytes[p] == (byte)0x20 && (bytes[p+1] == (byte)0x29 || bytes[p+1] == (byte)0x28)) return true;
             }
         }
@@ -80,22 +80,22 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
         }
         return code;
     }
-    
+
     @Override
     public int codeToMbcLength(int code) {
-        return code > 0xffff ? 4 : 2; 
+        return code > 0xffff ? 4 : 2;
     }
-    
+
     @Override
-    public int codeToMbc(int code, byte[]bytes, int p) {    
+    public int codeToMbc(int code, byte[]bytes, int p) {
         int p_ = p;
         if (code > 0xffff) {
             if (Config.VANILLA) {
-                int plane = code >>> 16;
+                int plane = (code >>> 16) - 1;
                 bytes[p_++] = (byte)((plane >>> 2) + 0xd8);
                 int high = (code & 0xff00) >>> 8;
                 bytes[p_++] = (byte)(((plane & 0x03) << 6) + (high >>> 2));
-                bytes[p_++] = (byte)((high & 0x02) + 0xdc);
+                bytes[p_++] = (byte)((high & 0x03) + 0xdc);
                 bytes[p_]   = (byte)(code & 0xff);
             } else {
                 int high = (code >>> 10) + 0xd7c0;
@@ -112,7 +112,7 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
             return 2;
         }
     }
-    
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]fold) {
         int p = pp.value;
@@ -120,7 +120,7 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
 
         if (isAscii(bytes[p+1] & 0xff) && bytes[p] == 0) {
             p++;
-            
+
             if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
                 if ((flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
                     if (bytes[p] == (byte)0x49) {
@@ -131,7 +131,7 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
                     }
                 }
             } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI
-            
+
             fold[foldP++] = 0;
             fold[foldP] = AsciiTables.ToLowerCaseTable[bytes[p] & 0xff];
             pp.value += 2;
@@ -148,23 +148,23 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
         sbOut.value = 0x00;
         return super.ctypeCodeRange(ctype);
     }
-    
+
     @Override
     public int leftAdjustCharHead(byte[]bytes, int p, int s, int end) {
         if (s <= p) return s;
-        
+
         if ((s - p) % 2 == 1) s--;
-        
+
         if (isSurrogateSecond(bytes[s] & 0xff) && s > p + 1) s -= 2;
-        
+
         return s;
     }
-    
+
     @Override
     public boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
         return false;
     }
-    
+
     static final int UTF16EncLen[] = {
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
@@ -198,7 +198,7 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
         } else {
             return (c & 0xfc) == 0xdc;
         }
-    }    
+    }
 
     private static boolean isSurrogate(int c) {
         if (Config.VANILLA) {
@@ -206,8 +206,8 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
         } else {
             return (c & 0xf8) == 0xd8;
         }
-        
+
     }
-    
+
     public static final UTF16BEEncoding INSTANCE = new UTF16BEEncoding();
 }
