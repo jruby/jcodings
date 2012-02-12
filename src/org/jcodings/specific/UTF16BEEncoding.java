@@ -68,13 +68,18 @@ public final class UTF16BEEncoding extends UnicodeEncoding {
 
     @Override
     public int mbcToCode(byte[]bytes, int p, int end) {
-        int code;
+        final int code;
         if (isSurrogateFirst(bytes[p] & 0xff)) {
-            code = ((((bytes[p + 0] & 0xff - 0xd8) << 2) +
-                     ((bytes[p + 1] & 0xff & 0xc0) >> 6) + 1) << 16) +
-                   ((((bytes[p + 1] & 0xff & 0x3f) << 2) +
-                      (bytes[p + 2] & 0xff - 0xdc)) << 8) +
-                       bytes[p + 3] & 0xff;
+            if (Config.VANILLA) {
+                code = ((((bytes[p + 0] & 0xff - 0xd8) << 2) +
+                        ((bytes[p + 1] & 0xff & 0xc0) >> 6) + 1) << 16) +
+                      ((((bytes[p + 1] & 0xff & 0x3f) << 2) +
+                         (bytes[p + 2] & 0xff - 0xdc)) << 8) +
+                          bytes[p + 3] & 0xff;
+            } else {
+                code = (((((bytes[p + 0] & 0xff) << 8) + (bytes[p + 1] & 0xff)) & 0x03ff) << 10) +
+                        ((((bytes[p + 2] & 0xff) << 8) + (bytes[p + 3] & 0xff)) & 0x03ff) + 0x10000;
+            }
         } else {
             code =  (bytes[p + 0] & 0xff) * 256 + (bytes[p + 1] & 0xff);
         }
