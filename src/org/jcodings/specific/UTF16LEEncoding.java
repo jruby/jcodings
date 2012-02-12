@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.specific;
@@ -31,8 +31,8 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
     }
 
     @Override
-    public int length(byte c) { 
-        return EncLen[(c & 0xff) + 1];       
+    public int length(byte c) {
+        return EncLen[(c & 0xff) + 1];
     }
 
     @Override
@@ -58,11 +58,11 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p + 1 < end) {
             if (bytes[p] == (byte)0x0a && bytes[p + 1] == (byte)0x00) return true;
-            
+
             if (Config.USE_UNICODE_ALL_LINE_TERMINATORS) {
                 if ((!Config.USE_CRNL_AS_LINE_TERMINATOR && bytes[p] == (byte)0x0d) ||
                         bytes[p] == (byte)0x85 && bytes[p + 1] == (byte)0x00) return true;
-                
+
                 if (bytes[p + 1] == (byte)0x20 && (bytes[p] == (byte)0x29 || bytes[p] == (byte)0x28)) return true;
             }
         }
@@ -86,20 +86,20 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
 
     @Override
     public int codeToMbcLength(int code) {
-        return code > 0xffff ? 4 : 2; 
+        return code > 0xffff ? 4 : 2;
     }
 
-    @Override    
-    public int codeToMbc(int code, byte[]bytes, int p) {    
+    @Override
+    public int codeToMbc(int code, byte[]bytes, int p) {
         int p_ = p;
         if (code > 0xffff) {
             if (Config.VANILLA) {
-                int plane = code >>> 16;
+                int plane = (code >>> 16) - 1;
                 int high = (code & 0xff00) >>> 8;
                 bytes[p_++] = (byte)(((plane & 0x03) << 6) + (high >>> 2));
                 bytes[p_++] = (byte)((plane >>> 2) + 0xd8);
                 bytes[p_++] = (byte)(code & 0xff);
-                bytes[p_  ] = (byte)((high & 0x02) + 0xdc);
+                bytes[p_  ] = (byte)((high & 0x03) + 0xdc);
             } else {
                 int high = (code >>> 10) + 0xd7c0;
                 int low = (code & 0x3ff) + 0xdc00;
@@ -115,7 +115,7 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
             return 2;
         }
     }
-    
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]fold) {
         int p = pp.value;
@@ -132,8 +132,8 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
                         return 2;
                     }
                 }
-            } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI            
-            
+            } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI
+
             fold[foldP++] = AsciiTables.ToLowerCaseTable[bytes[p] & 0xff];
             fold[foldP] = 0;
             pp.value += 2;
@@ -150,18 +150,18 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
         sbOut.value = 0x00;
         return super.ctypeCodeRange(ctype);
     }
-    
+
     @Override
     public int leftAdjustCharHead(byte[]bytes, int p, int s, int end) {
         if (s <= p) return s;
-        
+
         if ((s - p) % 2 == 1) s--;
-        
+
         if (isSurrogateSecond(bytes[s + 1] & 0xff) && s > p + 1) s -= 2;
-        
+
         return s;
     }
-    
+
     @Override
     public boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
         return false;
@@ -181,7 +181,7 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
         } else {
             return (c & 0xfc) == 0xdc;
         }
-    }    
+    }
 
     private static boolean isSurrogate(int c) {
         if (Config.VANILLA) {
@@ -189,8 +189,8 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
         } else {
             return (c & 0xf8) == 0xd8;
         }
-        
+
     }
-    
+
     public static final UTF16LEEncoding INSTANCE = new UTF16LEEncoding();
 }
