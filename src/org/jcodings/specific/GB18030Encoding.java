@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.specific;
@@ -58,14 +58,14 @@ public final class GB18030Encoding extends MultiByteEncoding {
         if (s < 0) return s == A ? 3 : CHAR_INVALID;
         if (++p == end) return missing(1);
         s = Trans[s][bytes[p] & 0xff];
-        return s == A ? 4 : CHAR_INVALID;  
+        return s == A ? 4 : CHAR_INVALID;
     }
 
     @Override
     public int mbcToCode(byte[]bytes, int p, int end) {
         return mbnMbcToCode(bytes, p, end);
     }
-    
+
     @Override
     public int codeToMbcLength(int code) {
         return mb4CodeToMbcLength(code);
@@ -80,12 +80,12 @@ public final class GB18030Encoding extends MultiByteEncoding {
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         return mbnMbcCaseFold(flag, bytes, pp, end, lower);
     }
-    
+
     @Override
     public boolean isCodeCType(int code, int ctype) {
         return mb4IsCodeCType(code, ctype);
     }
-    
+
     @Override
     public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
         return null;
@@ -128,7 +128,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
     @Override
     public int leftAdjustCharHead(byte[]bytes, int p, int s, int end) {
         State state = State.START;
-        
+
         for (int p_ = s; p_ >= p; p_--) {
             switch (state) {
             case START:
@@ -348,7 +348,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
                     break;
             }
         }
-        
+
         switch (state) {
         case START:             return (s - 0);
         case One_C2:            return (s - 0);
@@ -383,7 +383,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
 
         return s;
     }
-    
+
     @Override
     public boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
         return GB18030_MAP[bytes[p] & 0xff] == C1;
@@ -430,7 +430,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
           /* c */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           /* d */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           /* e */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* f */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, F 
+          /* f */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, F
         },
         { /* S1   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
@@ -448,7 +448,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
           /* c */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* d */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* e */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* f */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, F 
+          /* f */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, F
         },
         { /* S2   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
@@ -466,7 +466,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
           /* c */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
           /* d */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
           /* e */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-          /* f */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, F 
+          /* f */ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, F
         },
         { /* S3   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
@@ -484,7 +484,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
           /* c */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
           /* d */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
           /* e */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* f */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F 
+          /* f */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F
         }
     };
 

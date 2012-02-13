@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.specific;
@@ -27,7 +27,7 @@ import org.jcodings.exception.ErrorMessages;
 import org.jcodings.unicode.UnicodeEncoding;
 
 abstract class BaseUTF8Encoding extends UnicodeEncoding {
-    static final boolean USE_INVALID_CODE_SCHEME = true; 
+    static final boolean USE_INVALID_CODE_SCHEME = true;
 
     protected BaseUTF8Encoding(int[]EncLen, int[][]Trans) {
         super("UTF-8", 1, 6, EncLen, Trans);
@@ -42,12 +42,12 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p < end) {
             if (bytes[p] == (byte)0x0a) return true;
-            
+
             if (Config.USE_UNICODE_ALL_LINE_TERMINATORS) {
                 if (!Config.USE_CRNL_AS_LINE_TERMINATOR) {
                     if (bytes[p] == (byte)0x0d) return true;
                 }
-                
+
                 if (p + 1 < end) { // & 0xff...
                     if (bytes[p+1] == (byte)0x85 && bytes[p] == (byte)0xc2) return true; /* U+0085 */
                     if (p + 2 < end) {
@@ -85,13 +85,13 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
         }
     }
-    
+
     @Override
     public int mbcToCode(byte[]bytes, int p, int end) {
         int len = length(bytes, p, end);
-        
+
         int c = bytes[p++] & 0xff;
-        
+
         if (len > 1) {
             len--;
             int n = c & ((1 << (6 - len)) - 1);
@@ -107,15 +107,15 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             return c;
         }
     }
-    
+
     static byte trailS(int code, int shift) {
         return (byte)((((code) >>> (shift)) & 0x3f) | 0x80);
     }
-    
+
     static byte trail0(int code) {
         return (byte)(((code) & 0x3f) | 0x80);
     }
-    
+
     @Override
     public int codeToMbc(int code, byte[]bytes, int p) {
         int p_ = p;
@@ -153,7 +153,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
                 throw new EncodingException(ErrorMessages.ERR_TOO_BIG_WIDE_CHAR_VALUE);
             }
             bytes[p_++] = trail0(code);
-            return p_ - p; 
+            return p_ - p;
           }
     }
 
@@ -162,9 +162,9 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]fold) {
         int p = pp.value;
         int foldP = 0;
-        
+
         if (isMbcAscii(bytes[p])) {
-            
+
             if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
                 if ((flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
                     if (bytes[p] == (byte)0x49) {
@@ -175,7 +175,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
                     }
                 }
             } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI
-            
+
             fold[foldP] = AsciiTables.ToLowerCaseTable[bytes[p] & 0xff];
             pp.value++;
             return 1; /* return byte length of converted char to lower */
@@ -183,7 +183,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             return super.mbcCaseFold(flag, bytes, pp, end, fold);
         }
     }
-    
+
     /** utf8_get_ctype_code_range
      */
     @Override
@@ -191,11 +191,11 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
         sbOut.value = 0x80;
         return super.ctypeCodeRange(ctype); // onigenc_unicode_ctype_code_range
     }
-    
+
     private static boolean utf8IsLead(int c) {
         return ((c & 0xc0) & 0xff) != 0x80;
     }
-    
+
     /** utf8_left_adjust_char_head
      */
     @Override
@@ -205,7 +205,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
         while (!utf8IsLead(bytes[p_] & 0xff) && p_ > p) p_--;
         return p_;
     }
-    
+
     /** onigenc_always_true_is_allowed_reverse_match
      */
     @Override

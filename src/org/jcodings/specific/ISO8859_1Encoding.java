@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.specific;
@@ -31,7 +31,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
 
     @Override
     public void applyAllCaseFold(int flag, ApplyAllCaseFoldFunction fun, Object arg) {
-        applyAllCaseFoldWithMap(CaseFoldMap.length, CaseFoldMap, true, flag, fun, arg);      
+        applyAllCaseFoldWithMap(CaseFoldMap.length, CaseFoldMap, true, flag, fun, arg);
     }
 
     /** get_case_fold_codes_by_str
@@ -39,21 +39,21 @@ public final class ISO8859_1Encoding extends ISOEncoding {
     @Override
     public CaseFoldCodeItem[]caseFoldCodesByString(int flag, byte[]bytes, int p, int end) {
         int b = bytes[p] & 0xff;
-        
+
         if (0x41 <= b && b <= 0x5a) {
             CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 1, new int[]{b + 0x20});
-            
+
             if (b == 0x53 && end > p + 1 &&
                (bytes[p+1] == (byte)0x53 || bytes[p+1] == (byte)0x73)) { /* ss */
                 CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{0xdf});
 
-                return new CaseFoldCodeItem[]{item0, item1};  
+                return new CaseFoldCodeItem[]{item0, item1};
             } else {
                 return new CaseFoldCodeItem[]{item0};
             }
         } else if (0x61 <= b && b <= 0x7a) {
             CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 1, new int[]{b - 0x20});
-            
+
             if (b == 0x73 && end > p + 1 &&
                (bytes[p+1] == (byte)0x73 || bytes[p+1] == (byte)0x53)) { /* ss */
                 CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{0xdf});
@@ -61,7 +61,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
             } else {
                 return new CaseFoldCodeItem[]{item0};
             }
-            
+
         } else if (0xc0 <= b && b <= 0xcf) {
             return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b + 0x20})};
         } else if (0xd0 <= b && b <= 0xdf) {
@@ -70,8 +70,8 @@ public final class ISO8859_1Encoding extends ISOEncoding {
                 CaseFoldCodeItem item1 = new CaseFoldCodeItem(1, 2, new int[]{'S', 'S'});
                 CaseFoldCodeItem item2 = new CaseFoldCodeItem(1, 2, new int[]{'s', 'S'});
                 CaseFoldCodeItem item3 = new CaseFoldCodeItem(1, 2, new int[]{'S', 's'});
-                
-                return new CaseFoldCodeItem[]{item0, item1, item2, item3};               
+
+                return new CaseFoldCodeItem[]{item0, item1, item2, item3};
             } else if (b != 0xd7) {
                 return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b + 0x20})};
             }
@@ -81,10 +81,10 @@ public final class ISO8859_1Encoding extends ISOEncoding {
             if (b != 0xf7) {
                 return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b - 0x20})};
             }
-        }       
+        }
         return EMPTY_FOLD_CODES;
     }
-    
+
     static final short ISO8859_1CtypeTable[] = {
         0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008,
         0x4008, 0x420c, 0x4209, 0x4208, 0x4208, 0x4208, 0x4008, 0x4008,
@@ -117,9 +117,9 @@ public final class ISO8859_1Encoding extends ISOEncoding {
         0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2,
         0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2,
         0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x00a0,
-        0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2        
+        0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2
     };
-    
+
     static final byte ISO8859_1ToLowerCaseTable[] = new byte[]{
         (byte)'\000', (byte)'\001', (byte)'\002', (byte)'\003', (byte)'\004', (byte)'\005', (byte)'\006', (byte)'\007',
         (byte)'\010', (byte)'\011', (byte)'\012', (byte)'\013', (byte)'\014', (byte)'\015', (byte)'\016', (byte)'\017',
@@ -153,7 +153,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
         (byte)'\350', (byte)'\351', (byte)'\352', (byte)'\353', (byte)'\354', (byte)'\355', (byte)'\356', (byte)'\357',
         (byte)'\360', (byte)'\361', (byte)'\362', (byte)'\363', (byte)'\364', (byte)'\365', (byte)'\366', (byte)'\367',
         (byte)'\370', (byte)'\371', (byte)'\372', (byte)'\373', (byte)'\374', (byte)'\375', (byte)'\376', (byte)'\377'
-    }; 
+    };
 
     static final byte ISO8859_1ToUpperCaseTable[] = new byte[]{
         (byte)'\000', (byte)'\001', (byte)'\002', (byte)'\003', (byte)'\004', (byte)'\005', (byte)'\006', (byte)'\007',
@@ -189,7 +189,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
         (byte)'\320', (byte)'\321', (byte)'\322', (byte)'\323', (byte)'\324', (byte)'\325', (byte)'\326', (byte)'\367',
         (byte)'\330', (byte)'\331', (byte)'\332', (byte)'\333', (byte)'\334', (byte)'\335', (byte)'\336', (byte)'\377',
     };
-    
+
     static final int ISO8859_1CaseFoldMap[][] = {
         { 0xc0, 0xe0 },
         { 0xc1, 0xe1 },
@@ -222,7 +222,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
         { 0xdc, 0xfc },
         { 0xdd, 0xfd },
         { 0xde, 0xfe }
-    };  
+    };
 
     public static final ISO8859_1Encoding INSTANCE = new ISO8859_1Encoding();
 }

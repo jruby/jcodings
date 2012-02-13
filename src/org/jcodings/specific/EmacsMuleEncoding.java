@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings.specific;
@@ -51,7 +51,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
         // TODO: this won't work with signed values, probably need to move to long or use bitwise 'and' and masks
         if (isAscii(code)) {
             return 1;
-        } else if (code > 0xffffffff) { 
+        } else if (code > 0xffffffff) {
             return 0;
         } else if ((code & 0xff000000) >= 0x80000000) {
             return 4;
@@ -62,16 +62,16 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
         }
         throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
     }
-    
+
     @Override
     public int codeToMbc(int code, byte[]bytes, int p) {
         // TODO: check if mb4CodeToMbc is enough (too much code duplication in 1.9 sources)
-        int p_ = p;        
+        int p_ = p;
         if ((code & 0xff000000) != 0)           bytes[p_++] = (byte)((code >>> 24) & 0xff);
         if ((code & 0xff0000) != 0)             bytes[p_++] = (byte)((code >>> 16) & 0xff);
         if ((code & 0xff00) != 0 )              bytes[p_++] = (byte)((code >>> 8) & 0xff);
         bytes[p_++] = (byte)(code & 0xff);
-        
+
         if (length(bytes, p, p_) != (p_ - p)) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
         return p_ - p;
     }
@@ -83,7 +83,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
 
     @Override
     public boolean isCodeCType(int code, int ctype) {
-        if (code < 128) {            
+        if (code < 128) {
             return isCodeCTypeInternal(code, ctype); // configured with ascii
         } else {
             return codeToMbcLength(code) > 1;
@@ -94,11 +94,11 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
     public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
         return null;
     }
-    
+
     private static boolean islead(int c) {
         return c - 0x81 > 0x9d - 0x81;
     }
-    
+
     @Override
     public int leftAdjustCharHead(byte[] bytes, int p, int s, int end) {
         if (s <= p) return s;
@@ -106,12 +106,12 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
         while (!islead(bytes[p_] & 0xff) && p_ > p) p_--;
         return p_;
     };
-    
+
     @Override
     public boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
         return true;
     }
-    
+
     static final int EmacsMuleEncLen[] = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -166,7 +166,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
           /* c */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* d */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* e */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* f */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A 
+          /* f */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A
         },
         { /* S2   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
@@ -184,7 +184,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
           /* c */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           /* d */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           /* e */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* f */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 
+          /* f */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
         },
         { /* S3   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
@@ -259,6 +259,6 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
           /* f */ F, F, F, F, F, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, F
         },
     };
-    
+
     public static final EmacsMuleEncoding INSTANCE = new EmacsMuleEncoding();
 }

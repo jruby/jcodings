@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings;
@@ -49,7 +49,7 @@ public abstract class Encoding implements Cloneable {
         this.index = count++;
 
         this.isDummy = isDummy;
-        this.isAsciiCompatible = minLength == 1 && !isDummy; 
+        this.isAsciiCompatible = minLength == 1 && !isDummy;
     }
 
     protected Encoding(String name, int minLength, int maxLength) {
@@ -73,7 +73,7 @@ public abstract class Encoding implements Cloneable {
 
     @Override
     public final boolean equals(Object other) {
-        return this == other;       
+        return this == other;
     }
 
     @Override
@@ -96,7 +96,7 @@ public abstract class Encoding implements Cloneable {
     public final boolean isAsciiCompatible() {
         return isAsciiCompatible;
     }
-    
+
     /**
      * If this encoding is capable of being represented by a Java Charset
      * then provide it.
@@ -105,10 +105,10 @@ public abstract class Encoding implements Cloneable {
         if (!isDummy() && charset == null && getCharsetName() != null) {
             charset = Charset.forName(getCharsetName());
         }
-        
+
         return charset;
     }
-    
+
     public String getCharsetName() {
         // Enebo: I thought about just defaulting this to getName(), but then
         // for encodings which are unlikely to have charsets will constantly be
@@ -131,19 +131,19 @@ public abstract class Encoding implements Cloneable {
 
     /**
      * Returns character length given character head
-     * returns <code>1</code> for singlebyte encodings or performs direct length table lookup for multibyte ones.   
-     * 
+     * returns <code>1</code> for singlebyte encodings or performs direct length table lookup for multibyte ones.
+     *
      * @param   c
      *          Character head
      * Oniguruma equivalent: <code>mbc_enc_len</code>
-     * 
-     * To be deprecated very soon (use length(byte[]bytes, int p, int end) version) 
+     *
+     * To be deprecated very soon (use length(byte[]bytes, int p, int end) version)
      */
     public abstract int length(byte c);
 
     /**
      * Returns character length given stream, character position and stream end
-     * returns <code>1</code> for singlebyte encodings or performs sanity validations for multibyte ones 
+     * returns <code>1</code> for singlebyte encodings or performs sanity validations for multibyte ones
      * and returns the character length, missing characters in the stream otherwise
      *
      * @return
@@ -153,66 +153,66 @@ public abstract class Encoding implements Cloneable {
      *  < -1 (-1 - n)   Number of missing bytes for character in p...end range
      *
      * Oniguruma equivalent: <code>mbc_enc_len</code>
-     * modified for 1.9 purposes, 
+     * modified for 1.9 purposes,
      */
     public abstract int length(byte[]bytes, int p, int end);
 
     /**
-     * Returns maximum character byte length that can appear in an encoding  
-     * 
+     * Returns maximum character byte length that can appear in an encoding
+     *
      * Oniguruma equivalent: <code>max_enc_len</code>
      */
     public final int maxLength() {
         return maxLength;
     }
-    
+
     /* ONIGENC_MBC_MAXLEN_DIST */
     public final int maxLengthDistance() {
         return maxLength();
     }
 
     /**
-     * Returns minimum character byte length that can appear in an encoding  
-     * 
+     * Returns minimum character byte length that can appear in an encoding
+     *
      * Oniguruma equivalent: <code>min_enc_len</code>
-     */    
+     */
     public final int minLength() {
         return minLength;
     }
 
     /**
      * Returns true if <code>bytes[p]</code> is a head of a new line character
-     * 
+     *
      * Oniguruma equivalent: <code>is_mbc_newline</code>
      */
     public abstract boolean isNewLine(byte[]bytes, int p, int end);
 
     /**
      * Returns code point for a character
-     * 
+     *
      * Oniguruma equivalent: <code>mbc_to_code</code>
      */
     public abstract int mbcToCode(byte[]bytes, int p, int end);
 
     /**
      * Returns character length given a code point
-     * 
+     *
      * Oniguruma equivalent: <code>code_to_mbclen</code>
      */
     public abstract int codeToMbcLength(int code);
 
     /**
      * Extracts code point into it's multibyte representation
-     * 
-     * @return character length for the given code point 
-     * 
+     *
+     * @return character length for the given code point
+     *
      * Oniguruma equivalent: <code>code_to_mbc</code>
      */
     public abstract int codeToMbc(int code, byte[]bytes, int p);
 
     /**
      * Performs case folding for a character at <code>bytes[pp.value]</code>
-     * 
+     *
      * @param   flag    case fold flag
      * @param   pp      an <code>IntHolder</code> that points at character head
      * @param   to      a buffer where to extract case folded character
@@ -220,60 +220,60 @@ public abstract class Encoding implements Cloneable {
      * Oniguruma equivalent: <code>mbc_case_fold</code>
      */
     public abstract int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]to);
-    
+
     /**
      * Returns lower case table if it's safe to use it directly, otherwise <code>null</code>
      * Used for fast case insensitive matching for some singlebyte encodings
-     * 
-     * @return lower case table 
+     *
+     * @return lower case table
      */
     public byte[] toLowerCaseTable() {return null;}
 
     /**
      * Expand case folds given a character class (used for case insensitive matching)
-     * 
+     *
      * @param   flag    case fold flag
      * @param   fun     case folding functor (look at: <code>ApplyCaseFold</code>)
      * @param   arg     case folding functor argument (look at: <code>ApplyCaseFoldArg</code>)
-     * 
+     *
      * Oniguruma equivalent: <code>apply_all_case_fold</code>
      */
     public abstract void applyAllCaseFold(int flag, ApplyAllCaseFoldFunction fun, Object arg);
-    
+
     /**
      * Expand AST string nodes into their folded alternatives (look at: <code>Analyser.expandCaseFoldString</code>)
-     * 
+     *
      * Oniguruma equivalent: <code>get_case_fold_codes_by_str</code>
      */
     public abstract CaseFoldCodeItem[]caseFoldCodesByString(int flag, byte[]bytes, int p, int end);
-    
+
     /**
      * Returns character type given character type name (used when e.g. \p{Alpha})
-     * 
+     *
      * Oniguruma equivalent: <code>property_name_to_ctype</code>
      */
     public abstract int propertyNameToCType(byte[]bytes, int p, int end);
 
     /**
      * Perform a check whether given code is of given character type (e.g. used by isWord(someByte) and similar methods)
-     * 
+     *
      * @param   code    a code point of a character
      * @param   ctype   a character type to check against
-     * 
+     *
      * Oniguruma equivalent: <code>is_code_ctype</code>
      */
     public abstract boolean isCodeCType(int code, int ctype);
 
     /**
      * Returns code range for a given character type
-     * 
+     *
      * Oniguruma equivalent: <code>get_ctype_code_range</code>
      */
     public abstract int[]ctypeCodeRange(int ctype, IntHolder sbOut);
 
     /**
      * Seeks the previous character head in a stream
-     * 
+     *
      * Oniguruma equivalent: <code>left_adjust_char_head</code>
      *
      * @param   bytes   byte stream
@@ -285,11 +285,11 @@ public abstract class Encoding implements Cloneable {
 
     /**
      * Returns true if it's safe to use reversal Boyer-Moore search fail fast algorithm
-     * 
+     *
      * Oniguruma equivalent: <code>is_allowed_reverse_match</code>
      */
     public abstract boolean isReverseMatchAllowed(byte[]bytes, int p, int end);
-    
+
     /* onigenc_get_right_adjust_char_head / ONIGENC_LEFT_ADJUST_CHAR_HEAD */
     public final int rightAdjustCharHead(byte[]bytes, int p, int s, int end) {
         int p_ = leftAdjustCharHead(bytes, p, s, end);
@@ -311,8 +311,8 @@ public abstract class Encoding implements Cloneable {
 
     /* onigenc_get_prev_char_head */
     public final int prevCharHead(byte[]bytes, int p, int s, int end) {
-        if (s <= p) return -1; // ??      
-        return leftAdjustCharHead(bytes, p, s - 1, end);     
+        if (s <= p) return -1; // ??
+        return leftAdjustCharHead(bytes, p, s - 1, end);
     }
 
     /* onigenc_step_back */
@@ -345,10 +345,10 @@ public abstract class Encoding implements Cloneable {
         while (true) {
             if (bytes[p] == 0) {
                 int len = minLength();
-                
+
                 if (len == 1) return n;
                 int q = p + 1;
-                
+
                 while (len > 1) {
                     if (bytes[q] != 0) break;
                     q++;
@@ -358,9 +358,9 @@ public abstract class Encoding implements Cloneable {
             }
             p += length(bytes, p, end);
             n++;
-        }        
+        }
     }
-    
+
     /* onigenc_str_bytelen_null */
     public final int strByteLengthNull(byte[]bytes, int p, int end) {
         int p_, start;
@@ -380,9 +380,9 @@ public abstract class Encoding implements Cloneable {
                 if (len == 1) return p_ - start;
             }
             p_ += length(bytes, p_, end);
-        }   
+        }
     }
-    
+
     /* onigenc_with_ascii_strncmp */
     public final int strNCmp(byte[]bytes, int p, int end, byte[]ascii, int asciiP, int n) {
         while (n-- > 0) {
@@ -390,65 +390,65 @@ public abstract class Encoding implements Cloneable {
             int c = mbcToCode(bytes, p, end);
             int x = ascii[asciiP] - c;
             if (x != 0) return x;
-            
+
             asciiP++;
             p += length(bytes, p, end);
         }
         return 0;
-    }   
+    }
 
     public final boolean isNewLine(int code) {
         return isCodeCType(code, CharacterType.NEWLINE);
     }
-    
+
     public final boolean isGraph(int code) {
         return isCodeCType(code, CharacterType.GRAPH);
     }
-    
+
     public final boolean isPrint(int code) {
         return isCodeCType(code, CharacterType.PRINT);
     }
-    
+
     public final boolean isAlnum(int code) {
         return isCodeCType(code, CharacterType.ALNUM);
     }
-    
+
     public final boolean isAlpha(int code) {
         return isCodeCType(code, CharacterType.ALPHA);
     }
-    
+
     public final boolean isLower(int code) {
         return isCodeCType(code, CharacterType.LOWER);
     }
-    
+
     public final boolean isUpper(int code) {
         return isCodeCType(code, CharacterType.UPPER);
     }
-    
+
     public final boolean isCntrl(int code) {
         return isCodeCType(code, CharacterType.CNTRL);
     }
-    
+
     public final boolean isPunct(int code) {
         return isCodeCType(code, CharacterType.PUNCT);
     }
-    
+
     public final boolean isSpace(int code) {
         return isCodeCType(code, CharacterType.SPACE);
     }
-    
+
     public final boolean isBlank(int code) {
         return isCodeCType(code, CharacterType.BLANK);
     }
-    
+
     public final boolean isDigit(int code) {
         return isCodeCType(code, CharacterType.DIGIT);
     }
-    
+
     public final boolean isXDigit(int code) {
         return isCodeCType(code, CharacterType.XDIGIT);
     }
-    
+
     public final boolean isWord(int code) {
         return isCodeCType(code, CharacterType.WORD);
     }
@@ -467,10 +467,10 @@ public abstract class Encoding implements Cloneable {
     public final boolean isMbcHead(byte[]bytes, int p, int end) {
         return length(bytes, p, end) != 1;
     }
-    
+
     public boolean isMbcCrnl(byte[]bytes, int p, int end) {
         return mbcToCode(bytes, p, end) == 13 && isNewLine(bytes, p + length(bytes, p, end), end);
-    }    
+    }
 
     // ============================================================
     // helpers
@@ -478,11 +478,11 @@ public abstract class Encoding implements Cloneable {
     public static int digitVal(int code) {
         return code - '0';
     }
-    
+
     public static int odigitVal(int code) {
         return digitVal(code);
     }
-    
+
     public final int xdigitVal(int code) {
         if (isDigit(code)) {
             return digitVal(code);
@@ -493,12 +493,12 @@ public abstract class Encoding implements Cloneable {
 
     // ONIGENC_IS_MBC_ASCII
     public static boolean isMbcAscii(byte b) {
-        return (b & 0xff) < 128; // b > 0 ? 
+        return (b & 0xff) < 128; // b > 0 ?
     }
 
     // ONIGENC_IS_CODE_ASCII
     public static boolean isAscii(int code) {
-        return code < 128; 
+        return code < 128;
     }
 
     public static boolean isAscii(byte b) {
@@ -512,15 +512,15 @@ public abstract class Encoding implements Cloneable {
     public static byte asciiToUpper(int c) {
         return AsciiTables.ToUpperCaseTable[c];
     }
-    
+
     public static boolean isWordGraphPrint(int ctype) {
         return ctype == CharacterType.WORD ||
                ctype == CharacterType.GRAPH ||
                ctype == CharacterType.PRINT;
-    } 
-    
+    }
+
     public final int mbcodeStartPosition() {
-        return minLength() > 1 ? 0 : 0x80;      
+        return minLength() > 1 ? 0 : 0x80;
     }
 
     public final boolean isSingleByte() {
@@ -533,7 +533,7 @@ public abstract class Encoding implements Cloneable {
 
     public static final byte NEW_LINE = (byte)0x0a;
 
-    public static Encoding load(String name) { 
+    public static Encoding load(String name) {
         String encClassName = "org.jcodings.specific." + name + "Encoding";
 
         Class<?> encClass;

@@ -1,20 +1,20 @@
 /*
- * Permission is hereby granted, free of charge, to any person obtaining a copy of 
- * this software and associated documentation files (the "Software"), to deal in 
- * the Software without restriction, including without limitation the rights to 
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of
+ * this software and associated documentation files (the "Software"), to deal in
+ * the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
  * of the Software, and to permit persons to whom the Software is furnished to do
  * so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
 package org.jcodings;
@@ -41,8 +41,8 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     }
 
     @Override
-    public int length(byte c) {        
-        return EncLen[c & 0xff];       
+    public int length(byte c) {
+        return EncLen[c & 0xff];
     }
 
     protected final int missing(int n) {
@@ -108,7 +108,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         int s = TransZero[b];
         if (s < 0) return s == A ? 1 : CHAR_INVALID;
         return lengthForTwo(bytes, p, end, b, s);
-    }    
+    }
 
     private int lengthForTwo(byte[]bytes, int p, int end, int b, int s) {
         if (++p == end) return missing(b, 1);
@@ -120,7 +120,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         int len = length(bytes, p, end);
         int n = bytes[p++] & 0xff;
         if (len == 1) return n;
-        
+
         for (int i=1; i<len; i++) {
             if (p >= end) break;
             int c = bytes[p++] & 0xff;
@@ -129,11 +129,11 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         }
         return n;
     }
-    
+
     protected final int mbnMbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         int p = pp.value;
         int lowerP = 0;
-        
+
         if (isAscii(bytes[p] & 0xff)) {
             lower[lowerP] = AsciiTables.ToLowerCaseTable[bytes[p] & 0xff];
             pp.value++;
@@ -151,7 +151,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     protected final int mb2CodeToMbcLength(int code) {
         return ((code & 0xff00) != 0) ? 2 : 1;
     }
-    
+
     protected final int mb4CodeToMbcLength(int code) {
         if ((code & 0xff000000) != 0) {
             return 4;
@@ -159,7 +159,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
             return 3;
         } else if ((code & 0xff00) != 0) {
             return 2;
-        } else { 
+        } else {
             return 1;
         }
     }
@@ -170,24 +170,24 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
             bytes[p_++] = (byte)((code >>> 8) & 0xff);
         }
         bytes[p_++] = (byte)(code & 0xff);
-        
+
         if (length(bytes, p, p_) != (p_ - p)) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
         return p_ - p;
     }
 
-    protected final int mb4CodeToMbc(int code, byte[]bytes, int p) {        
-        int p_ = p;        
+    protected final int mb4CodeToMbc(int code, byte[]bytes, int p) {
+        int p_ = p;
         if ((code & 0xff000000) != 0)           bytes[p_++] = (byte)((code >>> 24) & 0xff);
         if ((code & 0xff0000) != 0 || p_ != p)  bytes[p_++] = (byte)((code >>> 16) & 0xff);
         if ((code & 0xff00) != 0 || p_ != p)    bytes[p_++] = (byte)((code >>> 8) & 0xff);
         bytes[p_++] = (byte)(code & 0xff);
-        
+
         if (length(bytes, p, p_) != (p_ - p)) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
         return p_ - p;
     }
 
     protected final boolean mb2IsCodeCType(int code, int ctype) {
-        if (code < 128) {            
+        if (code < 128) {
             return isCodeCTypeInternal(code, ctype); // configured with ascii
         } else {
             if (isWordGraphPrint(ctype)) {
