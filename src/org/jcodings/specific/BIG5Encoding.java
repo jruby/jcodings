@@ -19,74 +19,11 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.CanBeTrailTableEncoding;
-import org.jcodings.Config;
-import org.jcodings.IntHolder;
-import org.jcodings.ascii.AsciiTables;
-
-public final class BIG5Encoding extends CanBeTrailTableEncoding {
+public final class BIG5Encoding extends org.jcodings.BIG5Encoding {
 
     protected BIG5Encoding() {
-        super("Big5", 1, 2, Big5EncLen, BIG5Trans, AsciiTables.AsciiCtypeTable, BIG5_CAN_BE_TRAIL_TABLE);
+        super("Big5", Big5EncLen, 0);
     }
-
-    @Override
-    public int length(byte[]bytes, int p, int end) {
-        if (Config.VANILLA){
-            return length(bytes[p]);
-        } else {
-            return safeLengthForUptoTwo(bytes, p, end);
-        }
-    }
-
-    @Override
-    public int mbcToCode(byte[]bytes, int p, int end) {
-        return mbnMbcToCode(bytes, p, end);
-    }
-
-    @Override
-    public int codeToMbcLength(int code) {
-        return mb2CodeToMbcLength(code);
-    }
-
-    @Override
-    public int codeToMbc(int code, byte[]bytes, int p) {
-        return mb2CodeToMbc(code, bytes, p);
-    }
-
-    @Override
-    public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
-        return mbnMbcCaseFold(flag, bytes, pp, end, lower);
-    }
-
-    @Override
-    public boolean isCodeCType(int code, int ctype) {
-        return mb2IsCodeCType(code, ctype);
-    }
-
-    @Override
-    public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
-        return null;
-    }
-
-    static final boolean BIG5_CAN_BE_TRAIL_TABLE[] = {
-        false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-        false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-        false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-        false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true,
-        true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, false
-    };
 
     static final int Big5EncLen[] = {
         1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -105,45 +42,6 @@ public final class BIG5Encoding extends CanBeTrailTableEncoding {
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
-    };
-
-    private static final int BIG5Trans[][] = Config.VANILLA ? null : new int[][]{
-        { /* S0   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
-          /* 0 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 1 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 2 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 3 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 4 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 5 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 6 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 7 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 8 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* 9 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* a */ F, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* b */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* c */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* d */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* e */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-          /* f */ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, F
-        },
-        { /* S1   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
-          /* 0 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* 1 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* 2 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* 3 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* 4 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 5 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 6 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* 7 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, F,
-          /* 8 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* 9 */ F, F, F, F, F, F, F, F, F, F, F, F, F, F, F, F,
-          /* a */ F, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* b */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* c */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* d */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* e */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
-          /* f */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, F
-        }
     };
 
     public static final BIG5Encoding INSTANCE = new BIG5Encoding();

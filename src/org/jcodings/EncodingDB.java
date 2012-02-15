@@ -216,6 +216,8 @@ public class EncodingDB {
     private static String[] builtin = {
         "ASCII-8BIT",   "ASCII",
         "Big5",         "BIG5",
+        "Big5-HKSCS",   "Big5HKSCS",
+        "Big5-UAO",     "Big5UAO",
         "CP949",        "CP949",
         "Emacs-Mule",   "EmacsMule",
         "EUC-JP",       "EUCJP",
