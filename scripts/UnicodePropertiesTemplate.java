@@ -20,7 +20,7 @@
 package org.jcodings.unicode;
 
 import org.jcodings.Config;
-import org.jcodings.util.BytesHash;
+import org.jcodings.util.CaseInsensitiveBytesHash;
 
 
 public class UnicodeProperties {
@@ -38,12 +38,12 @@ public class UnicodeProperties {
 %{stdnames}
             };
 
-    private static BytesHash<Integer> initializeCTypeNameTable() {
-        BytesHash<Integer> table = new BytesHash<Integer>();
+    private static CaseInsensitiveBytesHash<Integer> initializeCTypeNameTable() {
+        CaseInsensitiveBytesHash<Integer> table = new CaseInsensitiveBytesHash<Integer>();
         for (int i=0; i<CTypeNameTable.length; i++) table.putDirect(CTypeNameTable[i], i);
 
         return table;
     }
     
-    static final BytesHash<Integer> CTypeNameHash = initializeCTypeNameTable();
+    static final CaseInsensitiveBytesHash<Integer> CTypeNameHash = initializeCTypeNameTable();
 }
