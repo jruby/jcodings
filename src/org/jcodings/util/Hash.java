@@ -170,7 +170,6 @@ public abstract class Hash<V> implements Iterable<V> {
             next = head.after;
         }
 
-        @Override
         public Iterator<HashEntry<V>> iterator() {
             return this;
         }
