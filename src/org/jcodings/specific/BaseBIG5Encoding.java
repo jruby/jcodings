@@ -17,18 +17,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.jcodings;
+package org.jcodings.specific;
 
 import org.jcodings.CanBeTrailTableEncoding;
 import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 
-public abstract class BIG5Encoding extends CanBeTrailTableEncoding {
+public abstract class BaseBIG5Encoding extends CanBeTrailTableEncoding {
 
     private final int transIndex;
 
-    protected BIG5Encoding(String name, int[]EncLen, int transIndex) {
+    protected BaseBIG5Encoding(String name, int[]EncLen, int transIndex) {
         super(name, 1, 2, EncLen, BIG5Trans, AsciiTables.AsciiCtypeTable, BIG5_CAN_BE_TRAIL_TABLE);
         this.transIndex = transIndex;
     }

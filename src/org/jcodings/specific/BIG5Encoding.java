@@ -19,7 +19,7 @@
  */
 package org.jcodings.specific;
 
-public final class BIG5Encoding extends org.jcodings.BIG5Encoding {
+public final class BIG5Encoding extends BaseBIG5Encoding {
 
     protected BIG5Encoding() {
         super("Big5", Big5EncLen, 0);
