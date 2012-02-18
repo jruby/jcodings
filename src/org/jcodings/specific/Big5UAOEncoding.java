@@ -22,7 +22,7 @@ package org.jcodings.specific;
 public final class Big5UAOEncoding extends org.jcodings.BIG5Encoding {
 
     protected Big5UAOEncoding() {
-        super("Big5-UAO", Big5UAOEncLen, 0);
+        super("Big5-UAO", Big5UAOEncLen, 2);
     }
 
     static final int Big5UAOEncLen[] = {

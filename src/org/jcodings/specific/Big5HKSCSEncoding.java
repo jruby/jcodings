@@ -22,7 +22,7 @@ package org.jcodings.specific;
 public final class Big5HKSCSEncoding extends org.jcodings.BIG5Encoding {
 
     protected Big5HKSCSEncoding() {
-        super("Big5-HKSCS", Big5HKSCSEncLen, 0);
+        super("Big5-HKSCS", Big5HKSCSEncLen, 2);
     }
 
     static final int Big5HKSCSEncLen[] = {
