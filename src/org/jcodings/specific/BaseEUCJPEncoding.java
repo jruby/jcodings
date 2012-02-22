@@ -28,7 +28,7 @@ import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.EncodingException;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
-import org.jcodings.util.BytesHash;
+import org.jcodings.util.CaseInsensitiveBytesHash;
 
 abstract class BaseEUCJPEncoding extends EucEncoding {
 
@@ -112,7 +112,7 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
         CR_Katakana
     };
 
-    private static final BytesHash<Integer> CTypeNameHash = new BytesHash<Integer>();
+    private static final CaseInsensitiveBytesHash<Integer> CTypeNameHash = new CaseInsensitiveBytesHash<Integer>();
 
     static {
         CTypeNameHash.put("Hiragana".getBytes(), 1 + CharacterType.MAX_STD_CTYPE);
