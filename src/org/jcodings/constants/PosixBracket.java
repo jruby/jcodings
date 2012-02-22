@@ -19,26 +19,9 @@
  */
 package org.jcodings.constants;
 
-import org.jcodings.util.BytesHash;
+import org.jcodings.util.CaseInsensitiveBytesHash;
 
 public class PosixBracket{
-
-    public static final byte[][] PBSNamesUpper = {
-        "Alnum".getBytes(),
-        "Alpha".getBytes(),
-        "Blank".getBytes(),
-        "Cntrl".getBytes(),
-        "Digit".getBytes(),
-        "Graph".getBytes(),
-        "Lower".getBytes(),
-        "Print".getBytes(),
-        "Punct".getBytes(),
-        "Space".getBytes(),
-        "Upper".getBytes(),
-        "XDigit".getBytes(),
-        "ASCII".getBytes(),
-        "Word".getBytes()
-    };
 
     public static final byte[][] PBSNamesLower = {
         "alnum".getBytes(),
@@ -74,10 +57,10 @@ public class PosixBracket{
         CharacterType.WORD,
     };
 
-    public static final BytesHash<Integer> PBSTableUpper = new BytesHash<Integer>(15);
+    public static final CaseInsensitiveBytesHash<Integer> PBSTableUpper = new CaseInsensitiveBytesHash<Integer>(PBSNamesLower.length + 5);
 
     static {
-	    for (int i=0; i<PBSValues.length; i++) PBSTableUpper.put(PBSNamesUpper[i], PBSValues[i]);
+	    for (int i=0; i<PBSValues.length; i++) PBSTableUpper.put(PBSNamesLower[i], PBSValues[i]);
     }
 
 }
