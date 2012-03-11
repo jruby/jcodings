@@ -21,6 +21,7 @@ package org.jcodings.transcode;
 
 import static org.jcodings.util.CaseInsensitiveBytesHash.caseInsensitiveEquals;
 
+import org.jcodings.Ptr;
 import org.jcodings.exception.InternalException;
 
 public final class EConv implements EConvFlags {

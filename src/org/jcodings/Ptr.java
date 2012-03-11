@@ -17,18 +17,18 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.jcodings.transcode;
+package org.jcodings;
 
-final class ObjPtr<T> {
-    ObjPtr() {
-        this(null);
+public final class Ptr {
+    public Ptr() {
+        this(0);
     }
 
-    ObjPtr(T p) {
+    public Ptr(int p) {
         this.p = p;
     }
 
-    T p;
+    public int p;
 
-    static final ObjPtr<Void> NULL = new ObjPtr<Void>();
+    public static final Ptr NULL = new Ptr(0);
 }

@@ -19,6 +19,7 @@
  */
 package org.jcodings.transcode;
 
+import org.jcodings.Ptr;
 import org.jcodings.exception.TranscoderException;
 
 public class Transcoding implements TranscodingInstruction {

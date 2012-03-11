@@ -24,6 +24,7 @@ import static org.jcodings.util.CaseInsensitiveBytesHash.caseInsensitiveEquals;
 
 import java.util.Arrays;
 
+import org.jcodings.ObjPtr;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.TranscoderException;
 import org.jcodings.transcode.Transcoder.GenericTranscoderEntry;
