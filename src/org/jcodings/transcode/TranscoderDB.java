@@ -68,11 +68,6 @@ public class TranscoderDB implements EConvFlags {
             }
             return transcoder;
         }
-
-        // @Override
-        // public int hashCode() {
-        // return transcoderClass.hashCode();
-        // }
     }
 
     public static final CaseInsensitiveBytesHash<CaseInsensitiveBytesHash<Entry>> transcoders = new CaseInsensitiveBytesHash<CaseInsensitiveBytesHash<Entry>>();
