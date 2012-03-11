@@ -20,30 +20,13 @@
 package org.jcodings.unicode;
 
 import org.jcodings.Config;
-import org.jcodings.util.CaseInsensitiveBytesHash;
-
+import org.jcodings.unicode.UnicodeEncoding.CodeRangeEntry;
 
 public class UnicodeProperties {
-    static final int[][]CodeRangeTable = Config.USE_UNICODE_PROPERTIES ?
-            new int[][] {
+    static final CodeRangeEntry[]CodeRangeTable = Config.USE_UNICODE_PROPERTIES ?
+            new CodeRangeEntry[] {
 %{extcrs}
-            } : new int[][] {
+            } : new CodeRangeEntry[] {
 %{stdcrs}
             };
-
-    private static final byte CTypeNameTable[][] = Config.USE_UNICODE_PROPERTIES ?
-            new byte[][] {
-%{extnames}
-            } : new byte[][] {
-%{stdnames}
-            };
-
-    private static CaseInsensitiveBytesHash<Integer> initializeCTypeNameTable() {
-        CaseInsensitiveBytesHash<Integer> table = new CaseInsensitiveBytesHash<Integer>();
-        for (int i=0; i<CTypeNameTable.length; i++) table.putDirect(CTypeNameTable[i], i);
-
-        return table;
-    }
-    
-    static final CaseInsensitiveBytesHash<Integer> CTypeNameHash = initializeCTypeNameTable();
 }

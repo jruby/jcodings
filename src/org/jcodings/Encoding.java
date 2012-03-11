@@ -20,6 +20,7 @@
 package org.jcodings;
 
 import java.nio.charset.Charset;
+
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.EncodingException;

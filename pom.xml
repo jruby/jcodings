@@ -134,6 +134,19 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
     </plugins>
+    <resources>
+        <resource>
+            <directory>resources</directory>
+            <includes>
+                <include>**/*.bin</include>
+            </includes>
+        </resource>
+    </resources>
+
   </build>
 </project>
