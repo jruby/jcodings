@@ -10,14 +10,40 @@ dst_bin_dir = "../resources/tables"
 enc_dir = "#{dst_dir}/unicode"
 INDENT = " " * 4
 
-
-
 def assert_eq a, b, msg = ""
     raise "unmet condition: #{a.inspect} == #{b.inspect}, info #{msg}" unless a == b
 end
 
 def assert_not_eq a, b, msg = ""
     raise "unmet condition: #{a.inspect} != #{b.inspect}, info: #{msg}" unless a != b
+end
+
+def extract_to to, file
+    to = to.map do |t|
+        case t
+        when /^0x[0-9a-f]+$/
+            t.to_i(16)
+        else
+            t = t.split(',').map{|t|t.strip}
+            assert_eq(t.all?{|e|e =~ /^0x[0-9a-f]+$/}, true)
+            t.map{|t| t.to_i(16)}
+        end
+    end
+    
+    open(file, "wb") do |f|
+        f << [to.size].pack("N")
+        to.each do |t| case t
+            when Fixnum
+                f << [1].pack("N")
+                f << [t].pack("N")
+            when Array
+                f << [t.size].pack("N")
+                t.each{|tx| f << [tx].pack("N")}
+            else
+                raise "foo"
+            end
+        end
+    end
 end
 
 folds = folds_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).map do |(type, name, tab)|
@@ -34,61 +60,12 @@ folds = folds_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).
                 from.each{|fr| f << [fr].pack("N")}
             end
 
-            to = to.map do |t|
-                case t
-                when /^0x[0-9a-f]+$/
-                    t.to_i(16)
-                else
-                    t = t.split(',').map{|t|t.strip}
-                    assert_eq(t.all?{|e|e =~ /^0x[0-9a-f]+$/}, true)
-                    t.map{|t| t.to_i(16)}
-                end
-            end
-
-            open("#{dst_bin_dir}/#{name}_To.bin", "wb") do |f|
-                f << [to.size].pack("N")
-                to.each do |t| case t
-                    when Fixnum
-                        f << [1].pack("N")
-                        f << [t].pack("N")
-                    when Array
-                        f << [t.size].pack("N")
-                        t.each{|tx| f << [tx].pack("N")}
-                    else
-                        raise "foo"
-                    end
-                end
-            end
+            extract_to to, "#{dst_bin_dir}/#{name}_To.bin"
 
         when "CaseUnfold_12_Type", "CaseUnfold_13_Type"
-            fld =  tab.scan(/\{\s?\{(.+?)\}.+\{\w+?.+?\{(.+?)\s?\}/).map{|t| "#{INDENT*2}{#{t[0]}}, {#{t[1]}}"}.join(",\n")
-            fld = fld.scan(/\{(.*?)\}/).map{|f|f.first}
+            fld =  tab.scan(/\{\s?\{(.+?)\}.+\{\w+?.+?\{(.+?)\s?\}/).flatten
 
-            to = fld.map do |t|
-                case t
-                when /^0x[0-9a-f]+$/
-                    t.to_i(16)
-                else
-                    t = t.split(',').map{|t|t.strip}
-                    assert_eq(t.all?{|e|e =~ /^0x[0-9a-f]+$/}, true)
-                    t.map{|t| t.to_i(16)}
-                end
-            end
-            
-            open("#{dst_bin_dir}/#{name}.bin", "wb") do |f|
-                f << [to.size].pack("N")
-                to.each do |t| case t
-                    when Fixnum
-                        f << [1].pack("N")
-                        f << [t].pack("N")
-                    when Array
-                        f << [t.size].pack("N")
-                        t.each{|tx| f << [tx].pack("N")}
-                    else
-                        raise "foo"
-                    end
-                end
-            end
+            extract_to fld, "#{dst_bin_dir}/#{name}.bin"
         else
             raise "error"
     end
