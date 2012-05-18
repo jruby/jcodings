@@ -26,8 +26,10 @@ import org.jcodings.ascii.AsciiTables;
 
 public final class GB18030Encoding extends MultiByteEncoding {
 
+    private static final String GB18030 = "GB18030";
+
     protected GB18030Encoding() {
-        super("GB18030", 1, 4, null, GB18030Trans, AsciiTables.AsciiCtypeTable);
+        super(GB18030, 1, 4, null, GB18030Trans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override
@@ -87,10 +89,14 @@ public final class GB18030Encoding extends MultiByteEncoding {
     }
 
     @Override
-    public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
+    public int[] ctypeCodeRange(int ctype, IntHolder sbOut) {
         return null;
     }
 
+    @Override
+    public String getCharsetName() {
+        return GB18030;
+    }
     private enum State {
         START,
         One_C2,

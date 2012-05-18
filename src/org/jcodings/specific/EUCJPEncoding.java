@@ -23,6 +23,8 @@ import org.jcodings.Config;
 
 public final class EUCJPEncoding extends BaseEUCJPEncoding {
 
+    private static final String EUC_JP = "EUC-JP";
+
     protected EUCJPEncoding() {
         super(EUCJPTrans);
     }
@@ -34,6 +36,11 @@ public final class EUCJPEncoding extends BaseEUCJPEncoding {
         } else {
             return safeLengthForUptoThree(bytes, p, end);
         }
+    }
+
+    @Override
+    public String getCharsetName() {
+        return EUC_JP;
     }
 
     private static final int EUCJPTrans[][] = Config.VANILLA ? null : new int[][]{
