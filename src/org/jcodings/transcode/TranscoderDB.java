@@ -214,7 +214,6 @@ public class TranscoderDB implements EConvFlags {
             numTrans = searchPath(source, destination, new SearchPathCallback() {
                 int additional = 0;
 
-                @Override
                 public void call(byte[] source, byte[] destination, int depth) {
                     if (lentries.p == null) lentries.p = new Entry[depth + 1 + additional];
                     lentries.p[depth] = getEntry(source, destination);
