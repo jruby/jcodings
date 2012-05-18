@@ -26,8 +26,10 @@ import org.jcodings.ascii.AsciiTables;
 
 public final class GBKEncoding extends CanBeTrailTableEncoding {
 
+    private static final String GBK = "GBK";
+
     protected GBKEncoding() {
-        super("GBK", 1, 2, GBKEncLen, GBKTrans, AsciiTables.AsciiCtypeTable, GBK_CAN_BE_TRAIL_TABLE);
+        super(GBK, 1, 2, GBKEncLen, GBKTrans, AsciiTables.AsciiCtypeTable, GBK_CAN_BE_TRAIL_TABLE);
     }
 
     @Override
@@ -67,6 +69,11 @@ public final class GBKEncoding extends CanBeTrailTableEncoding {
     @Override
     public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
         return null;
+    }
+
+    @Override
+    public String getCharsetName() {
+        return GBK;
     }
 
     static final boolean GBK_CAN_BE_TRAIL_TABLE[] = {
