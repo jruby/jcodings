@@ -26,8 +26,15 @@ import org.jcodings.ascii.AsciiTables;
 
 public final class EUCTWEncoding extends EucEncoding {
 
+    private static final String EUC_TW = "EUC-TW";
+
     protected EUCTWEncoding() {
-        super("EUC-TW", 1, 4, EUCTWEncLen, EUCTWTrans, AsciiTables.AsciiCtypeTable);
+        super(EUC_TW, 1, 4, EUCTWEncLen, EUCTWTrans, AsciiTables.AsciiCtypeTable);
+    }
+
+    @Override
+    public String getCharsetName() {
+        return EUC_TW;
     }
 
     @Override
@@ -65,11 +72,12 @@ public final class EUCTWEncoding extends EucEncoding {
     }
 
     @Override
-    public int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
+    public int[] ctypeCodeRange(int ctype, IntHolder sbOut) {
         return null;
     }
 
     // euckr_islead
+    @Override
     protected boolean isLead(int c) {
         if (Config.VANILLA) {
             return ((c < 0xa1 && c != 0x8e) || c == 0xff);

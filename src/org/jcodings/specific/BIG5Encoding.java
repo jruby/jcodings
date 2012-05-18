@@ -21,8 +21,15 @@ package org.jcodings.specific;
 
 public final class BIG5Encoding extends BaseBIG5Encoding {
 
+    private static final String BIG5 = "Big5";
+
     protected BIG5Encoding() {
-        super("Big5", Big5EncLen, 0);
+        super(BIG5, Big5EncLen, 0);
+    }
+
+    @Override
+    public String getCharsetName() {
+        return BIG5;
     }
 
     static final int Big5EncLen[] = {

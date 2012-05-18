@@ -26,8 +26,15 @@ import org.jcodings.ascii.AsciiTables;
 
 public final class CP949Encoding extends CanBeTrailTableEncoding {
 
+    private static final String CP949 = "CP949";
+
     protected CP949Encoding() {
-        super("CP949", 1, 2, CP949EncLen, CP949Trans, AsciiTables.AsciiCtypeTable, CP949_CAN_BE_TRAIL_TABLE);
+        super(CP949, 1, 2, CP949EncLen, CP949Trans, AsciiTables.AsciiCtypeTable, CP949_CAN_BE_TRAIL_TABLE);
+    }
+
+    @Override
+    public String getCharsetName() {
+        return CP949;
     }
 
     @Override
