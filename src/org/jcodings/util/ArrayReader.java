@@ -43,6 +43,7 @@ public class ArrayReader {
                 bytes[i] = dis.readByte();
             }
             checkAvailable(dis, name);
+            dis.close();
             return bytes;
         } catch (IOException ioe) {
             decorate(ioe, name);
@@ -59,6 +60,7 @@ public class ArrayReader {
                 ints[i] = dis.readInt();
             }
             checkAvailable(dis, name);
+            dis.close();
             return ints;
         } catch (IOException ioe) {
             decorate(ioe, name);
@@ -81,6 +83,7 @@ public class ArrayReader {
             }
 
             checkAvailable(dis, name);
+            dis.close();
             return ints;
         } catch (IOException ioe) {
             decorate(ioe, name);
