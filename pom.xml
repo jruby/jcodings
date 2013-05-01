@@ -83,6 +83,7 @@
     <scriptSourceDirectory>scripts</scriptSourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
     <finalName>jcodings</finalName>
+    <defaultGoal>install</defaultGoal>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId> 

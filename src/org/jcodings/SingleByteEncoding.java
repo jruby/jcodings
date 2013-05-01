@@ -72,7 +72,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
         return bytes[p] & 0xff;
     }
 
-    /** onigenc_single_byte_code_to_mbclen
+        /** onigenc_single_byte_code_to_mbclen
      */
     @Override
     public int codeToMbcLength(int code) {
