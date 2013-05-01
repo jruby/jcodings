@@ -17,37 +17,32 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.jcoding.specific;
+package org.jcodings.specific;
 
 import org.jcodings.exception.EncodingException;
 import org.jcodings.specific.ASCIIEncoding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
-import org.jcodings.specific.USASCIIEncoding;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-public class TestUSASCIIEncoding {
+public class TestASCIIEncoding {
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    /**
-     * codeToMbcLength always returns 1, even when codepoint is invalid,
-     * as Config.VANILLA == false.
-     */
+    
     @Test
     public void testValidCodeToMbcLength() {
         assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbcLength(0xff));
     }
-    
+
     @Test
     public void testValidCodeToMbc() {
         byte[] buffer = new byte[1];
-        assertEquals(1, USASCIIEncoding.INSTANCE.codeToMbc(0x7f, buffer, 0));
-        assertArrayEquals(new byte[]{0x7f}, buffer);
+        assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbc(0xff, buffer, 0));
+        assertArrayEquals(new byte[]{ -1 }, buffer);
     }
 
     @Test
@@ -56,8 +51,6 @@ public class TestUSASCIIEncoding {
         expectedException.expectMessage("out of range char");
         
         byte[] buffer = new byte[1];
-        assertEquals(1, USASCIIEncoding.INSTANCE.codeToMbc(0x80, buffer, 0));
+        assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbc(0x100, buffer, 0));
     }
-    
-    
 }

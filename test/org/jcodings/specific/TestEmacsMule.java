@@ -1,3 +1,5 @@
+package org.jcodings.specific;
+
 import static org.junit.Assert.assertEquals;
 import org.jcodings.specific.EmacsMuleEncoding;
 import org.junit.Test;
