@@ -1,9 +1,4 @@
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
-
-import java.nio.charset.Charset;
-
-import org.jcodings.specific.BIG5Encoding;
 import org.jcodings.specific.EmacsMuleEncoding;
 import org.junit.Test;
 
