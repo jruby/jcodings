@@ -4,7 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jruby.jcodings</groupId>
   <artifactId>jcodings</artifactId>
-  <packaging>jar</packaging>
   <version>1.0.9</version>
   <name>JCodings</name>
   <description>
@@ -17,9 +16,9 @@
   </issueManagement>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/jruby</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/jruby</developerConnection>
-    <url>http://svn.codehaus.org/jruby</url>
+    <connection>scm:git:git://github.com/jruby/jcodings.git</connection>
+    <developerConnection>scm:git:git://github.com/jruby/jcodings.git</developerConnection>
+    <url>http://github.com/jruby/jcodings</url>
   </scm>
 
   <licenses>
@@ -84,6 +83,7 @@
     <scriptSourceDirectory>scripts</scriptSourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
     <finalName>jcodings</finalName>
+    <defaultGoal>install</defaultGoal>
     <extensions>
       <extension>
         <groupId>org.apache.maven.wagon</groupId> 
@@ -93,8 +93,8 @@
     </extensions>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -105,8 +105,8 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9</version>
         <executions>
           <execution>
             <id>attach-javadocs</id>
@@ -116,11 +116,12 @@
           </execution>
         </executions>
         <configuration>
-            <skip>true</skip>
+          <skip>true</skip>
         </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
         <configuration>
           <source>1.5</source>
           <target>1.5</target>
@@ -128,6 +129,7 @@
       </plugin>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
         <configuration>
           <archive>
             <manifestFile>MANIFEST.MF</manifestFile>
@@ -135,8 +137,8 @@
         </configuration>
       </plugin>
       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
+          <version>2.6</version>
       </plugin>
     </plugins>
     <resources>
@@ -147,6 +149,5 @@
             </includes>
         </resource>
     </resources>
-
   </build>
 </project>
