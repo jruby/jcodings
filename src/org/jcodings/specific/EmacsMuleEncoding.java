@@ -96,7 +96,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
     }
 
     private static boolean islead(int c) {
-        return c - 0x81 > 0x9d - 0x81;
+        return c < 0x9d;
     }
 
     @Override
