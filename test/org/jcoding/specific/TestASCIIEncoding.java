@@ -17,38 +17,40 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package org.jcodings.specific;
+package org.jcoding.specific;
 
-import org.jcodings.SingleByteEncoding;
-import org.jcodings.ascii.AsciiTables;
+import org.jcodings.exception.EncodingException;
+import org.jcodings.specific.ASCIIEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
-public final class USASCIIEncoding extends SingleByteEncoding {
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-    protected USASCIIEncoding() {
-        super("US-ASCII", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable, false, 0x7f);
-    }
+public class TestASCIIEncoding {
 
-    @Override
-    public int length(byte[] bytes, int p, int end) {
-        return (bytes[p] & 0x80) == 0 ? 1 : -1;
-    }
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     
-    @Override
-    public final byte[] toLowerCaseTable() {
-        return LowerCaseTable;
+    @Test
+    public void testValidCodeToMbcLength() {
+        assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbcLength(0xff));
     }
 
-    @Override
-    public String getCharsetName() {
-        return "US-ASCII";
+    @Test
+    public void testValidCodeToMbc() {
+        byte[] buffer = new byte[1];
+        assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbc(0xff, buffer, 0));
+        assertArrayEquals(new byte[]{ -1 }, buffer);
     }
 
-    /** ascii_is_code_ctype / ONIGENC_IS_ASCII_CODE_CTYPE
-     */
-    @Override
-    public boolean isCodeCType(int code, int ctype) {
-        return code < 128 ? isCodeCTypeInternal(code, ctype) : false;
+    @Test
+    public void testInvalidCodeToMbc() {
+        expectedException.expect(EncodingException.class);
+        expectedException.expectMessage("out of range char");
+        
+        byte[] buffer = new byte[1];
+        assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbc(0x100, buffer, 0));
     }
-
-    public static final USASCIIEncoding INSTANCE = new USASCIIEncoding();
 }

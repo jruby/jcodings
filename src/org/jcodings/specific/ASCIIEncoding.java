@@ -32,7 +32,7 @@ public final class ASCIIEncoding extends SingleByteEncoding {
     }
 
     @Override
-    public final byte[]toLowerCaseTable() {
+    public final byte[] toLowerCaseTable() {
         return LowerCaseTable;
     }
 
