@@ -29,12 +29,12 @@ public final class USASCIIEncoding extends SingleByteEncoding {
     }
 
     @Override
-    public int length(byte[]bytes, int p, int end) {
+    public int length(byte[] bytes, int p, int end) {
         return (bytes[p] & 0x80) == 0 ? 1 : -1;
     }
-
+    
     @Override
-    public final byte[]toLowerCaseTable() {
+    public final byte[] toLowerCaseTable() {
         return LowerCaseTable;
     }
 

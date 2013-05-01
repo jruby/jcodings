@@ -27,12 +27,12 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     protected final byte[] LowerCaseTable;
     protected int codeSize = 0xff;
 
-    protected SingleByteEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable) {
+    protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable) {
         super(name, 1, 1, CTypeTable);
         this.LowerCaseTable = LowerCaseTable;
     }
 
-    protected SingleByteEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, boolean isDummy) {
+    protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable, boolean isDummy) {
         super(name, 1, 1, CTypeTable, isDummy);
         this.LowerCaseTable = LowerCaseTable;
     }
@@ -50,17 +50,17 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     }
 
     @Override
-    public int length(byte[]bytes, int p, int end) {
+    public int length(byte[] bytes, int p, int end) {
         return 1;
     }
 
     @Override
-    public final int strLength(byte[]bytes, int p, int end) {
+    public final int strLength(byte[] bytes, int p, int end) {
         return end - p;
     }
 
     @Override
-    public int strCodeAt(byte[]bytes, int p, int end, int index) {
+    public int strCodeAt(byte[] bytes, int p, int end, int index) {
         return bytes[index] & 0xff;
     }
     // onigenc_is_mbc_newline_0x0a here
@@ -68,7 +68,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     /** onigenc_single_byte_mbc_to_code
      */
     @Override
-    public int mbcToCode(byte[]bytes, int p, int end){
+    public int mbcToCode(byte[] bytes, int p, int end) {
         return bytes[p] & 0xff;
     }
 
@@ -97,21 +97,21 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     /** onigenc_not_support_get_ctype_code_range
      */
     @Override
-    public final int[]ctypeCodeRange(int ctype, IntHolder sbOut) {
+    public final int[] ctypeCodeRange(int ctype, IntHolder sbOut) {
         return null;
     }
 
     /** onigenc_single_byte_left_adjust_char_head
      */
     @Override
-    public final int leftAdjustCharHead(byte[]bytes, int p, int s, int end) {
+    public final int leftAdjustCharHead(byte[] bytes, int p, int s, int end) {
         return s;
     }
 
     /** onigenc_always_true_is_allowed_reverse_match
      */
     @Override
-    public final boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
+    public final boolean isReverseMatchAllowed(byte[] bytes, int p, int end) {
         return true;
     }
 }
