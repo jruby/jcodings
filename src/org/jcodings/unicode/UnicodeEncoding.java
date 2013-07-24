@@ -94,7 +94,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             p_ += length(name, p_, end);
         }
 
-        Integer ctype = CTypeNameHash.get(buf, 0, len);
+        Integer ctype = CTypeName.CTypeNameHash.get(buf, 0, len);
         if (ctype == null) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
         return ctype;
     }
@@ -119,7 +119,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
         }
 
-        int to[] = FoldHash.get(code);
+        int to[] = CaseFold.FoldHash.get(code);
         if (to != null) {
             if (to.length == 1) {
                 return codeToMbc(to[0], fold, foldP);
@@ -146,9 +146,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         /* if (CaseFoldInited == 0) init_case_fold_table(); */
 
         int[]code = new int[]{0};
-        for (int i=0; i<CaseUnfold_11_From.length; i++) {
-            int from = CaseUnfold_11_From[i];
-            int[]to = CaseUnfold_11_To[i];
+        for (int i=0; i<CaseFold11.CaseUnfold_11_From.length; i++) {
+            int from = CaseFold11.CaseUnfold_11_From[i];
+            int[]to = CaseFold11.CaseUnfold_11_To[i];
 
             for (int j=0; j<to.length; j++) {
                 code[0] = from;
@@ -178,9 +178,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             code[0] = 0x0069;
             fun.apply(0x0130, code, 1, arg);
         } else {
-            for (int i=0; i<CaseUnfold_11_Locale_From.length; i++) {
-                int from = CaseUnfold_11_Locale_From[i];
-                int[]to = CaseUnfold_11_Locale_To[i];
+            for (int i=0; i<CaseFold11.CaseUnfold_11_Locale_From.length; i++) {
+                int from = CaseFold11.CaseUnfold_11_Locale_From[i];
+                int[]to = CaseFold11.CaseUnfold_11_Locale_To[i];
 
                 for (int j=0; j<to.length; j++) {
                     code[0] = from;
@@ -201,9 +201,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI
 
         if ((flag & Config.INTERNAL_ENC_CASE_FOLD_MULTI_CHAR) != 0) {
-            for (int i=0; i<CaseUnfold_12.length; i+=2) {
-                int[]from = CaseUnfold_12[i];
-                int[]to = CaseUnfold_12[i + 1];
+            for (int i=0; i<CaseFold12.CaseUnfold_12.length; i+=2) {
+                int[]from = CaseFold12.CaseUnfold_12[i];
+                int[]to = CaseFold12.CaseUnfold_12[i + 1];
                 for (int j=0; j<to.length; j++) {
                     fun.apply(to[j], from, 2, arg);
 
@@ -216,9 +216,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
 
             if (!Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI || (flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) == 0) {
-                for (int i=0; i<CaseUnfold_12_Locale.length; i+=2) {
-                    int[]from = CaseUnfold_12_Locale[i];
-                    int[]to = CaseUnfold_12_Locale[i + 1];
+                for (int i=0; i<CaseFold12.CaseUnfold_12_Locale.length; i+=2) {
+                    int[]from = CaseFold12.CaseUnfold_12_Locale[i];
+                    int[]to = CaseFold12.CaseUnfold_12_Locale[i + 1];
                     for (int j=0; j<to.length; j++) {
                         fun.apply(to[j], from, 2, arg);
 
@@ -231,9 +231,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 }
             } // !USE_UNICODE_CASE_FOLD_TURKISH_AZERI
 
-            for (int i=0; i<CaseUnfold_13.length; i+=2) {
-                int[]from = CaseUnfold_13[i];
-                int[]to = CaseUnfold_13[i + 1];
+            for (int i=0; i<CaseFold13.CaseUnfold_13.length; i+=2) {
+                int[]from = CaseFold13.CaseUnfold_13[i];
+                int[]to = CaseFold13.CaseUnfold_13[i + 1];
 
                 for (int j=0; j<to.length; j++) {
                     fun.apply(to[j], from, 3, arg); //// ????
@@ -271,7 +271,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
         int n = 0;
         int fn = 0;
-        int[]to = FoldHash.get(code);
+        int[]to = CaseFold.FoldHash.get(code);
         CaseFoldCodeItem[]items = null;
         if (to != null) {
             items = new CaseFoldCodeItem[Config.ENC_GET_CASE_FOLD_CODES_MAX_NUM];
@@ -283,7 +283,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 n++;
 
                 code = to[0];
-                to = Unfold1Hash.get(code);
+                to = CaseFold11.Unfold1Hash.get(code);
 
                 if (to != null) {
                     for (int i=0; i<to.length; i++) {
@@ -299,7 +299,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
                 for (fn=0; fn<to.length; fn++) {
                     cs[fn][0] = to[fn];
-                    int[]z3 = Unfold1Hash.get(cs[fn][0]);
+                    int[]z3 = CaseFold11.Unfold1Hash.get(cs[fn][0]);
                     if (z3 != null) {
                         for (int i=0; i<z3.length; i++) {
                             cs[fn][i+1] = z3[i];
@@ -318,7 +318,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                         }
                     }
 
-                    int[]z2 = Unfold2Hash.get(to);
+                    int[]z2 = CaseFold12.Unfold2Hash.get(to);
                     if (z2 != null) {
                         for (int i=0; i<z2.length; i++) {
                             if (z2[i] == code) continue;
@@ -335,7 +335,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                             }
                         }
                     }
-                    int[]z2 = Unfold3Hash.get(to);
+                    int[]z2 = CaseFold13.Unfold3Hash.get(to);
                     if (z2 != null) {
                         for (int i=0; i<z2.length; i++) {
                             if (z2[i] == code) continue;
@@ -348,7 +348,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 flag = 0; /* DISABLE_CASE_FOLD_MULTI_CHAR(flag); */
             }
         } else {
-            to = Unfold1Hash.get(code);
+            to = CaseFold11.Unfold1Hash.get(code);
             if (to != null) {
                 items = new CaseFoldCodeItem[Config.ENC_GET_CASE_FOLD_CODES_MAX_NUM];
                 for (int i=0; i<to.length; i++) {
@@ -366,7 +366,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 final int codes0 = code;
                 final int codes1;
                 code = mbcToCode(bytes, p, end);
-                to = FoldHash.get(code);
+                to = CaseFold.FoldHash.get(code);
                 if (to != null && to.length == 1) {
                     codes1 = to[0];
                 } else {
@@ -375,7 +375,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
                 int clen = length(bytes, p, end);
                 len += clen;
-                int[]z2 = Unfold2Hash.get(codes0, codes1);
+                int[]z2 = CaseFold12.Unfold2Hash.get(codes0, codes1);
                 if (z2 != null) {
                     for (int i=0; i<z2.length; i++) {
                         items[n] = new CaseFoldCodeItem(len, 1, new int[]{z2[i]});
@@ -387,7 +387,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 if (p < end) {
                     final int codes2;
                     code = mbcToCode(bytes, p, end);
-                    to = FoldHash.get(code);
+                    to = CaseFold.FoldHash.get(code);
                     if (to != null && to.length == 1) {
                         codes2 = to[0];
                     } else {
@@ -395,7 +395,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     }
                     clen = length(bytes, p, end);
                     len += clen;
-                    z2 = Unfold3Hash.get(codes0, codes1, codes2);
+                    z2 = CaseFold13.Unfold3Hash.get(codes0, codes1, codes2);
                     if (z2 != null) {
                         for (int i=0; i<z2.length; i++) {
                             items[n] = new CaseFoldCodeItem(len, 1, new int[]{z2[i]});
@@ -467,65 +467,80 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         }
     }
 
-    private static CaseInsensitiveBytesHash<Integer> initializeCTypeNameTable() {
-        CaseInsensitiveBytesHash<Integer> table = new CaseInsensitiveBytesHash<Integer>();
-        for (int i = 0; i < UnicodeProperties.CodeRangeTable.length; i++) {
-            table.putDirect(UnicodeProperties.CodeRangeTable[i].name, i);
+    static class CTypeName {
+        private static final CaseInsensitiveBytesHash<Integer> CTypeNameHash = initializeCTypeNameTable();
+
+        private static CaseInsensitiveBytesHash<Integer> initializeCTypeNameTable() {
+            CaseInsensitiveBytesHash<Integer> table = new CaseInsensitiveBytesHash<Integer>();
+            for (int i = 0; i < UnicodeProperties.CodeRangeTable.length; i++) {
+                table.putDirect(UnicodeProperties.CodeRangeTable[i].name, i);
+            }
+            return table;
         }
-        return table;
     }
 
-    static final CaseInsensitiveBytesHash<Integer> CTypeNameHash = initializeCTypeNameTable();
+    private static class CaseFold {
+        private static final int CaseFold_From[] = readIntArray("CaseFold_From");
+        private static final int CaseFold_To[][] = readNestedIntArray("CaseFold_To");
+        private static final int CaseFold_Locale_From[] = readIntArray("CaseFold_Locale_From");
+        private static final int CaseFold_Locale_To[][] = readNestedIntArray("CaseFold_Locale_To");
 
-    static final int CaseFold_From[] = readIntArray("CaseFold_From");
-    static final int CaseFold_To[][] = readNestedIntArray("CaseFold_To");
-    static final int CaseFold_Locale_From[] = readIntArray("CaseFold_Locale_From");
-    static final int CaseFold_Locale_To[][] = readNestedIntArray("CaseFold_Locale_To");
-    static final int CaseUnfold_11_From[] = readIntArray("CaseUnfold_11_From");
-    static final int CaseUnfold_11_To[][] = readNestedIntArray("CaseUnfold_11_To");
-    static final int CaseUnfold_11_Locale_From[] = readIntArray("CaseUnfold_11_Locale_From");
-    static final int CaseUnfold_11_Locale_To[][] = readNestedIntArray("CaseUnfold_11_Locale_To");
-    static final int CaseUnfold_12[][] = readNestedIntArray("CaseUnfold_12");
-    static final int CaseUnfold_12_Locale[][] = readNestedIntArray("CaseUnfold_12_Locale");
-    static final int CaseUnfold_13[][] = readNestedIntArray("CaseUnfold_13");
+        private static IntHash<int[]> initializeFoldHash() {
+            IntHash<int[]> fold = new IntHash<int[]>(1200);
+            for (int i = 0; i < CaseFold_From.length; i++)
+                fold.putDirect(CaseFold_From[i], CaseFold_To[i]);
+            for (int i = 0; i < CaseFold_Locale_From.length; i++)
+                fold.putDirect(CaseFold_Locale_From[i], CaseFold_Locale_To[i]);
+            return fold;
+        }
 
-    private static IntHash<int[]> initializeFoldHash() {
-        IntHash<int[]> fold = new IntHash<int[]>(1200);
-        for (int i = 0; i < CaseFold_From.length; i++)
-            fold.putDirect(CaseFold_From[i], CaseFold_To[i]);
-        for (int i = 0; i < CaseFold_Locale_From.length; i++)
-            fold.putDirect(CaseFold_Locale_From[i], CaseFold_Locale_To[i]);
-        return fold;
+        static final IntHash<int[]>FoldHash = initializeFoldHash();
     }
 
-    private static IntHash<int[]> initializeUnfold1Hash() {
-        IntHash<int[]> unfold1 = new IntHash<int[]>(1000);
-        for (int i = 0; i < CaseUnfold_11_From.length; i++)
-            unfold1.putDirect(CaseUnfold_11_From[i], CaseUnfold_11_To[i]);
-        for (int i = 0; i < CaseUnfold_11_Locale_From.length; i++)
-            unfold1.putDirect(CaseUnfold_11_Locale_From[i], CaseUnfold_11_Locale_To[i]);
-        return unfold1;
+    private static class CaseFold11 {
+        private static final int CaseUnfold_11_From[] = readIntArray("CaseUnfold_11_From");
+        private static final int CaseUnfold_11_To[][] = readNestedIntArray("CaseUnfold_11_To");
+        private static final int CaseUnfold_11_Locale_From[] = readIntArray("CaseUnfold_11_Locale_From");
+        private static final int CaseUnfold_11_Locale_To[][] = readNestedIntArray("CaseUnfold_11_Locale_To");
+
+        private static IntHash<int[]> initializeUnfold1Hash() {
+            IntHash<int[]> unfold1 = new IntHash<int[]>(1000);
+            for (int i = 0; i < CaseUnfold_11_From.length; i++)
+                unfold1.putDirect(CaseUnfold_11_From[i], CaseUnfold_11_To[i]);
+            for (int i = 0; i < CaseUnfold_11_Locale_From.length; i++)
+                unfold1.putDirect(CaseUnfold_11_Locale_From[i], CaseUnfold_11_Locale_To[i]);
+            return unfold1;
+        }
+
+        static final IntHash<int[]> Unfold1Hash = initializeUnfold1Hash();
     }
 
-    private static IntArrayHash<int[]> initializeUnfold2Hash() {
-        IntArrayHash<int[]> unfold2 = new IntArrayHash<int[]>(200);
-        for (int i = 0; i < CaseUnfold_12.length; i += 2)
-            unfold2.putDirect(CaseUnfold_12[i], CaseUnfold_12[i + 1]);
-        for (int i = 0; i < CaseUnfold_12_Locale.length; i += 2)
-            unfold2.putDirect(CaseUnfold_12_Locale[i], CaseUnfold_12_Locale[i + 1]);
-        return unfold2;
+    private static class CaseFold12 {
+        private static final int CaseUnfold_12[][] = readNestedIntArray("CaseUnfold_12");
+        private static final int CaseUnfold_12_Locale[][] = readNestedIntArray("CaseUnfold_12_Locale");
+
+        private static IntArrayHash<int[]> initializeUnfold2Hash() {
+            IntArrayHash<int[]> unfold2 = new IntArrayHash<int[]>(200);
+            for (int i = 0; i < CaseUnfold_12.length; i += 2)
+                unfold2.putDirect(CaseUnfold_12[i], CaseUnfold_12[i + 1]);
+            for (int i = 0; i < CaseUnfold_12_Locale.length; i += 2)
+                unfold2.putDirect(CaseUnfold_12_Locale[i], CaseUnfold_12_Locale[i + 1]);
+            return unfold2;
+        }
+
+        static final IntArrayHash<int[]> Unfold2Hash = initializeUnfold2Hash();
     }
 
-    private static IntArrayHash<int[]> initializeUnfold3Hash() {
-        IntArrayHash<int[]> unfold3 = new IntArrayHash<int[]>(30);
-        for (int i = 0; i < CaseUnfold_13.length; i += 2)
-            unfold3.putDirect(CaseUnfold_13[i], CaseUnfold_13[i + 1]);
-        return unfold3;
+    private static class CaseFold13 {
+        private static final int CaseUnfold_13[][] = readNestedIntArray("CaseUnfold_13");
+
+        private static IntArrayHash<int[]> initializeUnfold3Hash() {
+            IntArrayHash<int[]> unfold3 = new IntArrayHash<int[]>(30);
+            for (int i = 0; i < CaseUnfold_13.length; i += 2)
+                unfold3.putDirect(CaseUnfold_13[i], CaseUnfold_13[i + 1]);
+            return unfold3;
+        }
+
+        static final IntArrayHash<int[]> Unfold3Hash = initializeUnfold3Hash();
     }
-
-    static final IntHash<int[]> FoldHash = initializeFoldHash();
-    static final IntHash<int[]> Unfold1Hash = initializeUnfold1Hash();
-    static final IntArrayHash<int[]> Unfold2Hash = initializeUnfold2Hash();
-    static final IntArrayHash<int[]> Unfold3Hash = initializeUnfold3Hash();
-
 }
