@@ -10,15 +10,21 @@
     Byte based encoding support library for java
   </description>
 
+  <parent>
+    <groupId>org.sonatype.oss</groupId>
+    <artifactId>oss-parent</artifactId>
+    <version>7</version>
+  </parent>
+
   <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/JRUBY</url>
+    <system>Github</system>
+    <url>https://github.com/jruby/jcodings/issues</url>
   </issueManagement>
 
   <scm>
     <connection>scm:git:git://github.com/jruby/jcodings.git</connection>
-    <developerConnection>scm:git:git://github.com/jruby/jcodings.git</developerConnection>
-    <url>http://github.com/jruby/jcodings</url>
+    <developerConnection>scm:git:git@github.com:jruby/jcodings.git</developerConnection>
+    <url>https://github.com/jruby/jcodings</url>
   </scm>
 
   <licenses>
@@ -28,38 +34,6 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-  <distributionManagement>
-    <repository>
-      <id>codehaus-jruby-repository</id>
-      <name>JRuby Central Repository</name>
-      <url>dav:https://dav.codehaus.org/repository/jruby</url>
-    </repository>
-    <snapshotRepository>
-      <id>codehaus-jruby-snapshot-repository</id>
-      <name>JRuby Central Development Repository</name>
-      <url>dav:https://dav.codehaus.org/snapshots.repository/jruby</url>
-    </snapshotRepository>
-    <site>
-      <id>codehaus-jruby-site</id>
-      <name>JRuby Maven site</name>
-      <url>dav:https://dav.codehaus.org/jruby/info</url>
-    </site>
-  </distributionManagement>
-
-  <repositories>
-    <repository>
-      <id>codehaus</id>
-      <name>Codehaus Repository</name>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <url>http://repository.codehaus.org</url>
-    </repository>
-  </repositories>
 
   <developers>
     <developer>
@@ -114,9 +88,6 @@
             </goals>
           </execution>
         </executions>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
