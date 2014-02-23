@@ -257,7 +257,7 @@ public class TranscoderDB implements EConvFlags {
     }
 
     /* rb_econv_open */
-    static EConv open(byte[] source, byte[] destination, int ecflags) {
+    public static EConv open(byte[] source, byte[] destination, int ecflags) {
         byte[][] decorators = new byte[MAX_ECFLAGS_DECORATORS][];
         int num = decoratorNames(ecflags, decorators);
         if (num == -1) return null;

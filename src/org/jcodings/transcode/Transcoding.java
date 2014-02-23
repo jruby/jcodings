@@ -29,7 +29,7 @@ public class Transcoding implements TranscodingInstruction {
         this.writeBuf = new byte[transcoder.maxOutput];
     }
 
-    final Transcoder transcoder;
+    public final Transcoder transcoder;
     int flags;
 
     int resumePosition;
@@ -74,10 +74,10 @@ public class Transcoding implements TranscodingInstruction {
 
     /* rb_transcoding_convert */
     EConvResult convert(byte[] in, Ptr inPtr, int inStop, byte[] out, Ptr outPtr, int outStop, int flags) {
-        return null;
+        return transcodeRestartable(in, inPtr, inStop, out, outPtr, outStop, flags);
     }
 
-    private EConvResult transcodeRestartable(byte[] in, Ptr inStart, int intStop, byte[] out, Ptr outStart, int outStop, int opt) {
+    private EConvResult transcodeRestartable(byte[] in, Ptr inStart, int inStop, byte[] out, Ptr outStart, int outStop, int opt) {
         if (readAgainLength != 0) {
             byte[] readAgainBuf = new byte[readAgainLength];
             Ptr readAgainPos = new Ptr(0);
@@ -91,7 +91,7 @@ public class Transcoding implements TranscodingInstruction {
                 readAgainLength += readAgainStop - readAgainPos.p;
             }
         }
-        return transcodeRestartable0(in, inStart, intStop, out, outStart, outStop, opt);
+        return transcodeRestartable0(in, inStart, inStop, out, outStart, outStop, opt);
     }
 
     int inCharStart;
@@ -105,7 +105,7 @@ public class Transcoding implements TranscodingInstruction {
 
     int opt;
 
-    private EConvResult transcodeRestartable0(byte[] in, Ptr inStart, int intStop, byte[] out, Ptr outStart, int outStop, int opt) {
+    private EConvResult transcodeRestartable0(byte[] in, Ptr inStart, int inStop, byte[] out, Ptr outStart, int outStop, int opt) {
         inPos = inStart;
         inP = inCharStart = inStart.p;
         outPos = outStart;

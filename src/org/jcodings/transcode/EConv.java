@@ -21,6 +21,7 @@ package org.jcodings.transcode;
 
 import static org.jcodings.util.CaseInsensitiveBytesHash.caseInsensitiveEquals;
 
+import org.jcodings.Encoding;
 import org.jcodings.Ptr;
 import org.jcodings.exception.InternalException;
 
@@ -36,12 +37,14 @@ public final class EConv implements EConvFlags {
 
     Buffer inBuf = new Buffer();
 
-    EConvElement[] elements;
+    public EConvElement[] elements;
     int numTranscoders;
     int numFinished;
 
-    Transcoding lastTranscoding;
+    public Transcoding lastTranscoding;
     final LastError lastError = new LastError();
+
+    public Encoding sourceEncoding, destinationEncoding;
 
     @Override
     public String toString() {
@@ -220,7 +223,7 @@ public final class EConv implements EConvFlags {
 
         if (elements[0].lastResult == EConvResult.AfterOutput) elements[0].lastResult = EConvResult.SourceBufferEmpty;
 
-        for (int i = numTranscoders = 1; i >= 0; i--) {
+        for (int i = numTranscoders - 1; i >= 0; i--) {
             switch (elements[i].lastResult) {
             case InvalidByteSequence:
             case IncompleteInput:
@@ -385,7 +388,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_convert */
-    private EConvResult convert(byte[] in, Ptr inPtr, int inStop, byte[] out, Ptr outPtr, int outStop, int flags) {
+    public EConvResult convert(byte[] in, Ptr inPtr, int inStop, byte[] out, Ptr outPtr, int outStop, int flags) {
         started = true;
 
         // null check
