@@ -133,7 +133,8 @@ public class EncodingDB {
         "UTF-32BE",     "UTF32BE",
         "UTF-32LE",     "UTF32LE",
         "Windows-1251", "CP1251",
-        "GB2312",       "EUCKR"         // done via rb_enc_register
+        "GB2312",       "EUCKR",         // done via rb_enc_register
+        "Windows-31J",  "SJIS"           // TODO: Windows-31J is actually a variant of SJIS
     };
 
     static Entry ascii;
@@ -208,6 +209,7 @@ public class EncodingDB {
                 dummy(enc[1]);
                 break;
             default:
+                Thread.dumpStack();
                 throw new InternalException("Unknown flag: " + enc[0].charAt(0));
             }
         }
