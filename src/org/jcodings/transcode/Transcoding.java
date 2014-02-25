@@ -211,7 +211,7 @@ public class Transcoding implements TranscodingInstruction {
                             {
                                 int char_start;
                                 int[] char_len = {0};
-                                char_start = transcode_char_start(in_pos, inchar_start, in_p, char_len);
+                                char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
                                 nextInfo = tr.func_si.call(this, char_start, char_len[0]);
                                 IP = FOLLOW_INFO;
                                 continue;
@@ -243,16 +243,12 @@ public class Transcoding implements TranscodingInstruction {
                                     IP = REPORT_INVALID;
                                     continue;
                                 }
-                                IP = REPORT_INVALID;
-                                continue;
                             case UNDEF:
                                 IP = REPORT_UNDEF;
                                 continue;
                             default:
                                 throw new RuntimeException("unknown transcoding instruction");
                         }
-                        IP = START;
-                        continue;
                     case READ_MORE:
                         while ((opt & EConvFlags.PARTIAL_INPUT) != 0 && recognizedLength + (in_stop - inchar_start) < unitlen) {
                             in_p = in_stop;
@@ -273,13 +269,13 @@ public class Transcoding implements TranscodingInstruction {
                         int char_start;
                         int[] char_len = {0};
                         if (tr.maxOutput <= out_stop - out_p) {
-                            char_start = transcode_char_start(this, in_bytes[in_pos.p], inchar_start, in_p, char_len);
-                            out_p += tr.func_sio(TRANSCODING_STATE(this), char_start, char_len[0], out_p, out_stop - out_p);
+                            char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
+                            out_p += tr.func_sio.call(TRANSCODING_STATE(this), char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
                             IP = START;
                             continue;
                         } else {
-                            char_start = transcode_char_start(this, in_bytes[in_pos.p], inchar_start, in_p, char_len);
-                            writeBuffLen = tr.func_sio(TRANSCODING_STATE(this), char_start, char_len[0], TRANSCODING_WRITEBUF(this), TRANSCODING_WRITEBUF_SIZE(this));
+                            char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
+                            writeBuffLen = tr.func_sio.call(TRANSCODING_STATE(this), char_start, char_len[0], TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
                             IP = TRANSFER_WRITEBUF;
                             continue;
@@ -290,13 +286,13 @@ public class Transcoding implements TranscodingInstruction {
                         int char_start;
                         int[] char_len = {0};
                         if (tr.maxOutput <= out_stop - out_p) {
-                            char_start = transcode_char_start(this, in_bytes[in_pos.p], inchar_start, in_p, char_len);
-                            out_p += tr.func_so(TRANSCODING_STATE(this), char_start, char_len[0], out_p, out_stop - out_p);
+                            char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
+                            out_p += tr.func_so.call(TRANSCODING_STATE(this), char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
                             IP = START;
                             continue;
                         } else {
-                            char_start = transcode_char_start(this, in_bytes[in_pos.p], inchar_start, in_p, char_len);
-                            writeBuffLen = tr.func_so(TRANSCODING_STATE(this), char_start, char_len[0], TRANSCODING_WRITEBUF(this), TRANSCODING_WRITEBUF_SIZE(this));
+                            char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
+                            writeBuffLen = tr.func_so.call(TRANSCODING_STATE(this), char_start, char_len[0], TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
                             IP = TRANSFER_WRITEBUF;
                             continue;
@@ -304,11 +300,11 @@ public class Transcoding implements TranscodingInstruction {
                     }
                     case CALL_FUN_IO:
                         if (tr.maxOutput <= out_stop - out_p) {
-                            out_p += tr.func_io.call(this, nextInfo, out_p, out_stop - out_p);
+                            out_p += tr.func_io.call(this, nextInfo, out_bytes, out_p, out_stop - out_p);
                             IP = START;
                             continue;
                         } else {
-                            writeBuffLen = tr.func_io.call(this, nextInfo, TRANSCODING_WRITEBUF(this), TRANSCODING_WRITEBUF_SIZE(this));
+                            writeBuffLen = tr.func_io.call(this, nextInfo, TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
                             IP = TRANSFER_WRITEBUF;
                             continue;
@@ -415,9 +411,9 @@ public class Transcoding implements TranscodingInstruction {
                         continue;
                     case FINISH_FUNC:
                         if (tr.maxOutput <= out_stop - out_p) {
-                            out_p += tr.finish_func(TRANSCODING_STATE(this), out_p, out_stop - out_p);
+                            out_p += tr.finish_func.call(TRANSCODING_STATE(this), out_bytes, out_p, out_stop - out_p);
                         } else {
-                            writeBuffLen = tr.finish_func(TRANSCODING_STATE(this), TRANSCODING_WRITEBUF(this), TRANSCODING_WRITEBUF_SIZE(this));
+                            writeBuffLen = tr.finish_func.call(TRANSCODING_STATE(this), TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
                             while (writeBuffOff <= writeBuffLen) {
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_CLEANUP);
@@ -441,6 +437,20 @@ public class Transcoding implements TranscodingInstruction {
             return ts.result;
         }
     }
+
+    private int transcode_char_start(byte[] in_bytes, int in_start, int inchar_start, int in_p, int[] char_len_ptr) {
+        int ptr;
+        if (inchar_start - in_start < recognizedLength) {
+            System.arraycopy(TRANSCODING_READBUF(this), recognizedLength, in_bytes, inchar_start, in_p - inchar_start);
+            ptr = 0;
+        }
+        else {
+            ptr = inchar_start - recognizedLength;
+        }
+        char_len_ptr[0] = recognizedLength + (in_p - inchar_start);
+        return ptr;
+    }
+
 
     private static void SUSPEND(Transcoding tc, byte[] in_bytes, int in_p, int inchar_start, Ptr in_pos, Ptr out_pos, int out_p, int readagain_len, EConvResult ret, Body num) {
         tc.resumePosition = num;
@@ -512,6 +522,10 @@ public class Transcoding implements TranscodingInstruction {
 
     private static int TRANSCODING_WRITEBUF_SIZE(Transcoding tc) {
         return tc.writeBuffLen;
+    }
+
+    private static byte[] TRANSCODING_READBUF(Transcoding tc) {
+        return tc.readBuf;
     }
 
     private static byte[] TRANSCODING_STATE(Transcoding tc) {

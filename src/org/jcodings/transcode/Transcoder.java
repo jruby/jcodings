@@ -72,6 +72,33 @@ public abstract class Transcoder implements TranscodingInstruction {
     final int stateSize;
     final byte[] state;
 
+    public interface IIFunc {
+        public int call(Transcoding tc, int nextInfo);
+    }
+
+    public interface SIFunc {
+        public int call(Transcoding tc, int charStart, int charLen);
+    }
+
+    public interface SOFunc {
+        public int call(byte[] state, int charStart, int charLen, byte[] outBytes, int outP, int outLen);
+    }
+
+    public interface IOFunc {
+        public int call(Transcoding tc, int nextInfo, byte[] outBytes, int outP, int outLen);
+    }
+
+    public interface FinishFunc {
+        public int call(byte[] inBytes, byte[] outBytes, int outP, int outLen);
+    }
+
+    final IIFunc func_ii = null;
+    final SIFunc func_si = null;
+    final SOFunc func_so = null;
+    final SOFunc func_sio = null;
+    final IOFunc func_io = null;
+    final FinishFunc finish_func = null;
+
     public int stateInit() {
         return 0;
     }
