@@ -20,7 +20,6 @@
 package org.jcodings.transcode;
 
 import org.jcodings.Ptr;
-import org.jcodings.exception.TranscoderException;
 
 import static org.jcodings.transcode.Transcoding.Body.*;
 
@@ -87,7 +86,7 @@ public class Transcoding implements TranscodingInstruction {
             System.arraycopy(readBuf, recognizedLength, readAgainBuf, readAgainPos.p, readAgainLength);
             readAgainLength = 0;
 
-            EConvResult res = transcodeRestartable0(readAgainBuf, readAgainPos, readAgainStop, out, outStart, outStop, opt | EConv.PARTIAL_INPUT);
+            EConvResult res = transcodeRestartable0(new Pointer<BytePointer>(new BytePointer[]{new BytePointer(readAgainBuf, readAgainPos.p)}, 0), , readAgainStop, outStop, this, opt | EConv.PARTIAL_INPUT);
             if (!res.isSourceBufferEmpty()) {
                 System.arraycopy(readAgainBuf, readAgainPos.p, readBuf, recognizedLength + readAgainLength, readAgainStop - readAgainPos.p);
                 readAgainLength += readAgainStop - readAgainPos.p;
@@ -125,7 +124,7 @@ public class Transcoding implements TranscodingInstruction {
         try {
             while (true) {
                 switch (IP) {
-                    case B00:
+                    case START:
                         inchar_start = in_p;
                         tc.recognizedLength = 0;
                         tc.nextTable = tr.treeStart;
@@ -135,27 +134,21 @@ public class Transcoding implements TranscodingInstruction {
                     case B01:
                         if (in_stop.le(in_p)) {
                             if ((opt & EConvFlags.PARTIAL_INPUT) == 0) {
-                                IP = B02;
+                                IP = CLEANUP;
                                 continue;
                             }
-                            SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, B00);
-                            IP = B00;
+                            SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, START);
+                            IP = START;
                             continue;
                         }
-                        IP = B04;
-                        continue;
                     case B04:
                         tc.nextByte = in_p.deref_inc();
-                        IP = B05;
-                        continue;
                     case B05: // follow_byte:
                         if (tc.nextByte < BL_MIN_BYTE(tc) || BL_MAX_BYTE(tc) < tc.nextByte) {
                             tc.nextInfo = INVALID;
                         } else {
                             tc.nextInfo = BL_ACTION(tc, tc.nextByte);
                         }
-                        IP = B06;
-                        continue;
                     case B06: // follow_info:
                         switch (tc.nextInfo & 0x1F) {
                             case NOMAP:
@@ -170,7 +163,7 @@ public class Transcoding implements TranscodingInstruction {
                                     SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B07);
                                     out_p.set_inc(TRANSCODING_WRITEBUF(tc)[tc.writeBuffOff++]);
                                 }
-                                IP = B00;
+                                IP = START;
                                 continue;
                             case 0x00:
                             case 0x04:
@@ -184,7 +177,7 @@ public class Transcoding implements TranscodingInstruction {
                                 IP = B09;
                                 continue;
                             case ZERObt: // drop input
-                                IP = B00;
+                                IP = START;
                                 continue;
                             case ONEbt:
                                 SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B11);
@@ -257,7 +250,7 @@ public class Transcoding implements TranscodingInstruction {
                             default:
                                 throw new RuntimeException("unknown transcoding instruction");
                         }
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B29:
                         while ((opt & EConvFlags.PARTIAL_INPUT) != 0 && tc.recognizedLength + (in_stop.offset - inchar_start.offset) < unitlen) {
@@ -281,7 +274,7 @@ public class Transcoding implements TranscodingInstruction {
                         if (tr.maxOutput <= out_stop.offset - out_p.offset) {
                             char_start = transcode_char_start(tc, in_pos.deref(), inchar_start, in_p, char_len);
                             out_p.offset += tr.func_sio(TRANSCODING_STATE(tc), char_start, char_len[0], out_p, out_stop.offset - out_p.offset);
-                            IP = B00;
+                            IP = START;
                             continue;
                         } else {
                             char_start = transcode_char_start(tc, in_pos.deref(), inchar_start, in_p, char_len);
@@ -298,7 +291,7 @@ public class Transcoding implements TranscodingInstruction {
                         if (tr.maxOutput <= out_stop.offset - out_p.offset) {
                             char_start = transcode_char_start(tc, in_pos.deref(), inchar_start, in_p, char_len);
                             out_p.offset += tr.func_so(TRANSCODING_STATE(tc), char_start, char_len[0], out_p, out_stop.offset - out_p.offset);
-                            IP = B00;
+                            IP = START;
                             continue;
                         } else {
                             char_start = transcode_char_start(tc, in_pos.deref(), inchar_start, in_p, char_len);
@@ -311,7 +304,7 @@ public class Transcoding implements TranscodingInstruction {
                     case B24:
                         if (tr.maxOutput <= out_stop.offset - out_p.offset) {
                             out_p.offset += tr.func_io.call(tc, tc.nextInfo, out_p, out_stop.offset - out_p.offset);
-                            IP = B00;
+                            IP = START;
                             continue;
                         } else {
                             tc.writeBuffLen = tr.func_io.call(tc, tc.nextInfo, TRANSCODING_WRITEBUF(tc), TRANSCODING_WRITEBUF_SIZE(tc));
@@ -324,7 +317,7 @@ public class Transcoding implements TranscodingInstruction {
                             SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B26);
                             out_p.set_inc(TRANSCODING_WRITEBUF(tc)[tc.writeBuffOff++]);
                         }
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B26:
                         out_p.set_inc(TRANSCODING_WRITEBUF(tc)[tc.writeBuffOff++]);
@@ -332,14 +325,14 @@ public class Transcoding implements TranscodingInstruction {
                         continue;
                     case B11: // byte 1
                         out_p.set_inc(getBT1(tc.nextInfo));
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B12: // bytes 1, 2
                         out_p.set_inc(getBT1(tc.nextInfo));
                         SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B13);
                     case B13: // byte 2
                         out_p.set_inc(getBT2(tc.nextInfo));
-                        IP = B00; // continue
+                        IP = START; // continue
                         continue;
                     case B17: // bytes 0, 1, 2, 3
                         out_p.set_inc(getBT0(tc.nextInfo));
@@ -352,7 +345,7 @@ public class Transcoding implements TranscodingInstruction {
                         SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B16);
                     case B16: // byte 3
                         out_p.set_inc(getBT3(tc.nextInfo));
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B18: // GB4 bytes 0, 1, 2, 3
                         out_p.set_inc(getGB4bt0(tc.nextInfo));
@@ -365,7 +358,7 @@ public class Transcoding implements TranscodingInstruction {
                         SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B21);
                     case B21: // GB4 bytes 3
                         out_p.set_inc(getGB4bt3(tc.nextInfo));
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B22:
                         while (tc.outputIndex < STR1_LENGTH(BYTE_ADDR(tc, STR1_BYTEINDEX(tc.nextInfo)).deref())) {
@@ -373,7 +366,7 @@ public class Transcoding implements TranscodingInstruction {
                             out_p.set_inc(BYTE_ADDR(tc, STR1_BYTEINDEX(tc.nextInfo)).deref());
                             tc.outputIndex++;
                         }
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B23:
                         out_p.set_inc(BYTE_ADDR(tc, STR1_BYTEINDEX(tc.nextInfo)).deref());
@@ -386,7 +379,7 @@ public class Transcoding implements TranscodingInstruction {
                             SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, B07);
                             out_p.set_inc(TRANSCODING_WRITEBUF(tc)[tc.writeBuffOff++]);
                         }
-                        IP = B00;
+                        IP = START;
                         continue;
                     case B09:
                         while (in_p.offset >= in_stop.offset) {
@@ -401,19 +394,46 @@ public class Transcoding implements TranscodingInstruction {
                         IP = B05;
                         continue;
                     case B31: // invalid:
-                        SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.InvalidByteSequence, B00);
-                        IP = B00;
+                        SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.InvalidByteSequence, START);
+                        IP = START;
                         continue;
                     case B10: // incomplete:
-                        SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.IncompleteInput, B00);
-                        IP = B00;
+                        SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.IncompleteInput, START);
+                        IP = START;
                         continue;
                     case B32: // undef:
-                        SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.UndefinedConversion, B00);
-                        IP = B00;
+                        SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.UndefinedConversion, START);
+                        IP = START;
                         continue;
-                    case B02:
-                        /* TODO: cleanup */
+                    case CLEANUP:
+                        if (tr.finish_func != null) {
+                            IP = SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, Body.FINISH_FUNC);
+                            continue;
+                        }
+                        IP = FINISHED;
+                        continue;
+                    case FINISH_FUNC:
+                        if (tr.maxOutput <= out_stop.offset - out_p.offset) {
+                            out_p.offset += tr.finish_func(TRANSCODING_STATE(tc), out_p, out_stop.offset - out_p.offset);
+                        } else {
+                            tc.writeBuffLen = tr.finish_func(TRANSCODING_STATE(tc), TRANSCODING_WRITEBUF(tc), TRANSCODING_WRITEBUF_SIZE(tc));
+                            tc.writeBuffOff = 0;
+                            while (tc.writeBuffOff <= tc.writeBuffLen) {
+                                IP = SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, CLEANUP_RESUME);
+                                out_p.set_inc(TRANSCODING_WRITEBUF(tc)[tc.writeBuffOff++]);
+                            }
+                        }
+                        IP = FINISHED;
+                        continue;
+                    case CLEANUP_RESUME:
+                        do {
+                            out_p.set_inc(TRANSCODING_WRITEBUF(tc)[tc.writeBuffOff++]);
+                            IP = SUSPEND_OBUF(tc, out_stop, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, CLEANUP_RESUME);
+                        } while (tc.writeBuffOff <= tc.writeBuffLen);
+                    case FINISHED:
+                        while (true) {
+                            SUSPEND(tc, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.Finished, CLEANUP_RESUME);
+                        }
                 }
             }
         } catch (TranscodingSuspend ts) {
@@ -449,7 +469,7 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     enum Body {
-        B00,
+        START,
         B01,
         B04,
         B05,
@@ -479,7 +499,10 @@ public class Transcoding implements TranscodingInstruction {
         B31,
         B10,
         B32,
-        B02;
+        FINISH_FUNC,
+        CLEANUP_RESUME,
+        FINISHED,
+        CLEANUP;
     }
 
     private static byte[] TRANSCODING_WRITEBUF(Transcoding tc) {
@@ -609,7 +632,7 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     private static int BL_OFFSET(Transcoding tc, byte b) {
-        return Transcoding.BL_BASE(tc).deref(2 + b  - Transcoding.BL_MIN_BYTE(tc));
+        return Transcoding.BL_BASE(tc).deref(2 + b - Transcoding.BL_MIN_BYTE(tc));
     }
 
     private static int BL_ACTION(Transcoding tc, byte b) {
