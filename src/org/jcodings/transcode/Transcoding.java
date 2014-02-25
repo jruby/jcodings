@@ -129,6 +129,8 @@ public class Transcoding implements TranscodingInstruction {
 
         int out_p = out_pos.p;
 
+        int[] char_len = null;
+
         Body ip = resumePosition;
 
         try {
@@ -220,7 +222,7 @@ public class Transcoding implements TranscodingInstruction {
                             case FUNsi:
                             {
                                 int char_start;
-                                int[] char_len = {0};
+                                char_len = PREPARE_CHAR_LEN(char_len);
                                 char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
                                 nextInfo = tr.startToInfo(this, char_start, char_len[0]);
                                 ip = FOLLOW_INFO;
@@ -277,7 +279,7 @@ public class Transcoding implements TranscodingInstruction {
                     case CALL_FUN_SIO:
                     {
                         int char_start;
-                        int[] char_len = {0};
+                        char_len = PREPARE_CHAR_LEN(char_len);
                         if (tr.maxOutput <= out_stop - out_p) {
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
                             out_p += tr.startToIOutput(state, in_bytes, char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
@@ -294,7 +296,7 @@ public class Transcoding implements TranscodingInstruction {
                     case CALL_FUN_SO:
                     {
                         int char_start;
-                        int[] char_len = {0};
+                        char_len = PREPARE_CHAR_LEN(char_len);
                         if (tr.maxOutput <= out_stop - out_p) {
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
                             out_p += tr.startToOutput(state, in_bytes, char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
@@ -446,6 +448,15 @@ public class Transcoding implements TranscodingInstruction {
         } catch (TranscodingSuspend ts) {
             return ts.result;
         }
+    }
+
+    private int[] PREPARE_CHAR_LEN(int[] char_len) {
+        if (char_len == null) {
+            char_len = new int[]{0};
+        } else {
+            char_len[0] = 0;
+        }
+        return char_len;
     }
 
     private int transcode_char_start(byte[] in_bytes, int in_start, int inchar_start, int in_p, int[] char_len_ptr) {
