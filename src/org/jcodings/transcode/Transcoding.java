@@ -55,6 +55,8 @@ public class Transcoding implements TranscodingInstruction {
     final byte[] writeBuf;
     final byte[] state;
 
+    final TranscodingSuspend cachedSuspend = new TranscodingSuspend(null);
+
     void close() {
         transcoder.stateFinish();
     }
@@ -483,7 +485,8 @@ public class Transcoding implements TranscodingInstruction {
             tc.recognizedLength -= readagain_len;
             tc.readAgainLength = readagain_len;
         }
-        throw new TranscodingSuspend(ret);
+        tc.cachedSuspend.result = ret;
+        throw tc.cachedSuspend;
     }
 
     private static Body SUSPEND_OBUF(Transcoding tc, int out_stop, byte[] in_bytes, int in_p, int inchar_start, Ptr in_pos, Ptr out_pos, int out_p, int readagain_len, Body num) {
