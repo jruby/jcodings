@@ -28,4 +28,39 @@ public class To_UTF_16_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new To_UTF_16_Transcoder();
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int sp = 0;
+        if (statep[sp] == 0) {
+            o[oStart++] = (byte)0xFE;
+            o[oStart++] = (byte)0xFF;
+            statep[sp] = (byte)1;
+            return 2 + funSoToUTF16BE(statep, sBytes, sStart, l, o, oStart, oSize);
+        }
+        return funSoToUTF16BE(statep, sBytes, sStart, l, o, oStart, oSize);
+    }
+
+    private int funSoToUTF16BE(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
+        if ((sBytes[sStart] & 0x80) == 0) {
+            o[oStart] = (byte)0x00;
+            o[oStart+1] = sBytes[sStart];
+            return 2;
+        } else if ((sBytes[sStart] & 0xE0) == 0xC0) {
+            o[oStart] = (byte)(((sBytes[sStart] & 0xFF) >> 2) & 0x07);
+            o[oStart+1] = (byte)(((sBytes[sStart] & 0x03) << 6) | (sBytes[sStart+1] & 0x3F));
+            return 2;
+        } else if ((sBytes[sStart] & 0xF0) == 0xE0) {
+            o[oStart] = (byte)(((sBytes[sStart] & 0xFF) << 4) | (((sBytes[sStart+1] & 0xFF) >> 2) ^ 0x20));
+            o[oStart+1] = (byte)(((sBytes[sStart+1] & 0xFF) << 6) | ((sBytes[sStart+2] & 0xFF) ^ 0x80));
+            return 2;
+        } else {
+            int w = (((sBytes[sStart] & 0x07) << 2) | (((sBytes[sStart+1] & 0xFF) >> 4) & 0x03)) - 1;
+            o[0] = (byte)(0xD8 | (w>>2));
+            o[1] = (byte)((w<<6) | ((sBytes[sStart+1] & 0x0F) <<2 ) | (((sBytes[sStart+2] & 0xFF) >> 4) - 8));
+            o[2] = (byte)(0xDC | (((sBytes[sStart+2] & 0xFF) >> 2) & 0x03));
+            o[3] = (byte)(((sBytes[sStart+2] & 0xFF) << 6) | ((sBytes[sStart+3] & 0xFF) & ~0x80));
+            return 4;
+        }
+    }
 }

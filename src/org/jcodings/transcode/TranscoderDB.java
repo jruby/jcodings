@@ -189,7 +189,7 @@ public class TranscoderDB implements EConvFlags {
     }
 
     /* rb_econv_open_by_transcoder_entries */
-    private static EConv openByTrascoderEntries(int n, Entry[] entries) {
+    private static EConv openByTranscoderEntries(int n, Entry[] entries) {
         EConv econv = new EConv(n);
 
         for (int i = 0; i < n; i++) {
@@ -222,7 +222,7 @@ public class TranscoderDB implements EConvFlags {
             });
             entries = lentries.p;
         }
-        EConv econv = openByTrascoderEntries(numTrans, entries);
+        EConv econv = openByTranscoderEntries(numTrans, entries);
         econv.flags = ecflags;
         econv.source = source;
         econv.destination = destination;

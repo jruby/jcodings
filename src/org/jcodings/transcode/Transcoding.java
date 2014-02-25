@@ -24,16 +24,24 @@ import org.jcodings.Ptr;
 import static org.jcodings.transcode.Transcoding.Body.*;
 
 public class Transcoding implements TranscodingInstruction {
-    public Transcoding(Transcoder transcoder) {
+    public Transcoding(Transcoder transcoder, int flags) {
         this.transcoder = transcoder;
+        this.flags = flags;
+        this.resumePosition = Transcoding.Body.START;
+        this.recognizedLength = 0;
+        this.readAgainLength = 0;
+        this.writeBuffLen = 0;
+        this.writeBuffOff = 0;
         this.readBuf = new byte[transcoder.maxInput];
         this.writeBuf = new byte[transcoder.maxOutput];
+        this.state = new byte[transcoder.stateSize];
+        transcoder.stateInit(state);
     }
 
     public final Transcoder transcoder;
     int flags;
 
-    Body resumePosition;
+    Body resumePosition = Body.START;
     int nextTable;
     int nextInfo;
     byte nextByte;
@@ -45,7 +53,7 @@ public class Transcoding implements TranscodingInstruction {
 
     int writeBuffOff, writeBuffLen;
     final byte[] writeBuf;
-    byte[] state;
+    final byte[] state;
 
     void close() {
         transcoder.stateFinish();
@@ -121,11 +129,12 @@ public class Transcoding implements TranscodingInstruction {
 
         int out_p = out_pos.p;
 
-        Body IP = resumePosition;
+        Body ip = resumePosition;
 
         try {
             while (true) {
-                switch (IP) {
+//                System.out.println("executing: " + ip);
+                switch (ip) {
                     case START:
                         inchar_start = in_p;
                         recognizedLength = 0;
@@ -135,17 +144,18 @@ public class Transcoding implements TranscodingInstruction {
                     case RESUME_AFTER_OUTPUT:
                         if (in_stop <= in_p) {
                             if ((opt & EConvFlags.PARTIAL_INPUT) == 0) {
-                                IP = CLEANUP;
+                                ip = CLEANUP;
                                 continue;
                             }
                             SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, START);
-                            IP = START;
+                            ip = START;
                             continue;
                         }
                     case NEXTBYTE:
                         nextByte = in_bytes[in_p++];
+//                        System.out.println("read byte: " + nextByte);
                     case FOLLOW_BYTE: // follow_byte:
-                        if (nextByte < BL_MIN_BYTE(this) || BL_MAX_BYTE(this) < nextByte) {
+                        if ((nextByte & 0xFF) < BL_MIN_BYTE(this) || BL_MAX_BYTE(this) < (nextByte & 0xFF)) {
                             nextInfo = INVALID;
                         } else {
                             nextInfo = BL_ACTION(this, nextByte);
@@ -164,7 +174,7 @@ public class Transcoding implements TranscodingInstruction {
                                     SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_NOMAP);
                                     out_bytes[out_p++] = TRANSCODING_WRITEBUF(this)[writeBuffOff++];
                                 }
-                                IP = START;
+                                ip = START;
                                 continue;
                             case 0x00:
                             case 0x04:
@@ -175,64 +185,64 @@ public class Transcoding implements TranscodingInstruction {
                             case 0x18:
                             case 0x1C:
                                 SUSPEND_AFTER_OUTPUT(this, opt, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, SELECT_TABLE);
-                                IP = SELECT_TABLE;
+                                ip = SELECT_TABLE;
                                 continue;
                             case ZERObt: // drop input
-                                IP = START;
+                                ip = START;
                                 continue;
                             case ONEbt:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, ONE_BYTE_1);
-                                IP = ONE_BYTE_1;
+                                ip = ONE_BYTE_1;
                                 continue;
                             case TWObt:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, TWO_BYTE_1);
-                                IP = TWO_BYTE_1;
+                                ip = TWO_BYTE_1;
                                 continue;
                             case THREEbt:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, FOUR_BYTE_1);
-                                IP = FOUR_BYTE_1;
+                                ip = FOUR_BYTE_1;
                             case FOURbt:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, FOUR_BYTE_0);
-                                IP = FOUR_BYTE_0;
+                                ip = FOUR_BYTE_0;
                                 continue;
                             case GB4bt:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, GB_FOUR_BYTE_0);
-                                IP = GB_FOUR_BYTE_0;
+                                ip = GB_FOUR_BYTE_0;
                                 continue;
                             case STR1:
                                 outputIndex = 0;
-                                IP = STRING;
+                                ip = STRING;
                                 continue;
                             case FUNii:
-                                nextInfo = tr.func_ii.call(this, nextInfo);
-                                IP = FOLLOW_INFO;
+                                nextInfo = tr.infoToInfo(this, nextInfo);
+                                ip = FOLLOW_INFO;
                                 continue;
                             case FUNsi:
                             {
                                 int char_start;
                                 int[] char_len = {0};
                                 char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                                nextInfo = tr.func_si.call(this, char_start, char_len[0]);
-                                IP = FOLLOW_INFO;
+                                nextInfo = tr.startToInfo(this, char_start, char_len[0]);
+                                ip = FOLLOW_INFO;
                                 continue;
                             }
                             case FUNio:
-                                IP = CALL_FUN_IO;
+                                ip = CALL_FUN_IO;
                                 continue;
                             case FUNso:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, CALL_FUN_SO);
-                                IP = CALL_FUN_SO;
+                                ip = CALL_FUN_SO;
                                 continue;
                             case FUNsio:
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, CALL_FUN_SIO);
-                                IP = CALL_FUN_SIO;
+                                ip = CALL_FUN_SIO;
                                 continue;
                             case INVALID:
                                 if (recognizedLength + (in_p - inchar_start) <= unitlen) {
                                     if (recognizedLength + (in_p - inchar_start) < unitlen) {
                                         SUSPEND_AFTER_OUTPUT(this, opt, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, READ_MORE);
                                     }
-                                    IP = READ_MORE;
+                                    ip = READ_MORE;
                                     continue;
                                 } else {
                                     int invalid_len;
@@ -240,11 +250,11 @@ public class Transcoding implements TranscodingInstruction {
                                     invalid_len = recognizedLength + (in_p - inchar_start);
                                     discard_len = ((invalid_len - 1) / unitlen) * unitlen;
                                     readagain_len = invalid_len - discard_len;
-                                    IP = REPORT_INVALID;
+                                    ip = REPORT_INVALID;
                                     continue;
                                 }
                             case UNDEF:
-                                IP = REPORT_UNDEF;
+                                ip = REPORT_UNDEF;
                                 continue;
                             default:
                                 throw new RuntimeException("unknown transcoding instruction");
@@ -254,7 +264,7 @@ public class Transcoding implements TranscodingInstruction {
                             in_p = in_stop;
                             SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, READ_MORE);
                         }
-                        IP = RESUME_READ_MORE;
+                        ip = RESUME_READ_MORE;
                         continue;
                     case RESUME_READ_MORE:
                         if (recognizedLength + (in_stop - inchar_start) <= unitlen) {
@@ -262,7 +272,7 @@ public class Transcoding implements TranscodingInstruction {
                         } else {
                             in_p = inchar_start + (unitlen - recognizedLength);
                         }
-                        IP = REPORT_INVALID;
+                        ip = REPORT_INVALID;
                         continue;
                     case CALL_FUN_SIO:
                     {
@@ -270,14 +280,14 @@ public class Transcoding implements TranscodingInstruction {
                         int[] char_len = {0};
                         if (tr.maxOutput <= out_stop - out_p) {
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                            out_p += tr.func_sio.call(TRANSCODING_STATE(this), char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
-                            IP = START;
+                            out_p += tr.startToIOutput(state, in_bytes, char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
+                            ip = START;
                             continue;
                         } else {
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                            writeBuffLen = tr.func_sio.call(TRANSCODING_STATE(this), char_start, char_len[0], TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
+                            writeBuffLen = tr.startToIOutput(state, in_bytes, char_start, char_len[0], TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
-                            IP = TRANSFER_WRITEBUF;
+                            ip = TRANSFER_WRITEBUF;
                             continue;
                         }
                     }
@@ -287,26 +297,26 @@ public class Transcoding implements TranscodingInstruction {
                         int[] char_len = {0};
                         if (tr.maxOutput <= out_stop - out_p) {
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                            out_p += tr.func_so.call(TRANSCODING_STATE(this), char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
-                            IP = START;
+                            out_p += tr.startToOutput(state, in_bytes, char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
+                            ip = START;
                             continue;
                         } else {
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                            writeBuffLen = tr.func_so.call(TRANSCODING_STATE(this), char_start, char_len[0], TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
+                            writeBuffLen = tr.startToOutput(state, in_bytes, char_start, char_len[0], TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
-                            IP = TRANSFER_WRITEBUF;
+                            ip = TRANSFER_WRITEBUF;
                             continue;
                         }
                     }
                     case CALL_FUN_IO:
                         if (tr.maxOutput <= out_stop - out_p) {
-                            out_p += tr.func_io.call(this, nextInfo, out_bytes, out_p, out_stop - out_p);
-                            IP = START;
+                            out_p += tr.infoToOutput(this, nextInfo, out_bytes, out_p, out_stop - out_p);
+                            ip = START;
                             continue;
                         } else {
-                            writeBuffLen = tr.func_io.call(this, nextInfo, TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
+                            writeBuffLen = tr.infoToOutput(this, nextInfo, TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
-                            IP = TRANSFER_WRITEBUF;
+                            ip = TRANSFER_WRITEBUF;
                             continue;
                         }
                     case TRANSFER_WRITEBUF:
@@ -314,22 +324,22 @@ public class Transcoding implements TranscodingInstruction {
                             SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_TRANSFER_WRITEBUF);
                             out_bytes[out_p++] = TRANSCODING_WRITEBUF(this)[writeBuffOff++];
                         }
-                        IP = START;
+                        ip = START;
                         continue;
                     case RESUME_TRANSFER_WRITEBUF:
                         out_bytes[out_p++] = TRANSCODING_WRITEBUF(this)[writeBuffOff++];
-                        IP = TRANSFER_WRITEBUF;
+                        ip = TRANSFER_WRITEBUF;
                         continue;
                     case ONE_BYTE_1: // byte 1
                         out_bytes[out_p++] = getBT1(nextInfo);
-                        IP = START;
+                        ip = START;
                         continue;
                     case TWO_BYTE_1: // bytes 1, 2
                         out_bytes[out_p++] = getBT1(nextInfo);
                         SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, TWO_BYTE_2);
                     case TWO_BYTE_2: // byte 2
                         out_bytes[out_p++] = getBT2(nextInfo);
-                        IP = START; // continue
+                        ip = START; // continue
                         continue;
                     case FOUR_BYTE_0: // bytes 0, 1, 2, 3
                         out_bytes[out_p++] = getBT0(nextInfo);
@@ -342,7 +352,7 @@ public class Transcoding implements TranscodingInstruction {
                         SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, FOUR_BYTE_3);
                     case FOUR_BYTE_3: // byte 3
                         out_bytes[out_p++] = getBT3(nextInfo);
-                        IP = START;
+                        ip = START;
                         continue;
                     case GB_FOUR_BYTE_0: // GB4 bytes 0, 1, 2, 3
                         out_bytes[out_p++] = getGB4bt0(nextInfo);
@@ -355,7 +365,7 @@ public class Transcoding implements TranscodingInstruction {
                         SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, GB_FOUR_BYTE_3);
                     case GB_FOUR_BYTE_3: // GB4 bytes 3
                         out_bytes[out_p++] = getGB4bt3(nextInfo);
-                        IP = START;
+                        ip = START;
                         continue;
                     case STRING:
                         while (outputIndex < STR1_LENGTH(BYTE_ADDR(STR1_BYTEINDEX(nextInfo)))) {
@@ -363,12 +373,12 @@ public class Transcoding implements TranscodingInstruction {
                             out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo))];
                             outputIndex++;
                         }
-                        IP = START;
+                        ip = START;
                         continue;
                     case RESUME_STRING:
                         out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo))];
                         outputIndex++;
-                        IP = STRING;
+                        ip = STRING;
                         continue;
                     case RESUME_NOMAP:
                         out_bytes[out_p++] = TRANSCODING_WRITEBUF(this)[writeBuffOff++];
@@ -376,51 +386,51 @@ public class Transcoding implements TranscodingInstruction {
                             SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_NOMAP);
                             out_bytes[out_p++] = TRANSCODING_WRITEBUF(this)[writeBuffOff++];
                         }
-                        IP = START;
+                        ip = START;
                         continue;
                     case SELECT_TABLE:
                         while (in_p >= in_stop) {
                             if ((opt & EConvFlags.PARTIAL_INPUT) != 0) {
-                                IP = REPORT_INCOMPLETE; // incomplete
+                                ip = REPORT_INCOMPLETE; // incomplete
                                 continue;
                             }
                             SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, SELECT_TABLE);
                         }
                         nextByte = in_bytes[in_p++];
                         nextTable = nextInfo;
-                        IP = FOLLOW_BYTE;
+                        ip = FOLLOW_BYTE;
                         continue;
                     case REPORT_INVALID: // invalid:
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.InvalidByteSequence, START);
-                        IP = START;
+                        ip = START;
                         continue;
                     case REPORT_INCOMPLETE: // incomplete:
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.IncompleteInput, START);
-                        IP = START;
+                        ip = START;
                         continue;
                     case REPORT_UNDEF: // undef:
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.UndefinedConversion, START);
-                        IP = START;
+                        ip = START;
                         continue;
                     case CLEANUP:
-                        if (tr.finish_func != null) {
-                            IP = SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, Body.FINISH_FUNC);
+                        if (tr.hasFinish()) {
+                            ip = SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, Body.FINISH_FUNC);
                             continue;
                         }
-                        IP = FINISHED;
+                        ip = FINISHED;
                         continue;
                     case FINISH_FUNC:
                         if (tr.maxOutput <= out_stop - out_p) {
-                            out_p += tr.finish_func.call(TRANSCODING_STATE(this), out_bytes, out_p, out_stop - out_p);
+                            out_p += tr.finish(state, out_bytes, out_p, out_stop - out_p);
                         } else {
-                            writeBuffLen = tr.finish_func.call(TRANSCODING_STATE(this), TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
+                            writeBuffLen = tr.finish(state, TRANSCODING_WRITEBUF(this), 0, TRANSCODING_WRITEBUF_SIZE(this));
                             writeBuffOff = 0;
                             while (writeBuffOff <= writeBuffLen) {
                                 SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_CLEANUP);
                                 out_bytes[out_p++] = TRANSCODING_WRITEBUF(this)[writeBuffOff++];
                             }
                         }
-                        IP = FINISHED;
+                        ip = FINISHED;
                         continue;
                     case RESUME_CLEANUP:
                         do {
@@ -429,7 +439,7 @@ public class Transcoding implements TranscodingInstruction {
                         } while (writeBuffOff <= writeBuffLen);
                     case FINISHED:
                         while (true) {
-                            SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.Finished, RESUME_CLEANUP);
+                            SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.Finished, FINISHED);
                         }
                 }
             }
@@ -528,10 +538,6 @@ public class Transcoding implements TranscodingInstruction {
         return tc.readBuf;
     }
 
-    private static byte[] TRANSCODING_STATE(Transcoding tc) {
-        return tc.state;
-    }
-
     private static final int WORDINDEX_SHIFT_BITS = 2;
 
     private static int WORDINDEX2INFO(int widx) {
@@ -551,11 +557,11 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     private static int BL_BASE(Transcoding tc) {
-        return Transcoding.BYTE_ADDR(BYTE_LOOKUP_BASE(tc, WORD_ADDR(tc.nextTable)));
+        return BYTE_ADDR(BYTE_LOOKUP_BASE(tc, WORD_ADDR(tc.nextTable)));
     }
 
     private static int BL_INFO(Transcoding tc) {
-        return Transcoding.WORD_ADDR(BYTE_LOOKUP_INFO(tc, WORD_ADDR(tc.nextTable)));
+        return WORD_ADDR(BYTE_LOOKUP_INFO(tc, WORD_ADDR(tc.nextTable)));
     }
 
     private static int BYTE_LOOKUP_BASE(Transcoding tc, int bl) {
@@ -566,20 +572,20 @@ public class Transcoding implements TranscodingInstruction {
         return tc.transcoder.intArray[bl + 1];
     }
 
-    private static byte BL_MIN_BYTE(Transcoding tc) {
-        return tc.transcoder.byteArray[BL_BASE(tc)];
+    private static int BL_MIN_BYTE(Transcoding tc) {
+        return tc.transcoder.byteArray[BL_BASE(tc)] & 0xFF;
     }
 
-    private static byte BL_MAX_BYTE(Transcoding tc) {
-        return tc.transcoder.byteArray[BL_BASE(tc) + 1];
+    private static int BL_MAX_BYTE(Transcoding tc) {
+        return tc.transcoder.byteArray[BL_BASE(tc) + 1] & 0xFF;
     }
 
-    private static int BL_OFFSET(Transcoding tc, byte b) {
-        return tc.transcoder.byteArray[BL_BASE(tc) + 2 + b - BL_MIN_BYTE(tc)];
+    private static int BL_OFFSET(Transcoding tc, int b) {
+        return tc.transcoder.byteArray[BL_BASE(tc) + 2 + b - BL_MIN_BYTE(tc)] & 0xFF;
     }
 
     private static int BL_ACTION(Transcoding tc, byte b) {
-        return tc.transcoder.intArray[BL_INFO(tc) + BL_OFFSET(tc, b)];
+        return tc.transcoder.intArray[BL_INFO(tc) + BL_OFFSET(tc, b & 0xFF)];
     }
 
     private static class TranscodingSuspend extends RuntimeException {

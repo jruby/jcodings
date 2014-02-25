@@ -23,31 +23,31 @@ public enum EConvResult {
 
     InvalidByteSequence, UndefinedConversion, DestinationBufferFull, SourceBufferEmpty, Finished, AfterOutput, IncompleteInput;
 
-    boolean isInvalidByteSequence() {
+    public boolean isInvalidByteSequence() {
         return this == InvalidByteSequence;
     }
 
-    boolean isUndefinedConversion() {
+    public boolean isUndefinedConversion() {
         return this == UndefinedConversion;
     }
 
-    boolean isDestinationBufferFull() {
+    public boolean isDestinationBufferFull() {
         return this == DestinationBufferFull;
     }
 
-    boolean isSourceBufferEmpty() {
+    public boolean isSourceBufferEmpty() {
         return this == SourceBufferEmpty;
     }
 
-    boolean isFinished() {
+    public boolean isFinished() {
         return this == Finished;
     }
 
-    boolean isAfterOutput() {
+    public boolean isAfterOutput() {
         return this == AfterOutput;
     }
 
-    boolean isIncompleteInput() {
+    public boolean isIncompleteInput() {
         return this == IncompleteInput;
     }
 }

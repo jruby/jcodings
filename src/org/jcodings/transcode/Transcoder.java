@@ -48,7 +48,6 @@ public abstract class Transcoder implements TranscodingInstruction {
         this.maxOutput = maxOutput;
         this.compatibility = compatibility;
         this.stateSize = stateSize;
-        this.state = stateSize == 0 ? null : new byte[stateSize];
     }
 
     protected Transcoder(String source, String destination, int treeStart, String arrayKey, int inputUnitLength, int maxInput, int maxOutput,
@@ -70,36 +69,8 @@ public abstract class Transcoder implements TranscodingInstruction {
     final AsciiCompatibility compatibility;
 
     final int stateSize;
-    final byte[] state;
 
-    public interface IIFunc {
-        public int call(Transcoding tc, int nextInfo);
-    }
-
-    public interface SIFunc {
-        public int call(Transcoding tc, int charStart, int charLen);
-    }
-
-    public interface SOFunc {
-        public int call(byte[] state, int charStart, int charLen, byte[] outBytes, int outP, int outLen);
-    }
-
-    public interface IOFunc {
-        public int call(Transcoding tc, int nextInfo, byte[] outBytes, int outP, int outLen);
-    }
-
-    public interface FinishFunc {
-        public int call(byte[] inBytes, byte[] outBytes, int outP, int outLen);
-    }
-
-    final IIFunc func_ii = null;
-    final SIFunc func_si = null;
-    final SOFunc func_so = null;
-    final SOFunc func_sio = null;
-    final IOFunc func_io = null;
-    final FinishFunc finish_func = null;
-
-    public int stateInit() {
+    public int stateInit(byte[] state) {
         return 0;
     }
 
@@ -107,15 +78,15 @@ public abstract class Transcoder implements TranscodingInstruction {
         return 0;
     }
 
-    public Object infoToInfo(Object o) {
-        return o;
+    public int infoToInfo(Transcoding tc, int o) {
+        return 0;
     }
 
-    public Object startToInfo(Object o) {
-        return o;
+    public int startToInfo(Transcoding tc, int charStart, int charLen) {
+        return 0;
     }
 
-    public int infoToOutput(byte[] p, int size) {
+    public int infoToOutput(Transcoding tc, int nextInfo, byte[] p, int start, int size) {
         return 0;
     }
 
@@ -123,8 +94,12 @@ public abstract class Transcoder implements TranscodingInstruction {
         return 0;
     }
 
-    public int finish(byte[] p, int size) {
+    public int finish(byte[] state, byte[] p, int start, int size) {
         return 0;
+    }
+
+    public boolean hasFinish() {
+        return false;
     }
 
     public int resetSize() {
@@ -135,18 +110,19 @@ public abstract class Transcoder implements TranscodingInstruction {
         return 0;
     }
 
-    public int startToOutput(byte[] p, int size, Object o, byte[] p2, int size2) {
+    public int startToOutput(byte[] state, byte[] charBytes, int charStart, int size, byte[] p2, int start2, int size2) {
+        return 0;
+    }
+
+    public int startToIOutput(byte[] state, byte[] charBytes, int charStart, int size, byte[] p2, int start2, int size2) {
         return 0;
     }
 
     /* rb_transcoding_open_by_transcoder */
     public final Transcoding transcoding(int flags) {
-        Transcoding transcoding = new Transcoding(this);
-        transcoding.flags = flags;
+        Transcoding tc = new Transcoding(this, flags);
 
-        // ...
-
-        return transcoding;
+        return tc;
     }
 
     public static Transcoder load(String name) {

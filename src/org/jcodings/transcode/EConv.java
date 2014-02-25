@@ -42,7 +42,7 @@ public final class EConv implements EConvFlags {
     int numFinished;
 
     public Transcoding lastTranscoding;
-    final LastError lastError = new LastError();
+    public final LastError lastError = new LastError();
 
     public Encoding sourceEncoding, destinationEncoding;
 
@@ -74,14 +74,14 @@ public final class EConv implements EConvFlags {
         }
     }
 
-    static final class LastError {
-        EConvResult result;
-        Transcoding errorTranscoding;
-        byte[] source, destination;
+    public static final class LastError {
+        public EConvResult result;
+        public Transcoding errorTranscoding;
+        public byte[] source, destination;
 
-        byte[] errorBytes;
-        int errorBytesP, errorBytesEnd;
-        int readAgainLength;
+        public byte[] errorBytes;
+        public int errorBytesP, errorBytesEnd;
+        public int readAgainLength;
 
         void reset() {
             result = null;
@@ -141,28 +141,29 @@ public final class EConv implements EConvFlags {
     private int transSweep(byte[] in, Ptr inPtr, int inStop, byte[] out, Ptr outPtr, int outStop, int flags, int start) {
         boolean try_ = true;
 
-        final Ptr ipp = new Ptr();
-        final Ptr opp = new Ptr();
+        Ptr ipp = null;
+        Ptr opp = null;
 
         while (try_) {
+            try_ = false;
             for (int i = 0; i < numTranscoders; i++) {
                 EConvElement te = elements[i];
 
                 final int is, os;
                 final byte[] ibytes, obytes;
                 if (i == 0) {
-                    ipp.p = inPtr.p;
+                    ipp = inPtr;
                     is = inStop;
                     ibytes = in;
                 } else {
                     EConvElement previousTE = elements[i - 1];
-                    ipp.p = previousTE.dataStart; // !!!!
+                    ipp = new Ptr(previousTE.dataStart);
                     is = previousTE.dataEnd;
                     ibytes = previousTE.bytes;
                 }
 
                 if (i == numTranscoders - 1) {
-                    opp.p = outPtr.p;
+                    opp = outPtr;
                     os = outStop;
                     obytes = out;
                 } else {
@@ -173,7 +174,7 @@ public final class EConv implements EConvFlags {
                         te.dataStart = te.bufStart;
                         te.dataEnd -= off;
                     }
-                    opp.p = te.dataEnd;
+                    opp = new Ptr(te.dataEnd);
                     os = te.bufEnd;
                     obytes = te.bytes;
                 }
