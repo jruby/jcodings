@@ -70,6 +70,10 @@ public abstract class Transcoder implements TranscodingInstruction {
 
     final int stateSize;
 
+    public boolean hasStateInit() {
+        return false;
+    }
+
     public int stateInit(byte[] state) {
         return 0;
     }
@@ -78,8 +82,8 @@ public abstract class Transcoder implements TranscodingInstruction {
         return 0;
     }
 
-    public int infoToInfo(Transcoding tc, int o) {
-        return 0;
+    public int infoToInfo(byte[] state, int o) {
+        throw new RuntimeException("unimplemented infoToInfo needed in " + this);
     }
 
     public int startToInfo(byte[] state, byte[] s, int sStart, int l) {
@@ -87,19 +91,15 @@ public abstract class Transcoder implements TranscodingInstruction {
     }
 
     public int infoToOutput(byte[] state, int nextInfo, byte[] p, int start, int size) {
-        return 0;
-    }
-
-    public int startToOutput(byte[] p, int size) {
-        return 0;
-    }
-
-    public int finish(byte[] state, byte[] p, int start, int size) {
-        return 0;
+        throw new RuntimeException("unimplemented intoToOutput needed in " + this);
     }
 
     public boolean hasFinish() {
         return false;
+    }
+
+    public int finish(byte[] state, byte[] p, int start, int size) {
+        return 0;
     }
 
     public int resetSize() {
@@ -121,6 +121,10 @@ public abstract class Transcoder implements TranscodingInstruction {
     /* rb_transcoding_open_by_transcoder */
     public final Transcoding transcoding(int flags) {
         Transcoding tc = new Transcoding(this, flags);
+
+        if (hasStateInit()) {
+            stateInit(tc.state);
+        }
 
         return tc;
     }

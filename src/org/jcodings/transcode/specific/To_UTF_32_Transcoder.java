@@ -31,6 +31,11 @@ public class To_UTF_32_Transcoder extends Transcoder {
     public static final Transcoder INSTANCE = new To_UTF_32_Transcoder();
 
     @Override
+    public boolean hasStateInit() {
+        return true;
+    }
+
+    @Override
     public int stateInit(byte[] state) {
         state[0] = 0;
         return 0;

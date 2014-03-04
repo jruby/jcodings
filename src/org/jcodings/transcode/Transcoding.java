@@ -212,7 +212,7 @@ public class Transcoding implements TranscodingInstruction {
                             ip = STRING;
                             continue;
                         case FUNii:
-                            nextInfo = tr.infoToInfo(this, nextInfo);
+                            nextInfo = tr.infoToInfo(state, nextInfo);
                             ip = FOLLOW_INFO;
                             continue;
                         case FUNsi:
@@ -279,12 +279,12 @@ public class Transcoding implements TranscodingInstruction {
                     char_len = PREPARE_CHAR_LEN(char_len);
                     if (tr.maxOutput <= out_stop - out_p) {
                         char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                        out_p += tr.startToIOutput(state, in_bytes, char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
+                        out_p += tr.startToIOutput(state, in_bytes, char_start, char_len[0], nextInfo, out_bytes, out_p, out_stop - out_p);
                         ip = START;
                         continue;
                     } else {
                         char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                        writeBuffLen = tr.startToIOutput(state, in_bytes, char_start, char_len[0], writeBuf, 0, writeBuffLen);
+                        writeBuffLen = tr.startToIOutput(state, in_bytes, char_start, char_len[0], nextInfo, writeBuf, 0, writeBuffLen);
                         writeBuffOff = 0;
                         ip = TRANSFER_WRITEBUF;
                         continue;

@@ -31,6 +31,17 @@ public class From_UTF_16_Transcoder extends Transcoder {
     public static final Transcoder INSTANCE = new From_UTF_16_Transcoder();
 
     @Override
+    public boolean hasStateInit() {
+        return true;
+    }
+
+    @Override
+    public int stateInit(byte[] state) {
+        state[0] = 0;
+        return 0;
+    }
+
+    @Override
     public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
         return TranscodeFunctions.funSiFromUTF16(statep, s, sStart, l);
     }
