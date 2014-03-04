@@ -111,11 +111,11 @@ public abstract class Transcoder implements TranscodingInstruction {
     }
 
     public int startToOutput(byte[] state, byte[] charBytes, int charStart, int size, byte[] p2, int start2, int size2) {
-        return 0;
+        throw new RuntimeException("unimplemented startToOutput needed in " + this);
     }
 
     public int startToIOutput(byte[] state, byte[] charBytes, int charStart, int size, byte[] p2, int start2, int size2) {
-        return 0;
+        throw new RuntimeException("unimplemented startToOutput needed in " + this);
     }
 
     /* rb_transcoding_open_by_transcoder */
