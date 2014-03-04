@@ -31,7 +31,7 @@ public class To_UTF_16BE_Transcoder extends Transcoder {
     public static final Transcoder INSTANCE = new To_UTF_16BE_Transcoder();
 
     @Override
-    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
-        return TranscodeFunctions.funSoToUTF16BE(statep, sBytes, sStart, l, o, oStart, oSize);
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoToUTF16BE(statep, s, sStart, l, o, oStart, oSize);
     }
 }

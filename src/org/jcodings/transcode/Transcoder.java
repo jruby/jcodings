@@ -110,11 +110,11 @@ public abstract class Transcoder implements TranscodingInstruction {
         return 0;
     }
 
-    public int startToOutput(byte[] state, byte[] charBytes, int charStart, int size, byte[] p2, int start2, int size2) {
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
         throw new RuntimeException("unimplemented startToOutput needed in " + this);
     }
 
-    public int startToIOutput(byte[] state, byte[] charBytes, int charStart, int size, byte[] p2, int start2, int size2) {
+    public int startToIOutput(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int oSize) {
         throw new RuntimeException("unimplemented startToIOutput needed in " + this);
     }
 

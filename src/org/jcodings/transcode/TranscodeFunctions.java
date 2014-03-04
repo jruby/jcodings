@@ -310,8 +310,8 @@ public class TranscodeFunctions {
 
     public static int funSoSjis2Eucjp(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
         if (l == 1) {
-            o[0] = (byte)0x8E;
-            o[1] = s[sStart];
+            o[oStart] = (byte)0x8E;
+            o[oStart+1] = s[sStart];
             return 2;
         } else {
             int h, l2;
@@ -325,8 +325,77 @@ public class TranscodeFunctions {
                 l2 -= 94;
                 h += 1;
             }
-            o[0] = (byte)h;
-            o[1] = (byte)l2;
+            o[oStart] = (byte)h;
+            o[oStart+1] = (byte)l2;
+            return 2;
+        }
+    }
+
+    public static int funSoFromGB18030(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize)
+    {
+        long u = ((s[sStart] & 0xFF)-0x90)*10*126*10 + ((s[sStart+1] & 0xFF)-0x30)*126*10 + ((s[sStart+2]&0xFF)-0x81)*10 + ((s[sStart+3]&0xFF)-0x30) + 0x10000;
+        o[oStart] = (byte)(0xF0 | (u>>18));
+        o[oStart+1] = (byte)(0x80 | ((u>>12)&0x3F));
+        o[oStart+2] = (byte)(0x80 | ((u>>6)&0x3F));
+        o[oStart+3] = (byte)(0x80 | (u&0x3F));
+        return 4;
+    }
+
+    public static int funSioFromGB18030(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int osize)
+    {
+        long diff = info >> 8;
+        long u;    /* Unicode Scalar Value */
+        if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
+            u = (((s[sStart]&0xFF)*10+(s[sStart+1]&0xFF))*126+(s[sStart+2] & 0xFF))*10+(s[sStart+3]&0xFF) - diff - 0x170000;
+        }
+        else { /* GB18030 2 bytes */
+            u = (s[sStart]&0xFF)*256 + (s[sStart+1]&0xFF) + 24055 - diff;
+        }
+        o[oStart] = (byte)(0xE0 | (u>>12));
+        o[oStart+1] = (byte)(0x80 | ((u>>6)&0x3F));
+        o[oStart+2] = (byte)(0x80 | (u&0x3F));
+        return 3;
+    }
+
+    public static int funSoToGB18030(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize)
+    {
+        long u = ((s[sStart]&0x07)<<18) | ((s[sStart+1]&0x3F)<<12) | ((s[sStart+2]&0x3F)<<6) | (s[sStart+3]&0x3F);
+        u -= 0x10000;
+        o[3] = (byte)(0x30 + u%10);
+        u /= 10;
+        o[2] = (byte)(0x81 + u%126);
+        u /= 126;
+        o[1] = (byte)(0x30 + u%10);
+        o[0] = (byte)(0x90 + u/10);
+        return 4;
+    }
+
+    public static int funSioToGB18030(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int osize)
+    {
+        long diff = info >> 8;
+        long u;    /* Unicode Scalar Value */
+
+        u = ((s[sStart]&0x0F)<<12) | ((s[sStart+1]&0x3F)<<6) | (s[sStart+2]&0x3F);
+
+        if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
+            u += (diff + 0x170000);
+            u -= 1688980;
+            u += 0x2;
+            o[oStart+3] = (byte)(0x30 + u%10);
+            u /= 10;
+            u += 0x32;
+            o[oStart+2] = (byte)(0x81 + u%126);
+            u /= 126;
+            u += 0x1;
+            o[oStart+1] = (byte)(0x30 + u%10);
+            u /= 10;
+            o[oStart] = (byte)(0x81 + u);
+            return 4;
+        }
+        else { /* GB18030 2 bytes */
+            u += (diff - 24055);
+            o[oStart+1] = (byte)(u%256);
+            o[oStart] = (byte)(u/256);
             return 2;
         }
     }

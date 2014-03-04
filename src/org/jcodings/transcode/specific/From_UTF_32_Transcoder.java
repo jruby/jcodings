@@ -42,7 +42,7 @@ public class From_UTF_32_Transcoder extends Transcoder {
     }
 
     @Override
-    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
-        return TranscodeFunctions.funSoFromUTF32(statep, sBytes, sStart, l, o, oStart, oSize);
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoFromUTF32(statep, s, sStart, l, o, oStart, oSize);
     }
 }

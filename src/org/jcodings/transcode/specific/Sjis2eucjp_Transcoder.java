@@ -31,7 +31,7 @@ public class Sjis2eucjp_Transcoder extends Transcoder {
     public static final Transcoder INSTANCE = new Sjis2eucjp_Transcoder();
 
     @Override
-    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
-        return TranscodeFunctions.funSoSjis2Eucjp(statep, sBytes, sStart, l, o, oStart, oSize);
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoSjis2Eucjp(statep, s, sStart, l, o, oStart, oSize);
     }
 }

@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class To_GB18030_Transcoder extends Transcoder {
@@ -28,4 +29,14 @@ public class To_GB18030_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new To_GB18030_Transcoder();
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoToGB18030(statep, s, sStart, l, o, oStart, oSize);
+    }
+
+    @Override
+    public int startToIOutput(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSioToGB18030(statep, s, sStart, l, info, o, oStart, oSize);
+    }
 }
