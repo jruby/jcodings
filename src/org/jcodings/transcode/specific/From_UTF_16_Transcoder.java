@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class From_UTF_16_Transcoder extends Transcoder {
@@ -28,4 +29,14 @@ public class From_UTF_16_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new From_UTF_16_Transcoder();
+
+    @Override
+    public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
+        return TranscodeFunctions.funSiFromUTF16(statep, s, sStart, l);
+    }
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoFromUTF16(statep, sBytes, sStart, l, o, oStart, oSize);
+    }
 }

@@ -220,7 +220,7 @@ public class Transcoding implements TranscodingInstruction {
                             int char_start;
                             char_len = PREPARE_CHAR_LEN(char_len);
                             char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                            nextInfo = tr.startToInfo(this, char_start, char_len[0]);
+                            nextInfo = tr.startToInfo(state, in_bytes, char_start, char_len[0]);
                             ip = FOLLOW_INFO;
                             continue;
                         }
@@ -309,11 +309,11 @@ public class Transcoding implements TranscodingInstruction {
                 }
                 case CALL_FUN_IO:
                     if (tr.maxOutput <= out_stop - out_p) {
-                        out_p += tr.infoToOutput(this, nextInfo, out_bytes, out_p, out_stop - out_p);
+                        out_p += tr.infoToOutput(state, nextInfo, out_bytes, out_p, out_stop - out_p);
                         ip = START;
                         continue;
                     } else {
-                        writeBuffLen = tr.infoToOutput(this, nextInfo, writeBuf, 0, writeBuffLen);
+                        writeBuffLen = tr.infoToOutput(state, nextInfo, writeBuf, 0, writeBuffLen);
                         writeBuffOff = 0;
                         ip = TRANSFER_WRITEBUF;
                         continue;
@@ -546,7 +546,7 @@ public class Transcoding implements TranscodingInstruction {
 
     private static final int WORDINDEX_SHIFT_BITS = 2;
 
-    private static int WORDINDEX2INFO(int widx) {
+    public static int WORDINDEX2INFO(int widx) {
         return widx << WORDINDEX_SHIFT_BITS;
     }
 
