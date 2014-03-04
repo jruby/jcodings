@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class Eucjp2sjis_Transcoder extends Transcoder {
@@ -28,4 +29,9 @@ public class Eucjp2sjis_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new Eucjp2sjis_Transcoder();
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoEucjp2Sjis(statep, sBytes, sStart, l, o, oStart, oSize);
+    }
 }
