@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class To_UTF_32_Transcoder extends Transcoder {
@@ -28,4 +29,15 @@ public class To_UTF_32_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new To_UTF_32_Transcoder();
+
+    @Override
+    public int stateInit(byte[] state) {
+        state[0] = 0;
+        return 0;
+    }
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoToUTF32(statep, sBytes, sStart, l, o, oStart, oSize);
+    }
 }
