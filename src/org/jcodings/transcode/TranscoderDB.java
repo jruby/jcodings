@@ -117,12 +117,12 @@ public class TranscoderDB implements EConvFlags {
         byte[] encoding;
     }
 
-    interface SearchPathCallback {
+    public interface SearchPathCallback {
         void call(byte[] source, byte[] destination, int depth);
     }
 
     /* transcode_search_path */
-    static int searchPath(byte[] source, byte[] destination, SearchPathCallback callback) {
+    public static int searchPath(byte[] source, byte[] destination, SearchPathCallback callback) {
         if (caseInsensitiveEquals(source, destination)) return -1;
 
         ObjPtr<SearchPathQueue> bfsQueue = new ObjPtr<SearchPathQueue>();
@@ -186,6 +186,11 @@ public class TranscoderDB implements EConvFlags {
 
         } // while
         return -1;
+    }
+
+    /* rb_econv_alloc */
+    public static EConv alloc(int n) {
+        return new EConv(n);
     }
 
     /* rb_econv_open_by_transcoder_entries */

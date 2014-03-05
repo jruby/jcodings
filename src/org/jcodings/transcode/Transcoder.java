@@ -55,6 +55,14 @@ public abstract class Transcoder implements TranscodingInstruction {
         this(source.getBytes(), destination.getBytes(), treeStart, arrayKey, inputUnitLength, maxInput, maxOutput, compatibility, stateSize);
     }
 
+    public byte[] getSource() {
+        return source;
+    }
+
+    public byte[] getDestination() {
+        return destination;
+    }
+
     final byte[] source, destination;
     final int hashCode;
 

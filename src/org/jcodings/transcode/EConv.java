@@ -27,7 +27,7 @@ import org.jcodings.exception.InternalException;
 
 public final class EConv implements EConvFlags {
     int flags;
-    byte[] source, destination; // source/destination encoding names
+    public byte[] source, destination; // source/destination encoding names
 
     boolean started = false;
 
@@ -38,7 +38,7 @@ public final class EConv implements EConvFlags {
     Buffer inBuf = new Buffer();
 
     public EConvElement[] elements;
-    int numTranscoders;
+    public int numTranscoders;
     int numFinished;
 
     public Transcoding lastTranscoding;
@@ -57,13 +57,13 @@ public final class EConv implements EConvFlags {
         lastError.result = EConvResult.SourceBufferEmpty;
     }
 
-    static final class EConvElement extends Buffer {
+    public static final class EConvElement extends Buffer {
         EConvElement(Transcoding transcoding) {
             this.transcoding = transcoding;
             lastResult = EConvResult.SourceBufferEmpty;
         }
 
-        final Transcoding transcoding;
+        public final Transcoding transcoding;
         EConvResult lastResult;
 
         @Override
@@ -146,18 +146,23 @@ public final class EConv implements EConvFlags {
 
         while (try_) {
             try_ = false;
-            for (int i = 0; i < numTranscoders; i++) {
+            for (int i = start; i < numTranscoders; i++) {
                 EConvElement te = elements[i];
 
                 final int is, os;
                 final byte[] ibytes, obytes;
+                EConvElement previousTE = null;
+                boolean ippIsStart = false;
+                boolean oppIsEnd = false;
+
                 if (i == 0) {
                     ipp = inPtr;
                     is = inStop;
                     ibytes = in;
                 } else {
-                    EConvElement previousTE = elements[i - 1];
+                    previousTE = elements[i - 1];
                     ipp = new Ptr(previousTE.dataStart);
+                    ippIsStart = true;
                     is = previousTE.dataEnd;
                     ibytes = previousTE.bytes;
                 }
@@ -175,6 +180,7 @@ public final class EConv implements EConvFlags {
                         te.dataEnd -= off;
                     }
                     opp = new Ptr(te.dataEnd);
+                    oppIsEnd = true;
                     os = te.bufEnd;
                     obytes = te.bytes;
                 }
@@ -193,6 +199,9 @@ public final class EConv implements EConvFlags {
                 int oold = opp.p;
                 EConvResult res;
                 te.lastResult = res = te.transcoding.convert(ibytes, ipp, is, obytes, opp, os, f);
+
+                if (ippIsStart) previousTE.dataStart = ipp.p;
+                if (oppIsEnd) te.dataEnd = opp.p;
 
                 if (iold != ipp.p || oold != opp.p) try_ = true;
 
@@ -224,7 +233,7 @@ public final class EConv implements EConvFlags {
 
         if (elements[0].lastResult == EConvResult.AfterOutput) elements[0].lastResult = EConvResult.SourceBufferEmpty;
 
-        for (int i = numTranscoders - 1; i >= 0; i--) {
+        for (int i = numTranscoders - 1; 0 <= i; i--) {
             switch (elements[i].lastResult) {
             case InvalidByteSequence:
             case IncompleteInput:
@@ -590,7 +599,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_close */
-    void close() {
+    public void close() {
         for (int i = 0; i < numTranscoders; i++) {
             elements[i].transcoding.close();
         }
@@ -610,7 +619,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_add_converter */
-    boolean addConverter(byte[] source, byte[] destination, int n) {
+    public boolean addConverter(byte[] source, byte[] destination, int n) {
         if (started) return false;
         TranscoderDB.Entry entry = TranscoderDB.getEntry(source, destination);
         if (entry == null) return false;
