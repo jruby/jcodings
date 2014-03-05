@@ -761,4 +761,122 @@ public class TranscodeFunctions {
             return 2;
         }
     }
+
+    public static int iso2022jpKddiInit(byte[] statep) {
+        Arrays.fill(statep, G0_ASCII);
+        return 0;
+    }
+
+    public static final int iso2022jp_kddi_decoder_jisx0208_rest = Transcoding.WORDINDEX2INFO(16);
+
+    public static int funSiIso2022jpKddiDecoder(byte[] statep, byte[] s, int sStart, int l) {
+        byte[] sp = statep;
+        if (sp[0] == G0_ASCII) {
+            return TranscodingInstruction.NOMAP;
+        } else if (0x21 <= (s[sStart]&0xFF) && (s[sStart]&0xFF) <= 0x7e) {
+            return iso2022jp_kddi_decoder_jisx0208_rest;
+        } else {
+            return TranscodingInstruction.INVALID;
+        }
+    }
+
+    public static int funSoIso2022jpKddiDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        if ((s[sStart]&0xFF) == 0x1b) {
+            if (s[sStart+1] == '(') {
+                switch (s[sStart+l-1] & 0xFF) {
+                    case 'B': /* US-ASCII */
+                    case 'J': /* JIS X 0201 Roman */
+                        sp[0] = G0_ASCII;
+                        break;
+                }
+            }
+            else {
+                switch (s[sStart+l-1] & 0xFF) {
+                    case '@':
+                        sp[0] = G0_JISX0208_1978;
+                        break;
+
+                    case 'B':
+                        sp[0] = G0_JISX0208_1983;
+                        break;
+                }
+            }
+            return 0;
+        }
+        else {
+            if (sp[0] == G0_JISX0208_1978) {
+                o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1978;
+            } else {
+                o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1983;
+            }
+            o[oStart+1] = (byte)(s[sStart] | 0x80);
+            o[oStart+2] = (byte)(s[sStart+1] | 0x80);
+            return 3;
+        }
+    }
+
+    public static int funSoIso2022jpKddiEncoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int output0 = oStart;
+        int newstate;
+
+        if (l == 1)
+            newstate = G0_ASCII;
+        else if (s[0] == EMACS_MULE_LEADING_CODE_JISX0208_1978)
+            newstate = G0_JISX0208_1978;
+        else
+            newstate = G0_JISX0208_1983;
+
+        if (sp[0] != newstate) {
+            o[oStart++] = 0x1b;
+            switch (newstate) {
+                case G0_ASCII:
+                    o[oStart++] = '(';
+                    o[oStart++] = 'B';
+                    break;
+                case G0_JISX0208_1978:
+                    o[oStart++] = '$';
+                    o[oStart++] = '@';
+                    break;
+                default:
+                    o[oStart++] = '$';
+                    o[oStart++] = 'B';
+                    break;
+            }
+            sp[0] = (byte)newstate;
+        }
+
+        if (l == 1) {
+            o[oStart++] = (byte)(s[sStart] & 0x7f);
+        }
+        else {
+            o[oStart++] = (byte)(s[sStart+1] & 0x7f);
+            o[oStart++] = (byte)(s[sStart+2] & 0x7f);
+        }
+
+        return oStart - output0;
+
+    }
+
+    public static int finishIso2022jpKddiEncoder(byte[] statep, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int output0 = oStart;
+
+        if (sp[0] == G0_ASCII)
+        return 0;
+
+        o[oStart++] = 0x1b;
+        o[oStart++] = '(';
+        o[oStart++] = 'B';
+        sp[0] = G0_ASCII;
+
+        return oStart - output0;
+    }
+
+    public static int iso2022jpKddiEncoderResetSequence_size(byte[] statep) {
+        byte[] sp = statep;
+        if (sp[0] != G0_ASCII) return 3;
+        return 0;
+    }
 }

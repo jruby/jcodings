@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class Iso2022jp_kddi_decoder_Transcoder extends Transcoder {
@@ -28,4 +29,23 @@ public class Iso2022jp_kddi_decoder_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new Iso2022jp_kddi_decoder_Transcoder();
+
+    @Override
+    public int stateInit(byte[] statep) {
+        return TranscodeFunctions.iso2022jpKddiInit(statep);
+    }
+
+    @Override
+    public int stateFinish(byte[] state) {
+        return TranscodeFunctions.iso2022jpKddiInit(state);
+    }
+
+    public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
+        return TranscodeFunctions.funSiIso2022jpKddiDecoder(statep, s, sStart, l);
+    }
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoIso2022jpKddiDecoder(statep, s, sStart, l, o, oStart, oSize);
+    }
 }
