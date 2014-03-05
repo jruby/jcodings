@@ -82,23 +82,23 @@ public abstract class Transcoder implements TranscodingInstruction {
         return false;
     }
 
-    public int stateInit(byte[] state) {
+    public int stateInit(byte[] statep) {
         return 0;
     }
 
-    public int stateFinish() {
+    public int stateFinish(byte[] stateFinish) {
         return 0;
     }
 
-    public int infoToInfo(byte[] state, int o) {
+    public int infoToInfo(byte[] statep, int o) {
         throw new RuntimeException("unimplemented infoToInfo needed in " + this);
     }
 
-    public int startToInfo(byte[] state, byte[] s, int sStart, int l) {
+    public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
         throw new RuntimeException("unimplemented startToInfo needed in " + this);
     }
 
-    public int infoToOutput(byte[] state, int nextInfo, byte[] p, int start, int size) {
+    public int infoToOutput(byte[] statep, int nextInfo, byte[] p, int start, int size) {
         throw new RuntimeException("unimplemented intoToOutput needed in " + this);
     }
 
@@ -106,15 +106,15 @@ public abstract class Transcoder implements TranscodingInstruction {
         return false;
     }
 
-    public int finish(byte[] state, byte[] p, int start, int size) {
+    public int finish(byte[] statep, byte[] p, int start, int size) {
         return 0;
     }
 
-    public int resetSize() {
+    public int resetSize(byte[] statep) {
         return 0;
     }
 
-    public int resetState(byte[] p, int size) {
+    public int resetState(byte[] statep, byte[] p, int start, int size) {
         return 0;
     }
 

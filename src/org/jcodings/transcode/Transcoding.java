@@ -56,7 +56,7 @@ public class Transcoding implements TranscodingInstruction {
     EConvResult suspendResult;
 
     void close() {
-        transcoder.stateFinish();
+        transcoder.stateFinish(state);
     }
 
     private int charStart;

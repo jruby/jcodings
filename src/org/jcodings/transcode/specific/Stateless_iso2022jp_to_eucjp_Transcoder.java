@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class Stateless_iso2022jp_to_eucjp_Transcoder extends Transcoder {
@@ -28,4 +29,9 @@ public class Stateless_iso2022jp_to_eucjp_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new Stateless_iso2022jp_to_eucjp_Transcoder();
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoStatelessIso2022jpToEucjp(statep, s, sStart, l, o, oStart, oSize);
+    }
 }

@@ -36,8 +36,8 @@ public class From_UTF_16_Transcoder extends Transcoder {
     }
 
     @Override
-    public int stateInit(byte[] state) {
-        state[0] = 0;
+    public int stateInit(byte[] statep) {
+        statep[0] = 0;
         return 0;
     }
 

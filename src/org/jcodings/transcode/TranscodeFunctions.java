@@ -1,5 +1,7 @@
 package org.jcodings.transcode;
 
+import java.util.Arrays;
+
 /**
  * Created by headius on 3/4/14.
  */
@@ -396,6 +398,366 @@ public class TranscodeFunctions {
             u += (diff - 24055);
             o[oStart+1] = (byte)(u%256);
             o[oStart] = (byte)(u/256);
+            return 2;
+        }
+    }
+
+    public static int iso2022jpInit(byte[] state) {
+        Arrays.fill(state, G0_ASCII);
+        return 0;
+    }
+
+    public static final byte G0_ASCII = 0;
+    public static final byte G0_JISX0208_1978 = 1;
+    public static final byte G0_JISX0208_1983 = 2;
+    public static final byte G0_JISX0201_KATAKANA = 3;
+
+    public static final byte EMACS_MULE_LEADING_CODE_JISX0208_1978 = (byte)0220;
+    public static final byte EMACS_MULE_LEADING_CODE_JISX0208_1983 = (byte)0222;
+    
+    public static final byte[] tbl0208 = {
+                    (byte)0x21, (byte)0x23, (byte)0x21, (byte)0x56, (byte)0x21, (byte)0x57, (byte)0x21, (byte)0x22, (byte)0x21, (byte)0x26, (byte)0x25, (byte)0x72, (byte)0x25, (byte)0x21, (byte)0x25, (byte)0x23,
+                    (byte)0x25, (byte)0x25, (byte)0x25, (byte)0x27, (byte)0x25, (byte)0x29, (byte)0x25, (byte)0x63, (byte)0x25, (byte)0x65, (byte)0x25, (byte)0x67, (byte)0x25, (byte)0x43, (byte)0x21, (byte)0x3C,
+                    (byte)0x25, (byte)0x22, (byte)0x25, (byte)0x24, (byte)0x25, (byte)0x26, (byte)0x25, (byte)0x28, (byte)0x25, (byte)0x2A, (byte)0x25, (byte)0x2B, (byte)0x25, (byte)0x2D, (byte)0x25, (byte)0x2F,
+                    (byte)0x25, (byte)0x31, (byte)0x25, (byte)0x33, (byte)0x25, (byte)0x35, (byte)0x25, (byte)0x37, (byte)0x25, (byte)0x39, (byte)0x25, (byte)0x3B, (byte)0x25, (byte)0x3D, (byte)0x25, (byte)0x3F,
+                    (byte)0x25, (byte)0x41, (byte)0x25, (byte)0x44, (byte)0x25, (byte)0x46, (byte)0x25, (byte)0x48, (byte)0x25, (byte)0x4A, (byte)0x25, (byte)0x4B, (byte)0x25, (byte)0x4C, (byte)0x25, (byte)0x4D,
+                    (byte)0x25, (byte)0x4E, (byte)0x25, (byte)0x4F, (byte)0x25, (byte)0x52, (byte)0x25, (byte)0x55, (byte)0x25, (byte)0x58, (byte)0x25, (byte)0x5B, (byte)0x25, (byte)0x5E, (byte)0x25, (byte)0x5F,
+                    (byte)0x25, (byte)0x60, (byte)0x25, (byte)0x61, (byte)0x25, (byte)0x62, (byte)0x25, (byte)0x64, (byte)0x25, (byte)0x66, (byte)0x25, (byte)0x68, (byte)0x25, (byte)0x69, (byte)0x25, (byte)0x6A,
+                    (byte)0x25, (byte)0x6B, (byte)0x25, (byte)0x6C, (byte)0x25, (byte)0x6D, (byte)0x25, (byte)0x6F, (byte)0x25, (byte)0x73, (byte)0x21, (byte)0x2B, (byte)0x21, (byte)0x2C};
+
+    public static int funSoCp50220Encoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int output0 = oStart;
+        byte[] sp = statep;
+
+        if (sp[0] == G0_JISX0201_KATAKANA) {
+            int c = sp[2] & 0x7F;
+            int p = (c - 0x21) * 2;
+            byte[] pBytes = tbl0208;
+            if (sp[1] == G0_JISX0208_1983) {
+                o[oStart++] = 0x1B;
+                o[oStart++] = (byte)'$';
+                o[oStart++] = (byte)'B';
+            }
+            sp[0] = G0_JISX0208_1983;
+            o[oStart++] = pBytes[p++];
+            if (l == 2 && (s[sStart] & 0xFF) == 0x8E) {
+                if ((s[sStart+1] & 0xFF) == 0xDE) {
+                    o[oStart++] = (byte)(pBytes[p++] + 2);
+                    return oStart - output0;
+                }
+            }
+            o[oStart++] = pBytes[p];
+        }
+
+        if (l == 2 && (s[sStart] & 0xFF) == 0x8E) {
+            int p = ((s[sStart+1] & 0xFF) - 0xA1) * 2;
+            byte[] pBytes = tbl0208;
+            if ((0xA1 <= (s[sStart+1] & 0xFF) && (s[sStart+1] & 0xFF) <= 0xB5) ||
+                    (0xC5 <= (s[sStart+1] & 0xFF) && (s[sStart+1] & 0xFF) <= 0xC9) ||
+                    (0xCF <= (s[sStart+1] & 0xFF) && (s[sStart+1] & 0xFF) <= 0xDF)) {
+                if (sp[0] != G0_JISX0208_1983) {
+                    o[oStart++] = 0x1b;
+                    o[oStart++] = '$';
+                    o[oStart++] = 'B';
+                    sp[0] = G0_JISX0208_1983;
+                }
+                o[oStart++] = pBytes[p++];
+                o[oStart++] = pBytes[p];
+                return oStart - output0;
+            }
+
+            sp[2] = s[1];
+            sp[1] = sp[0];
+            sp[0] = G0_JISX0201_KATAKANA;
+            return oStart - output0;
+        }
+
+        oStart += funSoCp5022xEncoder(statep, s, sStart, l, o, oStart, oSize);
+        return oStart - output0;
+    }
+
+    public static int funSoCp5022xEncoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int output0 = oStart;
+        int newstate;
+
+        if (l == 1)
+            newstate = G0_ASCII;
+        else if (s[sStart] == 0x8E) {
+            sStart++;
+            l = 1;
+            newstate = G0_JISX0201_KATAKANA;
+        }
+        else
+            newstate = G0_JISX0208_1983;
+
+        if (sp[0] != newstate) {
+            if (newstate == G0_ASCII) {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '(';
+                o[oStart++] = 'B';
+            }
+            else if (newstate == G0_JISX0201_KATAKANA) {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '(';
+                o[oStart++] = 'I';
+            }
+            else {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '$';
+                o[oStart++] = 'B';
+            }
+            sp[0] = (byte)newstate;
+        }
+
+        if (l == 1) {
+            o[oStart++] = (byte)(s[sStart] & 0x7f);
+        }
+        else {
+            o[oStart++] = (byte)(s[sStart] & 0x7f);
+            o[oStart++] = (byte)(s[sStart+1] & 0x7f);
+        }
+
+        return oStart - output0;
+    }
+
+    public static int finishCp50220Encoder(byte[] statep, byte[] o, int oStart, int size) {
+        byte[] sp = statep;
+        int output0 = oStart;
+
+        if (sp[0] == G0_ASCII) return 0;
+
+        if (sp[0] == G0_JISX0201_KATAKANA) {
+            int c = sp[2] & 0x7F;
+            int p = (c - 0x21) * 2;
+            byte[] pBytes = tbl0208;
+            if (sp[1] != G0_JISX0208_1983) {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '$';
+                o[oStart++] = 'B';
+            }
+            sp[0] = G0_JISX0208_1983;
+            o[oStart++] = pBytes[p++];
+            o[oStart++] = pBytes[p];
+        }
+
+        o[oStart++] = 0x1b;
+        o[oStart++] = '(';
+        o[oStart++] = 'B';
+        sp[0] = G0_ASCII;
+
+        return oStart - output0;
+    }
+
+    public static int iso2022jpEncoderResetSequenceSize(byte[] statep) {
+        byte[] sp = statep;
+        if (sp[0] != G0_ASCII) return 3;
+        return 0;
+    }
+
+    public static final int iso2022jp_decoder_jisx0208_rest = Transcoding.WORDINDEX2INFO(16);
+
+    public static int funSiIso50220jpDecoder(byte[] statep, byte[] s, int sStart, int l) {
+        byte[] sp = statep;
+        if (sp[0] == G0_ASCII)
+        return TranscodingInstruction.NOMAP;
+        else if (0x21 <= s[0] && s[0] <= 0x7e)
+            return iso2022jp_decoder_jisx0208_rest;
+        else
+            return TranscodingInstruction.INVALID;
+    }
+
+    public static int funSoIso50220jpDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        if (s[sStart] == 0x1b) {
+            if (s[sStart+1] == '(') {
+                switch (s[sStart+l-1]) {
+                    case 'B':
+                    case 'J':
+                        sp[0] = G0_ASCII;
+                        break;
+                }
+            }
+            else {
+                switch (s[l-1]) {
+                    case '@':
+                        sp[0] = G0_JISX0208_1978;
+                        break;
+
+                    case 'B':
+                        sp[0] = G0_JISX0208_1983;
+                        break;
+                }
+            }
+            return 0;
+        }
+        else {
+            if (sp[0] == G0_JISX0208_1978) {
+                o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1978;
+            } else {
+                o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1983;
+            }
+            o[oStart+1] = (byte)(s[sStart] | 0x80);
+            o[oStart+2] = (byte)(s[sStart+1] | 0x80);
+            return 3;
+        }
+    }
+
+    public static int funSoStatelessIso2022jpToEucjp(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        o[oStart] = s[sStart+1];
+        o[oStart+1] = s[sStart+2];
+        return 2;
+    }
+
+    public static int funSoEucjpToStatelessIso2022jp(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1983;
+        o[oStart+1] = s[sStart];
+        o[oStart+2] = s[sStart+1];
+        return 3;
+    }
+
+    public static int funSoIso2022jpEncoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int output0 = oStart;
+        int newstate;
+
+        if (l == 1)
+            newstate = G0_ASCII;
+        else if (s[0] == EMACS_MULE_LEADING_CODE_JISX0208_1978)
+            newstate = G0_JISX0208_1978;
+        else
+            newstate = G0_JISX0208_1983;
+
+        if (sp[0] != newstate) {
+            if (newstate == G0_ASCII) {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '(';
+                o[oStart++] = 'B';
+            }
+            else if (newstate == G0_JISX0208_1978) {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '$';
+                o[oStart++] = '@';
+            }
+            else {
+                o[oStart++] = 0x1b;
+                o[oStart++] = '$';
+                o[oStart++] = 'B';
+            }
+            sp[0] = (byte)newstate;
+        }
+
+        if (l == 1) {
+            o[oStart++] = (byte)(s[sStart] & 0x7f);
+        }
+        else {
+            o[oStart++] = (byte)(s[sStart+1] & 0x7f);
+            o[oStart++] = (byte)(s[sStart+2] & 0x7f);
+        }
+
+        return oStart - output0;
+    }
+
+    public static int finishIso2022jpEncoder(byte[] statep, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int output0 = oStart;
+
+        if (sp[0] == G0_ASCII) return 0;
+
+        o[oStart++] = 0x1b;
+        o[oStart++] = '(';
+        o[oStart++] = 'B';
+        sp[0] = G0_ASCII;
+
+        return oStart - output0;
+    }
+
+    public static int funSiCp50220Decoder(byte[] statep, byte[] s, int sStart, int l) {
+        byte[] sp = statep;
+        int c;
+        int s0 = s[sStart] & 0xFF;
+        switch (sp[0]) {
+            case G0_ASCII:
+                if (0xA1 <= s0 && s0 <= 0xDF)
+                    return TranscodingInstruction.FUNso;
+                return TranscodingInstruction.NOMAP;
+            case G0_JISX0201_KATAKANA:
+                c = s[sStart] & 0x7F;
+                if (0x21 <= c && c <= 0x5f)
+                    return TranscodingInstruction.FUNso;
+                break;
+            case G0_JISX0208_1978:
+                if ((0x21 <= s0 && s0 <= 0x28) || (0x30 <= s0 && s0 <= 0x74))
+                    return iso2022jp_decoder_jisx0208_rest;
+                break;
+            case G0_JISX0208_1983:
+                if ((0x21 <= s0 && s0 <= 0x28) ||
+                        s0 == 0x2D ||
+                        (0x30 <= s0 && s0 <= 0x74) ||
+                        (0x79 <= s0 && s0 <= 0x7C)) {
+                    /* 0x7F <= s0 && s0 <= 0x92) */
+                    return iso2022jp_decoder_jisx0208_rest;
+                }
+                break;
+        }
+        return TranscodingInstruction.INVALID;
+    }
+
+    public static int funSoCp50220Decoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        switch (s[sStart]&0xFF) {
+            case 0x1b:
+                if ((s[sStart+1]&0xFF) == '(') {
+                    switch ((s[sStart+l-1]&0xFF)) {
+                        case 'B':
+                        case 'J':
+                            sp[0] = G0_ASCII;
+                            break;
+                        case 'I':
+                            sp[0] = G0_JISX0201_KATAKANA;
+                            break;
+                    }
+                }
+                else {
+                    switch (s[sStart+l-1]&0xFF) {
+                        case '@':
+                            sp[0] = G0_JISX0208_1978;
+                            break;
+                        case 'B':
+                            sp[0] = G0_JISX0208_1983;
+                            break;
+                    }
+                }
+                return 0;
+            case 0x0E:
+                sp[0] = G0_JISX0201_KATAKANA;
+                return 0;
+            case 0x0F:
+                sp[0] = G0_ASCII;
+                return 0;
+            default:
+                if (sp[0] == G0_JISX0201_KATAKANA ||
+                    (0xA1 <= (s[sStart]&0xFF) && (s[sStart]&0xFF) <= 0xDF && sp[0] == G0_ASCII)) {
+                o[oStart] = (byte)0x8E;
+                o[oStart+1] = (byte)(s[sStart] | 0x80);
+            }
+        /* else if (0x7F == s[0] && s[0] <= 0x88) { */
+            /* User Defined Characters */
+            /* o[n++] = s[0] | 0xE0; */
+            /* o[n++] = s[1] | 0x80; */
+        /* else if (0x89 <= s[0] && s[0] <= 0x92) { */
+            /* User Defined Characters 2 */
+            /* o[n++] = 0x8f; */
+            /* o[n++] = s[0] + 0x6C; */
+            /* o[n++] = s[1] | 0x80; */
+        /* } */
+            else {
+            /* JIS X 0208 */
+            /* NEC Special Characters */
+            /* NEC-selected IBM extended Characters */
+                o[oStart] = (byte)(s[sStart] | 0x80);
+                o[oStart+1] = (byte)(s[sStart+1] | 0x80);
+            }
             return 2;
         }
     }

@@ -20,6 +20,7 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class Cp50221_decoder_Transcoder extends Transcoder {
@@ -28,4 +29,23 @@ public class Cp50221_decoder_Transcoder extends Transcoder {
     }
 
     public static final Transcoder INSTANCE = new Cp50221_decoder_Transcoder();
+
+    @Override
+    public int stateInit(byte[] statep) {
+        return TranscodeFunctions.iso2022jpInit(statep);
+    }
+
+    @Override
+    public int stateFinish(byte[] state) {
+        return TranscodeFunctions.iso2022jpInit(state);
+    }
+
+    public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
+        return TranscodeFunctions.funSiCp50220Decoder(statep, s, sStart, l);
+    }
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoCp50220Decoder(statep, s, sStart, l, o, oStart, oSize);
+    }
 }
