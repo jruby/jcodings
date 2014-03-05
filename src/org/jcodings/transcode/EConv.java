@@ -31,9 +31,9 @@ public final class EConv implements EConvFlags {
 
     boolean started = false;
 
-    byte[] replacementString;
-    int replacementLength;
-    byte[] replacementEncoding;
+    public byte[] replacementString;
+    public int replacementLength;
+    public byte[] replacementEncoding;
 
     Buffer inBuf = new Buffer();
 
@@ -701,7 +701,7 @@ public final class EConv implements EConvFlags {
     /* more_output_buffer */
 
     /* make_replacement */
-    private int makeReplacement() {
+    public int makeReplacement() {
         if (replacementString != null) return 0;
 
         byte[] insEnc = encodingToInsertOutput();
@@ -738,7 +738,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_set_replacement */
-    int setReplacement(byte[] str, int p, int len, byte[] encname) {
+    public int setReplacement(byte[] str, int p, int len, byte[] encname) {
         byte[] encname2 = encodingToInsertOutput();
 
         final byte[] str2;

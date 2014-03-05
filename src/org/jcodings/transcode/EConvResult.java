@@ -50,4 +50,26 @@ public enum EConvResult {
     public boolean isIncompleteInput() {
         return this == IncompleteInput;
     }
+
+    public String symbolicName() {
+        return symbolicName;
+    }
+
+    private final String symbolicName;
+
+    {
+        String name = name();
+        StringBuilder snakeName = new StringBuilder(name.length() + 3);
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if (Character.isLowerCase(c)) {
+                snakeName.append(c);
+                continue;
+            } else if (Character.isUpperCase(c)) {
+                if (i > 0) snakeName.append('_');
+                snakeName.append(Character.toLowerCase(c));
+            }
+        }
+        this.symbolicName = snakeName.toString().intern();
+    }
 }
