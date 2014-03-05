@@ -177,10 +177,15 @@ public class EncodingDB {
     public static void set_base(String name, String original) {
     }
 
+    public static Entry dummy(byte[] bytes) {
+        if (encodings.get(bytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_ALREADY_REGISTERED, new String(bytes));
+        Entry entry = new Entry(bytes);
+        encodings.putDirect(bytes, entry);
+        return entry;
+    }
+
     public static void dummy(String name) {
-        byte[]bytes = name.getBytes();
-        if (encodings.get(bytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_ALREADY_REGISTERED, name);
-        encodings.putDirect(bytes, new Entry(bytes));
+        dummy(name.getBytes());
     }
 
     static {
