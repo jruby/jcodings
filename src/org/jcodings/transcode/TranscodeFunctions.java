@@ -1,5 +1,7 @@
 package org.jcodings.transcode;
 
+import org.jcodings.transcode.specific.From_UTF8_MAC_Transcoder;
+
 import java.util.Arrays;
 
 /**
@@ -878,5 +880,216 @@ public class TranscodeFunctions {
         byte[] sp = statep;
         if (sp[0] != G0_ASCII) return 3;
         return 0;
+    }
+
+    public static int fromUtf8MacInit(byte[] state) {
+        bufClear(state);
+        return 0;
+    }
+
+    private static final int STATUS_BUF_SIZE = 16;
+    private static final int TOTAL_BUF_SIZE = STATUS_BUF_SIZE + 4 * 2; // status buf plus two ints
+
+    private static final int bufBytesize(byte[] p) {
+        return (bufEnd(p) - bufBeg(p) + STATUS_BUF_SIZE) % STATUS_BUF_SIZE;
+    }
+
+    private static final byte bufAt(byte[] sp, int pos) {
+        pos += bufBeg(sp);
+        pos %= STATUS_BUF_SIZE;
+        return sp[pos];
+    }
+
+    private static void bufClear(byte[] state) {
+        assert state.length >= 24 : "UTF8-MAC state not large enough";
+
+        Arrays.fill(state, (byte)0);
+    }
+
+    public static int funSoFromUtf8Mac(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int n = 0;
+
+        switch (l) {
+            case 1:
+                n = fromUtf8MacFinish(sp, o, oStart, oSize);
+                break;
+            case 4:
+                n = fromUtf8MacFinish(sp, o, oStart, oSize);
+                o[oStart+n++] = s[sStart++];
+                o[oStart+n++] = s[sStart++];
+                o[oStart+n++] = s[sStart++];
+                o[oStart+n++] = s[sStart++];
+                return n;
+        }
+
+        bufPush(sp, s, sStart, l);
+        n += bufApply(sp, o, oStart);
+        return n;
+    }
+
+    private static void bufPush(byte[] sp, byte[] p, int pStart, int l) {
+        int pend = pStart + l;
+        while (pStart < pend) {
+            /* if (sp->beg == sp->end) */
+            sp[bufEndPostInc(sp)] = p[pStart++];
+            bufEnd(sp, bufEnd(sp) % STATUS_BUF_SIZE);
+        }
+    }
+
+    private static final int from_utf8_mac_nfc2 = Transcoding.WORDINDEX2INFO(35578);
+
+    private static int bufApply(byte[] sp, byte[] o, int oStart) {
+        int n = 0;
+        int next_info;
+        byte[] buf = {0,0,0};
+        if (bufBytesize(sp) < 3 || (bufBytesize(sp) == 3 && bufAt(sp, 0) >= 0xE0)) {
+        /* char length is less than 2 */
+            return 0;
+        }
+        next_info = getInfo(from_utf8_mac_nfc2, sp);
+        switch (next_info & 0x1F) {
+            case TranscodingInstruction.THREEbt:
+            case TranscodingInstruction.TWObt:
+                buf[n++] = Transcoding.getBT1(next_info);
+                buf[n++] = Transcoding.getBT2(next_info);
+                if (TranscodingInstruction.THREEbt == (next_info & 0x1F))
+                    buf[n++] = Transcoding.getBT3(next_info);
+                bufClear(sp);
+                bufPush(sp, buf, 0, n);
+                return 0;
+            default:
+                return bufOutputChar(sp, o, oStart);
+        }
+    }
+
+    private static boolean bufEmpty(byte[] sp) {
+        return bufBeg(sp) == bufEnd(sp);
+    }
+
+    private static byte bufShift(byte[] sp) {
+        /* if (sp->beg == sp->end) */
+        int c = sp[bufBegPostInc(sp)];
+        bufBeg(sp, bufBeg(sp) % STATUS_BUF_SIZE);
+        return (byte)c;
+    }
+
+    private static boolean utf8Trailbyte(byte c) {
+        return (c & 0xC0) == 0x80;
+    }
+
+    private static int bufOutputChar(byte[] sp, byte[] o, int oStart) {
+        int n = 0;
+        while (!bufEmpty(sp)) {
+            o[oStart+n++] = (byte)bufShift(sp);
+            if (!utf8Trailbyte(sp[bufBeg(sp)])) break;
+        }
+        return n;
+    }
+
+    private static int getInfo(int nextInfo, byte[] sp) {
+        int pos = 0;
+        while (pos < bufBytesize(sp)) {
+            int next_byte = bufAt(sp, pos++) & 0xFF;
+            if (next_byte < UTF8MAC_BL_MIN_BYTE(nextInfo) || UTF8MAC_BL_MAX_BYTE(nextInfo) < next_byte)
+                nextInfo = TranscodingInstruction.INVALID;
+            else {
+                nextInfo = UTF8MAC_BL_ACTION(nextInfo, (byte)next_byte);
+            }
+            if ((nextInfo & 3) == 0) continue;
+            break;
+        }
+        return nextInfo;
+    }
+
+    public static int UTF8MAC_BL_MIN_BYTE(int nextInfo) {
+        return From_UTF8_MAC_Transcoder.INSTANCE.byteArray[BL_BASE(nextInfo)] & 0xFF;
+    }
+
+    public static int UTF8MAC_BL_MAX_BYTE(int nextInfo) {
+        return From_UTF8_MAC_Transcoder.INSTANCE.byteArray[BL_BASE(nextInfo) + 1] & 0xFF;
+    }
+
+    public static int UTF8MAC_BL_OFFSET(int nextInfo, int b) {
+        return From_UTF8_MAC_Transcoder.INSTANCE.byteArray[BL_BASE(nextInfo) + 2 + b - UTF8MAC_BL_MIN_BYTE(nextInfo)] & 0xFF;
+    }
+
+    public static int UTF8MAC_BL_ACTION(int nextInfo, byte b) {
+        return From_UTF8_MAC_Transcoder.INSTANCE.intArray[BL_INFO(nextInfo) + UTF8MAC_BL_OFFSET(nextInfo, b & 0xFF)];
+    }
+
+    private static int BL_BASE(int nextInfo) {
+        return BYTE_ADDR(BYTE_LOOKUP_BASE(WORD_ADDR(nextInfo)));
+    }
+
+    private static int BL_INFO(int nextInfo) {
+        return WORD_ADDR(BYTE_LOOKUP_INFO(WORD_ADDR(nextInfo)));
+    }
+
+    private static int BYTE_ADDR(int index) {
+        return index;
+    }
+
+    private static int WORD_ADDR(int index) {
+        return TranscodeTableSupport.INFO2WORDINDEX(index);
+    }
+
+    private static int BYTE_LOOKUP_BASE(int bl) {
+        return From_UTF8_MAC_Transcoder.INSTANCE.intArray[bl];
+    }
+
+    private static int BYTE_LOOKUP_INFO(int bl) {
+        return From_UTF8_MAC_Transcoder.INSTANCE.intArray[bl + 1];
+    }
+
+    private static int bufInt(byte[] statep, int base) {
+        return (statep[base] << 24) | (statep[base+1] << 16) | (statep[base+2] << 8) | (statep[base+3]);
+    }
+
+    private static void bufInt(byte[] statep, int base, int val) {
+        statep[base] = (byte)((val >>> 24) & 0xFF);
+        statep[base+1] = (byte)((val >>> 16) & 0xFF);
+        statep[base+2] = (byte)((val >>> 8) & 0xFF);
+        statep[base+3] = (byte)(val & 0xFF);
+    }
+
+    private static int bufBeg(byte[] statep) {
+        return bufInt(statep, 16);
+    }
+
+    private static int bufEnd(byte[] statep) {
+        return bufInt(statep, 20);
+    }
+
+    private static void bufBeg(byte[] statep, int end) {
+        bufInt(statep, 16, end);
+    }
+
+    private static void bufEnd(byte[] statep, int end) {
+        bufInt(statep, 20, end);
+    }
+
+    private static int bufEndPostInc(byte[] statep) {
+        int end = bufInt(statep, 20);
+        bufInt(statep, 20, end + 1);
+        return end;
+    }
+
+    private static int bufBegPostInc(byte[] statep) {
+        int beg = bufInt(statep, 16);
+        bufInt(statep, 16, beg + 1);
+        return beg;
+    }
+
+    public static int fromUtf8MacFinish(byte[] statep, byte[] p, int start, int size) {
+        return bufOutputAll(statep, p, start);
+    }
+
+    private static int bufOutputAll(byte[] sp, byte[] o, int oStart) {
+        int n = 0;
+        while (!bufEmpty(sp)) {
+            o[oStart+n++] = bufShift(sp);
+        }
+        return n;
     }
 }

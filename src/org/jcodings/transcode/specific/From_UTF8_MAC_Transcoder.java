@@ -20,12 +20,38 @@
 package org.jcodings.transcode.specific;
 
 import org.jcodings.transcode.AsciiCompatibility;
+import org.jcodings.transcode.TranscodeFunctions;
 import org.jcodings.transcode.Transcoder;
 
 public class From_UTF8_MAC_Transcoder extends Transcoder {
     protected From_UTF8_MAC_Transcoder () {
-        super("UTF8-MAC", "UTF-8", 4928, "Utf8Mac", 1, 4, 10, AsciiCompatibility.ENCODER, 0);
+        super("UTF8-MAC", "UTF-8", 4928, "Utf8Mac", 1, 4, 10, AsciiCompatibility.ENCODER, 24);
     }
 
     public static final Transcoder INSTANCE = new From_UTF8_MAC_Transcoder();
+
+    @Override
+    public int stateInit(byte[] statep) {
+        return TranscodeFunctions.fromUtf8MacInit(statep);
+    }
+
+    @Override
+    public int stateFinish(byte[] state) {
+        return TranscodeFunctions.fromUtf8MacInit(state);
+    }
+
+    @Override
+    public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        return TranscodeFunctions.funSoFromUtf8Mac(statep, s, sStart, l, o, oStart, oSize);
+    }
+
+    @Override
+    public boolean hasFinish() {
+        return true;
+    }
+
+    @Override
+    public int finish(byte[] statep, byte[] p, int start, int size) {
+        return TranscodeFunctions.fromUtf8MacFinish(statep, p, start, size);
+    }
 }

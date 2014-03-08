@@ -578,19 +578,19 @@ public class Transcoding implements TranscodingInstruction {
         return tc.transcoder.intArray[bl + 1];
     }
 
-    private static int BL_MIN_BYTE(Transcoding tc) {
+    public static int BL_MIN_BYTE(Transcoding tc) {
         return tc.transcoder.byteArray[BL_BASE(tc)] & 0xFF;
     }
 
-    private static int BL_MAX_BYTE(Transcoding tc) {
+    public static int BL_MAX_BYTE(Transcoding tc) {
         return tc.transcoder.byteArray[BL_BASE(tc) + 1] & 0xFF;
     }
 
-    private static int BL_OFFSET(Transcoding tc, int b) {
+    public static int BL_OFFSET(Transcoding tc, int b) {
         return tc.transcoder.byteArray[BL_BASE(tc) + 2 + b - BL_MIN_BYTE(tc)] & 0xFF;
     }
 
-    private static int BL_ACTION(Transcoding tc, byte b) {
+    public static int BL_ACTION(Transcoding tc, byte b) {
         return tc.transcoder.intArray[BL_INFO(tc) + BL_OFFSET(tc, b & 0xFF)];
     }
 
