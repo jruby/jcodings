@@ -1092,4 +1092,37 @@ public class TranscodeFunctions {
         }
         return n;
     }
+
+    private static final int END = 0;
+    private static final int NORMAL = 1;
+
+    public static int escapeXmlAttrQuoteInit(byte[] statep) {
+        statep[0] = END;
+        return 0;
+    }
+
+    public static int funSoEscapeXmlAttrQuote(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int n = 0;
+        if (sp[0] == END) {
+            sp[0] = NORMAL;
+            o[n++] = '"';
+        }
+        o[n++] = s[0];
+        return n;
+    }
+
+    public static int escapeXmlAttrQuoteFinish(byte[] statep, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int n = 0;
+
+        if (sp[0] == END) {
+            o[oStart+n++] = '"';
+        }
+
+        o[oStart+n++] = '"';
+        sp[0] = END;
+
+        return n;
+    }
 }
