@@ -199,6 +199,7 @@ public class Transcoding implements TranscodingInstruction {
                         case THREEbt:
                             if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, FOUR_BYTE_1)) return suspendResult;
                             ip = FOUR_BYTE_1;
+                            continue;
                         case FOURbt:
                             if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, FOUR_BYTE_0)) return suspendResult;
                             ip = FOUR_BYTE_0;
