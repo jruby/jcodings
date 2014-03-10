@@ -341,7 +341,7 @@ public final class EConv implements EConvFlags {
             byte[] data = elem.bytes;
             if (dataStart != dataEnd) {
                 if (outStop - outPtr.p < dataEnd - dataStart) {
-                    len = outStop = outPtr.p;
+                    len = outStop - outPtr.p;
                     System.arraycopy(data, dataStart, out, outPtr.p, len);
                     outPtr.p = outStop;
                     elem.dataStart += len;
@@ -501,6 +501,7 @@ public final class EConv implements EConvFlags {
         Ptr sp = new Ptr(strP);
         Ptr dp = new Ptr(dstLen);
         EConvResult res = ec.convert(str, sp, strP + strLen, dstStr, dp, dstBufSize, 0);
+        dstLen = dp.p;
 
         while (res.isDestinationBufferFull()) {
             dstBufSize *= 2;

@@ -164,7 +164,7 @@ public class Transcoding implements TranscodingInstruction {
                             int p = inchar_start;
                             writeBuffOff = 0;
                             while (p < in_p) {
-                                writeBuf[writeBuffOff] = in_bytes[p++];
+                                writeBuf[writeBuffOff++] = in_bytes[p++];
                             }
                             writeBuffLen = writeBuffOff;
                             writeBuffOff = 0;
