@@ -525,7 +525,7 @@ public final class EConv implements EConvFlags {
     /* rb_econv_insert_output */
     int insertOuput(byte[] str, int strLen, byte[] strEncoding) {
         byte[] insertEncoding = encodingToInsertOutput();
-        byte[] insertBuf = new byte[4096];
+        byte[] insertBuf = null;
 
         started = true;
 
@@ -538,8 +538,10 @@ public final class EConv implements EConvFlags {
             insertLen = strLen;
         } else {
             Ptr insertLenP = new Ptr();
+            insertBuf = new byte[4096];
             insertStr = allocateConvertedString(strEncoding, insertEncoding, str, 0, strLen, insertBuf, insertLenP);
             insertLen = insertLenP.p;
+            if (insertStr == null) return -1;
         }
 
         int need = insertLen;
@@ -570,12 +572,12 @@ public final class EConv implements EConvFlags {
         if (buf == null) {
             buf = new Buffer();
             buf.allocate(need);
-        } else if (need > (buf.bufEnd - buf.dataEnd)) {
+        } else if ((buf.bufEnd - buf.dataEnd) < need) {
             System.arraycopy(buf.bytes, buf.dataStart, buf.bytes, buf.bufStart, buf.dataEnd - buf.dataStart);
             buf.dataEnd = buf.dataStart + (buf.dataEnd - buf.dataStart);
             buf.dataStart = buf.bufStart;
 
-            if (need > (buf.bufEnd - buf.dataEnd)) {
+            if ((buf.bufEnd - buf.dataEnd) < need) {
                 int s = (buf.dataEnd - buf.bufStart) + need;
                 if (need > s) return -1;
                 byte[] tmp = new byte[s];
@@ -588,7 +590,7 @@ public final class EConv implements EConvFlags {
             }
         }
 
-        System.arraycopy(insertStr, 0, buf, buf.dataEnd, insertLen);
+        System.arraycopy(insertStr, 0, buf.bytes, buf.dataEnd, insertLen);
         buf.dataEnd += insertLen;
         if (transcoding != null && transcoding.transcoder.compatibility.isEncoder()) {
             System.arraycopy(transcoding.readBuf, transcoding.recognizedLength, buf, buf.dataEnd, transcoding.readAgainLength);
