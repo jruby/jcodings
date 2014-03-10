@@ -226,12 +226,18 @@ public class TranscoderDB implements EConvFlags {
                 }
             });
             entries = lentries.p;
+            if (numTrans < 0) {
+                return null;
+            }
         }
-        EConv econv = openByTranscoderEntries(numTrans, entries);
-        econv.flags = ecflags;
-        econv.source = source;
-        econv.destination = destination;
-        return econv;
+
+        EConv ec = openByTranscoderEntries(numTrans, entries);
+        if (ec == null) return null;
+
+        ec.flags = ecflags;
+        ec.source = source;
+        ec.destination = destination;
+        return ec;
     }
 
     /* decorator_names */
@@ -266,16 +272,17 @@ public class TranscoderDB implements EConvFlags {
         byte[][] decorators = new byte[MAX_ECFLAGS_DECORATORS][];
         int num = decoratorNames(ecflags, decorators);
         if (num == -1) return null;
-        EConv econv = open0(source, destination, ecflags & ERROR_HANDLER_MASK);
+        EConv ec = open0(source, destination, ecflags & ERROR_HANDLER_MASK);
+        if (ec == null) return null;
 
         for (int i = 0; i < num; i++) {
-            if (!econv.decorateAtLast(decorators[i])) {
-                econv.close();
+            if (!ec.decorateAtLast(decorators[i])) {
+                ec.close();
                 return null;
             }
         }
-        econv.flags |= ecflags & ~ERROR_HANDLER_MASK;
-        return econv;
+        ec.flags |= ecflags & ~ERROR_HANDLER_MASK;
+        return ec;
     }
 
     /* rb_econv_asciicompat_encoding */// ?? to transcoderdb ?
