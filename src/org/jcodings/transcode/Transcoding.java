@@ -111,12 +111,12 @@ public class Transcoding implements TranscodingInstruction {
 
     Ptr inPos;
 
-    private static int STR1_LENGTH(int byteaddr) {
-        return byteaddr + 4;
+    private static int STR1_LENGTH(byte[] bytes, int byteaddr) {
+        return bytes[byteaddr] + 4;
     }
 
-    private static int STR1_BYTEINDEX(int byteaddr) {
-        return byteaddr >> 6;
+    private static int STR1_BYTEINDEX(int w) {
+        return w >> 6;
     }
 
     private EConvResult transcodeRestartable0(final byte[] in_bytes, Ptr in_pos, final byte[] out_bytes, Ptr out_pos, int in_stop, int out_stop, int opt) {
@@ -141,6 +141,7 @@ public class Transcoding implements TranscodingInstruction {
                     nextTable = tr.treeStart;
 
                     if (0 == SUSPEND_AFTER_OUTPUT(this, opt, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_AFTER_OUTPUT)) return suspendResult;
+                    // fall through
                 case RESUME_AFTER_OUTPUT:
                     if (in_stop <= in_p) {
                         if ((opt & EConvFlags.PARTIAL_INPUT) == 0) {
@@ -150,14 +151,17 @@ public class Transcoding implements TranscodingInstruction {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, START);
                         return suspendResult;
                     }
+                    // fall through
                 case NEXTBYTE:
                     nextByte = in_bytes[in_p++];
+                    // fall through
                 case FOLLOW_BYTE: // follow_byte:
                     if ((nextByte & 0xFF) < BL_MIN_BYTE(this) || BL_MAX_BYTE(this) < (nextByte & 0xFF)) {
                         nextInfo = INVALID;
                     } else {
                         nextInfo = BL_ACTION(this, nextByte);
                     }
+                    // fall through
                 case FOLLOW_INFO: // follow_info:
                     switch (nextInfo & 0x1F) {
                         case NOMAP:
@@ -271,12 +275,16 @@ public class Transcoding implements TranscodingInstruction {
                     }
                     ip = REPORT_INVALID;
                     continue;
+
+                // func_sio logic
+
                 case RESUME_CALL_FUN_SIO:
                     // continue loop from SUSPEND_OBUF
                     while (out_stop - out_p < 1) {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_CALL_FUN_SIO);
                         return suspendResult;
                     }
+                    // fall through
                 case CALL_FUN_SIO:
                 {
                     int char_start;
@@ -294,12 +302,16 @@ public class Transcoding implements TranscodingInstruction {
                         continue;
                     }
                 }
+
+                // func_so logic
+
                 case RESUME_CALL_FUN_SO:
                     // continue loop from SUSPEND_OBUF
                     while (out_stop - out_p < 1) {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_CALL_FUN_SO);
                         return suspendResult;
                     }
+                    // fall through
                 case CALL_FUN_SO:
                 {
                     int char_start;
@@ -317,6 +329,9 @@ public class Transcoding implements TranscodingInstruction {
                         continue;
                     }
                 }
+
+                // func_io logic
+
                 case CALL_FUN_IO:
                     if (tr.maxOutput <= out_stop - out_p) {
                         out_p += tr.infoToOutput(state, nextInfo, out_bytes, out_p, out_stop - out_p);
@@ -325,9 +340,11 @@ public class Transcoding implements TranscodingInstruction {
                     } else {
                         writeBuffLen = tr.infoToOutput(state, nextInfo, writeBuf, 0, writeBuffLen);
                         writeBuffOff = 0;
-                        ip = TRANSFER_WRITEBUF;
-                        continue;
+                        // fall through
                     }
+
+                // write buffer transfer logic
+
                 case TRANSFER_WRITEBUF:
                     while (writeBuffOff < writeBuffLen) {
                         if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_TRANSFER_WRITEBUF)) return suspendResult;
@@ -344,12 +361,16 @@ public class Transcoding implements TranscodingInstruction {
                     out_bytes[out_p++] = writeBuf[writeBuffOff++];
                     ip = TRANSFER_WRITEBUF;
                     continue;
+
+                // bytes from info logic
+
                 case RESUME_ONE_BYTE_1: // byte 1
                     // continue loop from SUSPEND_OBUF
                     while (out_stop - out_p < 1) {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_ONE_BYTE_1);
                         return suspendResult;
                     }
+                    // fall through
                 case ONE_BYTE_1: // byte 1
                     out_bytes[out_p++] = getBT1(nextInfo);
                     ip = START;
@@ -357,6 +378,7 @@ public class Transcoding implements TranscodingInstruction {
                 case TWO_BYTE_1: // bytes 1, 2
                     out_bytes[out_p++] = getBT1(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_TWO_BYTE_1)) return suspendResult;
+                    // fall through
                 case TWO_BYTE_2: // byte 2
                     out_bytes[out_p++] = getBT2(nextInfo);
                     ip = START; // continue
@@ -372,12 +394,15 @@ public class Transcoding implements TranscodingInstruction {
                 case FOUR_BYTE_0: // bytes 0, 1, 2, 3
                     out_bytes[out_p++] = getBT0(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FOUR_BYTE_1)) return suspendResult;
+                    // fall through
                 case FOUR_BYTE_1: // bytes 1, 2, 3
                     out_bytes[out_p++] = getBT1(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FOUR_BYTE_2)) return suspendResult;
+                    // fall through
                 case FOUR_BYTE_2: // bytes 2, 3
                     out_bytes[out_p++] = getBT2(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FOUR_BYTE_3)) return suspendResult;
+                    // fall through
                 case FOUR_BYTE_3: // byte 3
                     out_bytes[out_p++] = getBT3(nextInfo);
                     ip = START;
@@ -417,12 +442,15 @@ public class Transcoding implements TranscodingInstruction {
                 case GB_FOUR_BYTE_0: // GB4 bytes 0, 1, 2, 3
                     out_bytes[out_p++] = getGB4bt0(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_GB_FOUR_BYTE_0)) return suspendResult;
+                    // fall through
                 case GB_FOUR_BYTE_1: // GB4 bytes 1, 2, 3
                     out_bytes[out_p++] = getGB4bt1(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_GB_FOUR_BYTE_1)) return suspendResult;
+                    // fall through
                 case GB_FOUR_BYTE_2: // GB4 bytes 2, 3
                     out_bytes[out_p++] = getGB4bt2(nextInfo);
                     if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_GB_FOUR_BYTE_2)) return suspendResult;
+                    // fall through
                 case GB_FOUR_BYTE_3: // GB4 bytes 3
                     out_bytes[out_p++] = getGB4bt3(nextInfo);
                     ip = START;
@@ -451,23 +479,22 @@ public class Transcoding implements TranscodingInstruction {
                     }
                     ip = GB_FOUR_BYTE_2;
                     continue;
-                case STRING:
-                    while (outputIndex < STR1_LENGTH(BYTE_ADDR(STR1_BYTEINDEX(nextInfo)))) {
-                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_STRING)) return suspendResult;
-                        out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo))];
-                        outputIndex++;
-                    }
-                    ip = START;
-                    continue;
                 case RESUME_STRING:
                     // continue loop from SUSPEND_OBUF
                     while (out_stop - out_p < 1) {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_STRING);
                         return suspendResult;
                     }
-                    out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo))];
+                    out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo)) + 1 + outputIndex];
                     outputIndex++;
-                    ip = STRING;
+                    // fall through
+                case STRING:
+                    while (outputIndex < STR1_LENGTH(transcoder.byteArray, BYTE_ADDR(STR1_BYTEINDEX(nextInfo)))) {
+                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_STRING)) return suspendResult;
+                        out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo)) + 1 + outputIndex];
+                        outputIndex++;
+                    }
+                    ip = START;
                     continue;
                 case RESUME_NOMAP:
                     // continue loop from SUSPEND_OBUF
@@ -504,30 +531,11 @@ public class Transcoding implements TranscodingInstruction {
                 case REPORT_UNDEF: // undef:
                     SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.UndefinedConversion, START);
                     return suspendResult;
-                case CLEANUP:
-                    if (tr.hasFinish()) {
-                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_CLEANUP)) return suspendResult;
-                        ip = FINISH_FUNC;
-                        continue;
-                    }
-                    ip = FINISHED;
-                    continue;
                 case RESUME_CLEANUP:
                     // continue loop from SUSPEND_OBUF
                     while (out_stop - out_p < 1) {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_CLEANUP);
                         return suspendResult;
-                    }
-                case FINISH_FUNC:
-                    if (tr.maxOutput <= out_stop - out_p) {
-                        out_p += tr.finish(state, out_bytes, out_p, out_stop - out_p);
-                    } else {
-                        writeBuffLen = tr.finish(state, writeBuf, 0, writeBuffLen);
-                        writeBuffOff = 0;
-                        while (writeBuffOff <= writeBuffLen) {
-                            if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
-                            out_bytes[out_p++] = writeBuf[writeBuffOff++];
-                        }
                     }
                     ip = FINISHED;
                     continue;
@@ -542,11 +550,30 @@ public class Transcoding implements TranscodingInstruction {
                         if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
                         out_bytes[out_p++] = writeBuf[writeBuffOff++];
                     }
-                case FINISHED:
-                    while (true) {
-                        SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.Finished, FINISHED);
-                        return suspendResult;
+                    ip = FINISHED;
+                    continue;
+                case CLEANUP:
+                    if (tr.hasFinish()) {
+                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_CLEANUP)) return suspendResult;
+                        ip = FINISH_FUNC;
+                        continue;
                     }
+                    // fall through
+                case FINISH_FUNC:
+                    if (tr.maxOutput <= out_stop - out_p) {
+                        out_p += tr.finish(state, out_bytes, out_p, out_stop - out_p);
+                    } else {
+                        writeBuffLen = tr.finish(state, writeBuf, 0, writeBuffLen);
+                        writeBuffOff = 0;
+                        while (writeBuffOff <= writeBuffLen) {
+                            if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
+                            out_bytes[out_p++] = writeBuf[writeBuffOff++];
+                        }
+                    }
+                    // fall through
+                case FINISHED:
+                    SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.Finished, FINISHED);
+                    return suspendResult;
             }
         }
     }
