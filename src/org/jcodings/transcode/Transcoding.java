@@ -133,7 +133,7 @@ public class Transcoding implements TranscodingInstruction {
 
         int ip = resumePosition;
 
-        while (true) {
+        MACHINE: while (true) {
             switch (ip) {
                 case START:
                     inchar_start = in_p;
@@ -264,9 +264,6 @@ public class Transcoding implements TranscodingInstruction {
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, READ_MORE);
                         return suspendResult;
                     }
-                    ip = RESUME_READ_MORE;
-                    continue;
-                case RESUME_READ_MORE:
                     if (recognizedLength + (in_stop - inchar_start) <= unitlen) {
                         in_p = in_stop;
                     } else {
@@ -487,9 +484,9 @@ public class Transcoding implements TranscodingInstruction {
                     continue;
                 case SELECT_TABLE:
                     while (in_p >= in_stop) {
-                        if ((opt & EConvFlags.PARTIAL_INPUT) != 0) {
+                        if ((opt & EConvFlags.PARTIAL_INPUT) == 0) {
                             ip = REPORT_INCOMPLETE; // incomplete
-                            continue;
+                            continue MACHINE;
                         }
                         SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.SourceBufferEmpty, SELECT_TABLE);
                         return suspendResult;

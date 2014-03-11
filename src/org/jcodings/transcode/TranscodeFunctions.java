@@ -53,21 +53,24 @@ public class TranscodeFunctions {
 
     public static int funSoToUTF16LE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
         int s0 = s[sStart] & 0xFF;
-        int s1 = s[sStart+1] & 0xFF;
+        int s1;
         if ((s0 & 0x80) == 0) {
             o[oStart + 1] = (byte)0x00;
             o[oStart] = (byte)s0;
             return 2;
         } else if ((s0 & 0xE0) == 0xC0) {
+            s1 = s[sStart+1] & 0xFF;
             o[oStart + 1] = (byte)((s0 >> 2) & 0x07);
             o[oStart] = (byte)(((s0 & 0x03) << 6) | (s1 & 0x3F));
             return 2;
         } else if ((s0 & 0xF0) == 0xE0) {
+            s1 = s[sStart+1] & 0xFF;
             int s2 = s[sStart+2] & 0xFF;
             o[oStart + 1] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
             o[oStart] = (byte)((s1 << 6) | (s1 ^ 0x80));
             return 2;
         } else {
+            s1 = s[sStart+1] & 0xFF;
             int s2 = s[sStart+2] & 0xFF;
             int s3 = s[sStart+3] & 0xFF;
             int w = (((s0 & 0x07) << 2) | ((s1 >> 4) & 0x03)) - 1;
@@ -185,7 +188,6 @@ public class TranscodeFunctions {
     }
 
     public static int funSoFromUTF32BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        int s0 = s[sStart+0] & 0xFF;
         int s1 = s[sStart+1] & 0xFF;
         int s2 = s[sStart+2] & 0xFF;
         int s3 = s[sStart+3] & 0xFF;
@@ -468,7 +470,7 @@ public class TranscodeFunctions {
     }
 
     public static int iso2022jpInit(byte[] state) {
-        Arrays.fill(state, G0_ASCII);
+        state[0] = G0_ASCII;
         return 0;
     }
 
@@ -511,7 +513,10 @@ public class TranscodeFunctions {
             s1 = s[sStart+1] & 0xFF;
             if (l == 2 && s0 == 0x8E) {
                 if (s1 == 0xDE) {
-                    o[oStart++] = (byte)(pBytes[p++] + 2);
+                    o[oStart++] = (byte)(pBytes[p] + 1);
+                    return oStart - output0;
+                } else if (s1 == 0xDF && (0x4A <= c && c <= 0x4E)) {
+                    o[oStart++] = (byte)(pBytes[p] + 2);
                     return oStart - output0;
                 }
             }
@@ -641,7 +646,7 @@ public class TranscodeFunctions {
             return TranscodingInstruction.INVALID;
     }
 
-    public static int funSoIso50220jpDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+    public static int funSoIso2022jpDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
         int s0 = s[sStart] & 0xFF;
         int s1 = s[sStart+1] & 0xFF;
         byte[] sp = statep;
@@ -758,7 +763,7 @@ public class TranscodeFunctions {
                     return TranscodingInstruction.FUNso;
                 return TranscodingInstruction.NOMAP;
             case G0_JISX0201_KATAKANA:
-                c = s[sStart] & 0x7F;
+                c = s0 & 0x7F;
                 if (0x21 <= c && c <= 0x5f)
                     return TranscodingInstruction.FUNso;
                 break;
@@ -1220,10 +1225,6 @@ public class TranscodeFunctions {
 
     private static byte NEWLINE_STATE(byte[] sp) {
         return sp[0];
-    }
-
-    private static byte NEWLINE_NEWLINES_MET(byte[] sp) {
-        return sp[1];
     }
 
     private static void NEWLINE_STATE(byte[] sp, int b) {
