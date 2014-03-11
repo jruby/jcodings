@@ -1250,7 +1250,7 @@ public class TranscodeFunctions {
                 len = 1;
                 sp[1] |= MET_CR;
             }
-            if (s[sStart] == '\r') {
+            if (s0 == '\r') {
                 sp[0] = NEWLINE_JUST_AFTER_CR;
             }
             else {
