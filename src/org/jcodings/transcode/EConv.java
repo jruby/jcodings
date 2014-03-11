@@ -593,7 +593,7 @@ public final class EConv implements EConvFlags {
         System.arraycopy(insertStr, 0, buf.bytes, buf.dataEnd, insertLen);
         buf.dataEnd += insertLen;
         if (transcoding != null && transcoding.transcoder.compatibility.isEncoder()) {
-            System.arraycopy(transcoding.readBuf, transcoding.recognizedLength, buf, buf.dataEnd, transcoding.readAgainLength);
+            System.arraycopy(transcoding.readBuf, transcoding.recognizedLength, buf.bytes, buf.dataEnd, transcoding.readAgainLength);
             buf.dataEnd = transcoding.readAgainLength;
             transcoding.readAgainLength = 0;
         }
