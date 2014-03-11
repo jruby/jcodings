@@ -52,7 +52,7 @@ public final class EConv implements EConvFlags {
     }
 
     EConv(int nHint) {
-        if (nHint < 0) nHint = 1;
+        if (nHint <= 0) nHint = 1;
         elements = new EConvElement[nHint];
         lastError.result = EConvResult.SourceBufferEmpty;
     }
