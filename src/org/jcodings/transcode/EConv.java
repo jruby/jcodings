@@ -458,7 +458,7 @@ public final class EConv implements EConvFlags {
             u += (utfBytes[p + 3]);
             byte[] charrefbuf = String.format("&#x%X;", u).getBytes(); // use faster sprintf ??
 
-            if (insertOuput(charrefbuf, charrefbuf.length, "US-ASCII".getBytes()) == -1) return -1;
+            if (insertOutput(charrefbuf, charrefbuf.length, "US-ASCII".getBytes()) == -1) return -1;
 
             p += 4;
             utfLen -= 4;
@@ -523,7 +523,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_insert_output */
-    int insertOuput(byte[] str, int strLen, byte[] strEncoding) {
+    public int insertOutput(byte[] str, int strLen, byte[] strEncoding) {
         byte[] insertEncoding = encodingToInsertOutput();
         byte[] insertBuf = null;
 
@@ -769,7 +769,7 @@ public final class EConv implements EConvFlags {
     /* output_replacement_character */
     int outputReplacementCharacter() {
         if (makeReplacement() == -1) return -1;
-        if (insertOuput(replacementString, replacementLength, replacementEncoding) == -1) return -1;
+        if (insertOutput(replacementString, replacementLength, replacementEncoding) == -1) return -1;
         return 0;
     }
 
