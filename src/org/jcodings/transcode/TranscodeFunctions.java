@@ -24,24 +24,27 @@ public class TranscodeFunctions {
 
     public static int funSoToUTF16BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
         int s0 = s[sStart] & 0xFF;
+        int s1, s2, s3;
+
         if ((s0 & 0x80) == 0) {
             o[oStart] = 0x00;
-            o[oStart + 1] = s[sStart];
+            o[oStart + 1] = (byte)s0;
             return 2;
         } else if ((s0 & 0xE0) == 0xC0) {
+            s1 = s[sStart+1] & 0xFF;
             o[oStart] = (byte)((s0 >> 2) & 0x07);
-            o[oStart + 1] = (byte)(((s0 & 0x03) << 6) | (s[sStart + 1] & 0x3F));
+            o[oStart + 1] = (byte)(((s0 & 0x03) << 6) | (s1 & 0x3F));
             return 2;
         } else if ((s0 & 0xF0) == 0xE0) {
-            int s1 = s[sStart+1] & 0xFF;
-            int s2 = s[sStart+2] & 0xFF;
+            s1 = s[sStart+1] & 0xFF;
+            s2 = s[sStart+2] & 0xFF;
             o[oStart] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
             o[oStart + 1] = (byte)((s1 << 6) | (s2 ^ 0x80));
             return 2;
         } else {
-            int s1 = s[sStart+1] & 0xFF;
-            int s2 = s[sStart+2] & 0xFF;
-            int s3 = s[sStart+3] & 0xFF;
+            s1 = s[sStart+1] & 0xFF;
+            s2 = s[sStart+2] & 0xFF;
+            s3 = s[sStart+3] & 0xFF;
             int w = (((s0 & 0x07) << 2) | ((s1 >> 4) & 0x03)) - 1;
             o[oStart] = (byte)(0xD8 | (w >> 2));
             o[oStart + 1] = (byte)((w << 6) | ((s1 & 0x0F) << 2) | ((s2 >> 4) - 8));
@@ -96,22 +99,30 @@ public class TranscodeFunctions {
     }
 
     public static int funSoToUTF32BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+        int s0 = s[sStart] & 0xFF;
+        int s1, s2, s3;
         o[oStart] = 0;
-        if ((s[sStart] & 0x80) == 0) {
+        if ((s0 & 0x80) == 0) {
             o[oStart + 1] = o[oStart + 2] = 0x00;
-            o[oStart + 3] = s[sStart];
-        } else if ((s[sStart] & 0xE0) == 0xC0) {
+            o[oStart + 3] = (byte)s0;
+        } else if ((s0 & 0xE0) == 0xC0) {
+            s1 = s[sStart+1] & 0xFF;
             o[oStart + 1] = 0x00;
-            o[oStart + 2] = (byte)(((s[sStart] & 0xFF) >> 2) & 0x07);
-            o[oStart + 3] = (byte)(((s[sStart] & 0x03) << 6) | (s[sStart + 1] & 0x3F));
-        } else if ((s[sStart] & 0xF0) == 0xE0) {
+            o[oStart + 2] = (byte)((s0 >> 2) & 0x07);
+            o[oStart + 3] = (byte)(((s0 & 0x03) << 6) | (s1 & 0x3F));
+        } else if ((s0 & 0xF0) == 0xE0) {
+            s1 = s[sStart+1] & 0xFF;
+            s2 = s[sStart+2] & 0xFF;
             o[oStart + 1] = 0x00;
-            o[oStart + 2] = (byte)((s[sStart] << 4) | (((s[sStart + 1] & 0xFF) >> 2) ^ 0x20));
-            o[oStart + 3] = (byte)((s[sStart + 1] << 6) | (s[sStart + 2] ^ 0x80));
+            o[oStart + 2] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
+            o[oStart + 3] = (byte)((s1 << 6) | (s2 ^ 0x80));
         } else {
-            o[oStart + 1] = (byte)(((s[sStart] & 0x07) << 2) | (((s[sStart + 1] & 0xFF) >> 4) & 0x03));
-            o[oStart + 2] = (byte)(((s[sStart + 1] & 0x0F) << 4) | (((s[sStart + 2] & 0xFF) >> 2) & 0x0F));
-            o[oStart + 3] = (byte)(((s[sStart + 2] & 0x03) << 6) | (s[sStart + 3] & 0x3F));
+            s1 = s[sStart+1] & 0xFF;
+            s2 = s[sStart+2] & 0xFF;
+            s3 = s[sStart+3] & 0xFF;
+            o[oStart + 1] = (byte)(((s0 & 0x07) << 2) | ((s2 >> 4) & 0x03));
+            o[oStart + 2] = (byte)(((s1 & 0x0F) << 4) | ((s2 >> 2) & 0x0F));
+            o[oStart + 3] = (byte)(((s2 & 0x03) << 6) | (s3 & 0x3F));
         }
         return 4;
     }
@@ -292,6 +303,7 @@ public class TranscodeFunctions {
     public static int funSoFromUTF16BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
         int s0 = s[sStart] & 0xFF;
         int s1 = s[sStart+1] & 0xFF;
+        int s2, s3;
         if (s0 == 0 && s1 < 0x80) {
             o[oStart] = (byte)s1;
             return 1;
@@ -305,11 +317,13 @@ public class TranscodeFunctions {
             o[oStart + 2] = (byte)(0x80 | (s1 & 0x3F));
             return 3;
         } else {
+            s2 = s[sStart+2] & 0xFF;
+            s3 = s[sStart+3] & 0xFF;
             long u = (((s0 & 0x03) << 2) | (s1 >> 6)) + 1;
             o[oStart] = (byte)(0xF0 | (u >> 2));
             o[oStart + 1] = (byte)(0x80 | ((u & 0x03) << 4) | (((s1 >> 2) & 0x0F)));
-            o[oStart + 2] = (byte)(0x80 | ((s1 & 0x03) << 4) | ((s[sStart + 2] & 0x03) << 2) | ((s[sStart + 3] & 0xFF) >> 6));
-            o[oStart + 3] = (byte)(0x80 | (s[sStart + 3] & 0x3F));
+            o[oStart + 2] = (byte)(0x80 | ((s1 & 0x03) << 4) | ((s2 & 0x03) << 2) | (s3 >> 6));
+            o[oStart + 3] = (byte)(0x80 | (s3 & 0x3F));
             return 4;
         }
     }
@@ -324,7 +338,7 @@ public class TranscodeFunctions {
             o[oStart] = (byte)(0xC0 | (s1 << 2) | (s0 >> 6));
             o[oStart + 1] = (byte)(0x80 | (s0 & 0x3F));
             return 2;
-        } else if ((s[sStart + 1] & 0xF8) != 0xD8) {
+        } else if ((s1 & 0xF8) != 0xD8) {
             o[oStart] = (byte)(0xE0 | (s1 >> 4));
             o[oStart + 1] = (byte)(0x80 | ((s1 & 0x0F) << 2) | (s0 >> 6));
             o[oStart + 2] = (byte)(0x80 | (s0 & 0x3F));
@@ -637,10 +651,11 @@ public class TranscodeFunctions {
     public static final int iso2022jp_decoder_jisx0208_rest = Transcoding.WORDINDEX2INFO(16);
 
     public static int funSiIso50220jpDecoder(byte[] statep, byte[] s, int sStart, int l) {
+        int s0 = s[sStart] & 0xFF;
         byte[] sp = statep;
         if (sp[0] == G0_ASCII)
         return TranscodingInstruction.NOMAP;
-        else if (0x21 <= s[sStart] && s[sStart] <= 0x7e)
+        else if (0x21 <= s0 && s0 <= 0x7e)
             return iso2022jp_decoder_jisx0208_rest;
         else
             return TranscodingInstruction.INVALID;
@@ -855,7 +870,7 @@ public class TranscodeFunctions {
     public static final int iso2022jp_kddi_decoder_jisx0208_rest = Transcoding.WORDINDEX2INFO(16);
 
     public static int funSiIso2022jpKddiDecoder(byte[] statep, byte[] s, int sStart, int l) {
-        int s0 = s[sStart]&0xFF;
+        int s0 = s[sStart] & 0xFF;
         byte[] sp = statep;
         if (sp[0] == G0_ASCII) {
             return TranscodingInstruction.NOMAP;
@@ -867,8 +882,8 @@ public class TranscodeFunctions {
     }
 
     public static int funSoIso2022jpKddiDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
-        int s0 = s[sStart]&0xFF;
-        int s1 = s[sStart+1]&0xFF;
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
         byte[] sp = statep;
         if (s0 == 0x1b) {
             if (s1 == '(') {
