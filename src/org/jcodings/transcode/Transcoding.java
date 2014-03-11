@@ -345,13 +345,6 @@ public class Transcoding implements TranscodingInstruction {
 
                 // write buffer transfer logic
 
-                case TRANSFER_WRITEBUF:
-                    while (writeBuffOff < writeBuffLen) {
-                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_TRANSFER_WRITEBUF)) return suspendResult;
-                        out_bytes[out_p++] = writeBuf[writeBuffOff++];
-                    }
-                    ip = START;
-                    continue;
                 case RESUME_TRANSFER_WRITEBUF:
                     // continue loop from SUSPEND_OBUF
                     while (out_stop - out_p < 1) {
@@ -359,7 +352,13 @@ public class Transcoding implements TranscodingInstruction {
                         return suspendResult;
                     }
                     out_bytes[out_p++] = writeBuf[writeBuffOff++];
-                    ip = TRANSFER_WRITEBUF;
+                    // fall through
+                case TRANSFER_WRITEBUF:
+                    while (writeBuffOff < writeBuffLen) {
+                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_TRANSFER_WRITEBUF)) return suspendResult;
+                        out_bytes[out_p++] = writeBuf[writeBuffOff++];
+                    }
+                    ip = START;
                     continue;
 
                 // bytes from info logic
@@ -541,24 +540,14 @@ public class Transcoding implements TranscodingInstruction {
                     continue;
                 case RESUME_FINISH_WRITEBUF:
                     // continue loop from SUSPEND_OBUF
-                    while (out_stop - out_p < 1) {
-                        SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_FINISH_WRITEBUF);
-                        return suspendResult;
-                    }
+                    if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
                     out_bytes[out_p++] = writeBuf[writeBuffOff++];
                     while (writeBuffOff <= writeBuffLen) {
-                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
+                        if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
                         out_bytes[out_p++] = writeBuf[writeBuffOff++];
                     }
                     ip = FINISHED;
                     continue;
-                case CLEANUP:
-                    if (tr.hasFinish()) {
-                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_CLEANUP)) return suspendResult;
-                        ip = FINISH_FUNC;
-                        continue;
-                    }
-                    // fall through
                 case FINISH_FUNC:
                     if (tr.maxOutput <= out_stop - out_p) {
                         out_p += tr.finish(state, out_bytes, out_p, out_stop - out_p);
@@ -566,9 +555,17 @@ public class Transcoding implements TranscodingInstruction {
                         writeBuffLen = tr.finish(state, writeBuf, 0, writeBuffLen);
                         writeBuffOff = 0;
                         while (writeBuffOff <= writeBuffLen) {
-                            if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
+                            if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
                             out_bytes[out_p++] = writeBuf[writeBuffOff++];
                         }
+                    }
+                    ip = FINISHED;
+                    continue;
+                case CLEANUP:
+                    if (tr.hasFinish()) {
+                        if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_CLEANUP)) return suspendResult;
+                        ip = FINISH_FUNC;
+                        continue;
                     }
                     // fall through
                 case FINISHED:
