@@ -31,6 +31,8 @@ public interface EConvFlags {
 
     final int DECORATOR_MASK                  = 0x0000ff00;
     final int NEWLINE_DECORATOR_MASK          = 0x00003f00;
+    final int NEWLINE_DECORATOR_READ_MASK      = 0x00000f00;
+    final int NEWLINE_DECORATOR_WRITE_MASK     = 0x00003000;
 
     final int UNIVERSAL_NEWLINE_DECORATOR     = 0x00000100;
     final int CRLF_NEWLINE_DECORATOR          = 0x00001000;
