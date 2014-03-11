@@ -1093,19 +1093,19 @@ public class TranscodeFunctions {
         return n;
     }
 
-    private static final int END = 0;
-    private static final int NORMAL = 1;
+    private static final int ESCAPE_END = 0;
+    private static final int ESCAPE_NORMAL = 1;
 
     public static int escapeXmlAttrQuoteInit(byte[] statep) {
-        statep[0] = END;
+        statep[0] = ESCAPE_END;
         return 0;
     }
 
     public static int funSoEscapeXmlAttrQuote(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
         byte[] sp = statep;
         int n = 0;
-        if (sp[0] == END) {
-            sp[0] = NORMAL;
+        if (sp[0] == ESCAPE_END) {
+            sp[0] = ESCAPE_NORMAL;
             o[n++] = '"';
         }
         o[n++] = s[0];
@@ -1116,13 +1116,75 @@ public class TranscodeFunctions {
         byte[] sp = statep;
         int n = 0;
 
-        if (sp[0] == END) {
+        if (sp[0] == ESCAPE_END) {
             o[oStart+n++] = '"';
         }
 
         o[oStart+n++] = '"';
-        sp[0] = END;
+        sp[0] = ESCAPE_END;
 
         return n;
+    }
+
+    private static final int NEWLINE_NORMAL = 0;
+    private static final int NEWLINE_JUST_AFTER_CR = 1;
+
+    private static final int MET_LF = 0x01;
+    private static final int MET_CRLF = 0x02;
+    private static final int MET_CR = 0x04;
+
+    public static int universalNewlineInit(byte[] statep) {
+        byte[] sp = statep;
+        // STATE = NORMAL
+        sp[0] = 0;
+        // NEWLINES_MET = 0
+        sp[1] = 0;
+
+        return 0;
+    }
+
+    public static int funSoUniversalNewline(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int len;
+        if (s[sStart] == '\n') {
+            if (sp[0] == NEWLINE_NORMAL) {
+                sp[1] |= MET_LF;
+            }
+            else { /* JUST_AFTER_CR */
+                sp[1] |= MET_CRLF;
+            }
+            o[oStart] = '\n';
+            len = 1;
+            sp[0] = NEWLINE_NORMAL;
+        }
+        else {
+            len = 0;
+            if (sp[0] == NEWLINE_JUST_AFTER_CR) {
+                o[oStart] = '\n';
+                len = 1;
+                sp[1] |= MET_CR;
+            }
+            if (s[0] == '\r') {
+                sp[0] = NEWLINE_JUST_AFTER_CR;
+            }
+            else {
+                o[oStart+len++] = s[sStart];
+                sp[1] = NEWLINE_NORMAL;
+            }
+        }
+
+        return len;
+    }
+
+    public static int universalNewlineFinish(byte[] statep, byte[] o, int oStart, int oSize) {
+        byte[] sp = statep;
+        int len = 0;
+        if (sp[0] == NEWLINE_JUST_AFTER_CR) {
+            o[oStart] = '\n';
+            len = 1;
+            sp[1] |= MET_CR;
+        }
+        sp[0] = NEWLINE_NORMAL;
+        return len;
     }
 }
