@@ -1218,12 +1218,30 @@ public class TranscodeFunctions {
     private static final int MET_CRLF = 0x02;
     private static final int MET_CR = 0x04;
 
+    private static byte NEWLINE_STATE(byte[] sp) {
+        return sp[0];
+    }
+
+    private static byte NEWLINE_NEWLINES_MET(byte[] sp) {
+        return sp[1];
+    }
+
+    private static void NEWLINE_STATE(byte[] sp, int b) {
+        sp[0] = (byte)b;
+    }
+
+    private static void NEWLINE_NEWLINES_MET(byte[] sp, int b) {
+        sp[1] = (byte)b;
+    }
+
+    private static void NEWLINE_NEWLINES_MET_or_mask(byte[] sp, int b) {
+        sp[1] |= (byte)b;
+    }
+
     public static int universalNewlineInit(byte[] statep) {
         byte[] sp = statep;
-        // STATE = NORMAL
-        sp[0] = 0;
-        // NEWLINES_MET = 0
-        sp[1] = 0;
+        NEWLINE_STATE(sp, NEWLINE_NORMAL);
+        NEWLINE_NEWLINES_MET(sp, 0);
 
         return 0;
     }
@@ -1233,29 +1251,29 @@ public class TranscodeFunctions {
         byte[] sp = statep;
         int len;
         if (s0 == '\n') {
-            if (sp[0] == NEWLINE_NORMAL) {
-                sp[1] |= MET_LF;
+            if (NEWLINE_STATE(sp) == NEWLINE_NORMAL) {
+                NEWLINE_NEWLINES_MET_or_mask(sp, MET_LF);
             }
             else { /* JUST_AFTER_CR */
-                sp[1] |= MET_CRLF;
+                NEWLINE_NEWLINES_MET_or_mask(sp, MET_CRLF);
             }
             o[oStart] = '\n';
             len = 1;
-            sp[0] = NEWLINE_NORMAL;
+            NEWLINE_STATE(sp, NEWLINE_NORMAL);
         }
         else {
             len = 0;
-            if (sp[0] == NEWLINE_JUST_AFTER_CR) {
+            if (NEWLINE_STATE(sp) == NEWLINE_JUST_AFTER_CR) {
                 o[oStart] = '\n';
                 len = 1;
-                sp[1] |= MET_CR;
+                NEWLINE_NEWLINES_MET_or_mask(sp, MET_CR);
             }
             if (s0 == '\r') {
-                sp[0] = NEWLINE_JUST_AFTER_CR;
+                NEWLINE_STATE(sp, NEWLINE_JUST_AFTER_CR);
             }
             else {
                 o[oStart+len++] = (byte)s0;
-                sp[1] = NEWLINE_NORMAL;
+                NEWLINE_STATE(sp, NEWLINE_NORMAL);
             }
         }
 
@@ -1265,10 +1283,10 @@ public class TranscodeFunctions {
     public static int universalNewlineFinish(byte[] statep, byte[] o, int oStart, int oSize) {
         byte[] sp = statep;
         int len = 0;
-        if (sp[0] == NEWLINE_JUST_AFTER_CR) {
+        if (NEWLINE_STATE(sp) == NEWLINE_JUST_AFTER_CR) {
             o[oStart] = '\n';
             len = 1;
-            sp[1] |= MET_CR;
+            NEWLINE_NEWLINES_MET_or_mask(sp, MET_CR);
         }
         sp[0] = NEWLINE_NORMAL;
         return len;
