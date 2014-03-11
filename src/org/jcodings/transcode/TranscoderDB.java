@@ -254,33 +254,36 @@ public class TranscoderDB implements EConvFlags {
 
         if (((ecflags & XML_TEXT_DECORATOR) != 0) && ((ecflags & XML_ATTR_CONTENT_DECORATOR) != 0)) return -1;
 
-        int num = 0;
+        int numDecorators = 0;
 
-        if ((ecflags & XML_TEXT_DECORATOR) != 0) decorators[num++] = "xml_text_escape".getBytes();
-        if ((ecflags & XML_ATTR_CONTENT_DECORATOR) != 0) decorators[num++] = "xml_attr_content_escape".getBytes();
-        if ((ecflags & XML_ATTR_QUOTE_DECORATOR) != 0) decorators[num++] = "xml_attr_quote".getBytes();
+        if ((ecflags & XML_TEXT_DECORATOR) != 0) decorators[numDecorators++] = "xml_text_escape".getBytes();
+        if ((ecflags & XML_ATTR_CONTENT_DECORATOR) != 0) decorators[numDecorators++] = "xml_attr_content_escape".getBytes();
+        if ((ecflags & XML_ATTR_QUOTE_DECORATOR) != 0) decorators[numDecorators++] = "xml_attr_quote".getBytes();
 
-        if ((ecflags & CRLF_NEWLINE_DECORATOR) != 0) decorators[num++] = "crlf_newline".getBytes();
-        if ((ecflags & CR_NEWLINE_DECORATOR) != 0) decorators[num++] = "cr_newline".getBytes();
-        if ((ecflags & UNIVERSAL_NEWLINE_DECORATOR) != 0) decorators[num] = "universal_newline".getBytes();
+        if ((ecflags & CRLF_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "crlf_newline".getBytes();
+        if ((ecflags & CR_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "cr_newline".getBytes();
+        if ((ecflags & UNIVERSAL_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "universal_newline".getBytes();
 
-        return num;
+        return numDecorators;
     }
 
     /* rb_econv_open */
     public static EConv open(byte[] source, byte[] destination, int ecflags) {
         byte[][] decorators = new byte[MAX_ECFLAGS_DECORATORS][];
-        int num = decoratorNames(ecflags, decorators);
-        if (num == -1) return null;
+
+        int numDecorators = decoratorNames(ecflags, decorators);
+        if (numDecorators == -1) return null;
+
         EConv ec = open0(source, destination, ecflags & ERROR_HANDLER_MASK);
         if (ec == null) return null;
 
-        for (int i = 0; i < num; i++) {
+        for (int i = 0; i < numDecorators; i++) {
             if (!ec.decorateAtLast(decorators[i])) {
                 ec.close();
                 return null;
             }
         }
+
         ec.flags |= ecflags & ~ERROR_HANDLER_MASK;
         return ec;
     }
