@@ -105,7 +105,7 @@ public class TranscodeFunctions {
     public static int funSoToUTF32LE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
         o[oStart] = 0;
         if ((s[sStart] & 0x80) == 0) {
-            o[oStart + 2] = o[1] = 0x00;
+            o[oStart + 2] = o[oStart+1] = 0x00;
             o[oStart + 3] = s[sStart];
         } else if ((s[sStart] & 0xE0) == 0xC0) {
             o[oStart + 2] = 0x00;
@@ -296,7 +296,7 @@ public class TranscodeFunctions {
 
     public static int funSoEucjp2Sjis(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
         if (s[sStart] == 0x8e) {
-            o[0] = s[sStart + 1];
+            o[oStart] = s[sStart + 1];
             return 1;
         } else {
             int h, m, l2;
@@ -306,8 +306,8 @@ public class TranscodeFunctions {
             l2 = (s[sStart + 1] & 0xFF) - m * 94 - 3;
             if (0x7f <= l2)
                 l++;
-            o[0] = (byte)h;
-            o[1] = (byte)l2;
+            o[oStart] = (byte)h;
+            o[oStart+1] = (byte)l2;
             return 2;
         }
     }
@@ -365,12 +365,12 @@ public class TranscodeFunctions {
     {
         long u = ((s[sStart]&0x07)<<18) | ((s[sStart+1]&0x3F)<<12) | ((s[sStart+2]&0x3F)<<6) | (s[sStart+3]&0x3F);
         u -= 0x10000;
-        o[3] = (byte)(0x30 + u%10);
+        o[oStart+3] = (byte)(0x30 + u%10);
         u /= 10;
-        o[2] = (byte)(0x81 + u%126);
+        o[oStart+2] = (byte)(0x81 + u%126);
         u /= 126;
-        o[1] = (byte)(0x30 + u%10);
-        o[0] = (byte)(0x90 + u/10);
+        o[oStart+1] = (byte)(0x30 + u%10);
+        o[oStart] = (byte)(0x90 + u/10);
         return 4;
     }
 
@@ -468,7 +468,7 @@ public class TranscodeFunctions {
                 return oStart - output0;
             }
 
-            sp[2] = s[1];
+            sp[2] = s[sStart+1];
             sp[1] = sp[0];
             sp[0] = G0_JISX0201_KATAKANA;
             return oStart - output0;
@@ -563,7 +563,7 @@ public class TranscodeFunctions {
         byte[] sp = statep;
         if (sp[0] == G0_ASCII)
         return TranscodingInstruction.NOMAP;
-        else if (0x21 <= s[0] && s[0] <= 0x7e)
+        else if (0x21 <= s[sStart] && s[sStart] <= 0x7e)
             return iso2022jp_decoder_jisx0208_rest;
         else
             return TranscodingInstruction.INVALID;
@@ -625,7 +625,7 @@ public class TranscodeFunctions {
 
         if (l == 1)
             newstate = G0_ASCII;
-        else if (s[0] == EMACS_MULE_LEADING_CODE_JISX0208_1978)
+        else if (s[sStart] == EMACS_MULE_LEADING_CODE_JISX0208_1978)
             newstate = G0_JISX0208_1978;
         else
             newstate = G0_JISX0208_1983;
@@ -825,7 +825,7 @@ public class TranscodeFunctions {
 
         if (l == 1)
             newstate = G0_ASCII;
-        else if (s[0] == EMACS_MULE_LEADING_CODE_JISX0208_1978)
+        else if (s[sStart] == EMACS_MULE_LEADING_CODE_JISX0208_1978)
             newstate = G0_JISX0208_1978;
         else
             newstate = G0_JISX0208_1983;
@@ -1108,7 +1108,7 @@ public class TranscodeFunctions {
             sp[0] = ESCAPE_NORMAL;
             o[n++] = '"';
         }
-        o[n++] = s[0];
+        o[oStart+n++] = s[sStart];
         return n;
     }
 
