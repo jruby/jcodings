@@ -609,12 +609,12 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_putbackable */
-    int putbackable() {
+    public int putbackable() {
         return numTranscoders == 0 ? 0 : elements[0].transcoding.readAgainLength;
     }
 
     /* rb_econv_putback */
-    void putback(byte[] bytes, int p, int len) {
+    public void putback(byte[] bytes, int p, int len) {
         if (numTranscoders == 0 || len == 0) return;
         Transcoding transcoding = elements[0].transcoding;
         System.arraycopy(transcoding.readBuf, transcoding.recognizedLength + transcoding.readAgainLength, bytes, p, len);

@@ -74,7 +74,7 @@ public abstract class Transcoder implements TranscodingInstruction {
     // static final int wordSize = 4;
     public final int inputUnitLength, maxInput, maxOutput;
 
-    final AsciiCompatibility compatibility;
+    public final AsciiCompatibility compatibility;
 
     final int stateSize;
 

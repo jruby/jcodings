@@ -22,15 +22,15 @@ package org.jcodings.transcode;
 public enum AsciiCompatibility {
     CONVERTER, DECODER, ENCODER;
 
-    boolean isConverter() {
+    public boolean isConverter() {
         return this == CONVERTER;
     }
 
-    boolean isDecoder() {
+    public boolean isDecoder() {
         return this == DECODER;
     }
 
-    boolean isEncoder() {
+    public boolean isEncoder() {
         return this == ENCODER;
     }
 }

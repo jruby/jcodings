@@ -92,7 +92,7 @@ public class TranscoderDB implements EConvFlags {
     }
 
     /* get_transcoder_entry */
-    static Entry getEntry(byte[] source, byte[] destination) {
+    public static Entry getEntry(byte[] source, byte[] destination) {
         CaseInsensitiveBytesHash<Entry> sHash = transcoders.get(source);
         return sHash == null ? null : sHash.get(destination);
     }
@@ -241,7 +241,7 @@ public class TranscoderDB implements EConvFlags {
     }
 
     /* decorator_names */
-    private static int decoratorNames(int ecflags, byte[][] decorators) {
+    public static int decoratorNames(int ecflags, byte[][] decorators) {
         switch (ecflags & NEWLINE_DECORATOR_MASK) {
         case UNIVERSAL_NEWLINE_DECORATOR:
         case CRLF_NEWLINE_DECORATOR:
