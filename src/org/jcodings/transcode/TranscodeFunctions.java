@@ -22,48 +22,59 @@ public class TranscodeFunctions {
         return funSoToUTF16BE(statep, sBytes, sStart, l, o, oStart, osize);
     }
 
-    public static int funSoToUTF16BE(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int osize) {
-        if ((sBytes[sStart] & 0x80) == 0) {
-            o[oStart] = (byte)0x00;
-            o[oStart + 1] = sBytes[sStart];
+    public static int funSoToUTF16BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+        int s0 = s[sStart] & 0xFF;
+        if ((s0 & 0x80) == 0) {
+            o[oStart] = 0x00;
+            o[oStart + 1] = s[sStart];
             return 2;
-        } else if ((sBytes[sStart] & 0xE0) == 0xC0) {
-            o[oStart] = (byte)(((sBytes[sStart] & 0xFF) >> 2) & 0x07);
-            o[oStart + 1] = (byte)(((sBytes[sStart] & 0x03) << 6) | (sBytes[sStart + 1] & 0x3F));
+        } else if ((s0 & 0xE0) == 0xC0) {
+            o[oStart] = (byte)((s0 >> 2) & 0x07);
+            o[oStart + 1] = (byte)(((s0 & 0x03) << 6) | (s[sStart + 1] & 0x3F));
             return 2;
-        } else if ((sBytes[sStart] & 0xF0) == 0xE0) {
-            o[oStart] = (byte)(((sBytes[sStart] & 0xFF) << 4) | (((sBytes[sStart + 1] & 0xFF) >> 2) ^ 0x20));
-            o[oStart + 1] = (byte)(((sBytes[sStart + 1] & 0xFF) << 6) | ((sBytes[sStart + 2] & 0xFF) ^ 0x80));
+        } else if ((s0 & 0xF0) == 0xE0) {
+            int s1 = s[sStart+1] & 0xFF;
+            int s2 = s[sStart+2] & 0xFF;
+            o[oStart] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
+            o[oStart + 1] = (byte)((s1 << 6) | (s2 ^ 0x80));
             return 2;
         } else {
-            int w = (((sBytes[sStart] & 0x07) << 2) | (((sBytes[sStart + 1] & 0xFF) >> 4) & 0x03)) - 1;
+            int s1 = s[sStart+1] & 0xFF;
+            int s2 = s[sStart+2] & 0xFF;
+            int s3 = s[sStart+3] & 0xFF;
+            int w = (((s0 & 0x07) << 2) | ((s1 >> 4) & 0x03)) - 1;
             o[oStart] = (byte)(0xD8 | (w >> 2));
-            o[oStart + 1] = (byte)((w << 6) | ((sBytes[sStart + 1] & 0x0F) << 2) | (((sBytes[sStart + 2] & 0xFF) >> 4) - 8));
-            o[oStart + 2] = (byte)(0xDC | (((sBytes[sStart + 2] & 0xFF) >> 2) & 0x03));
-            o[oStart + 3] = (byte)(((sBytes[sStart + 2] & 0xFF) << 6) | ((sBytes[sStart + 3] & 0xFF) & ~0x80));
+            o[oStart + 1] = (byte)((w << 6) | ((s1 & 0x0F) << 2) | ((s2 >> 4) - 8));
+            o[oStart + 2] = (byte)(0xDC | ((s2 >> 2) & 0x03));
+            o[oStart + 3] = (byte)((s2 << 6) | (s3 & ~0x80));
             return 4;
         }
     }
 
     public static int funSoToUTF16LE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        if ((s[sStart] & 0x80) == 0) {
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        if ((s0 & 0x80) == 0) {
             o[oStart + 1] = (byte)0x00;
-            o[oStart] = s[sStart];
+            o[oStart] = (byte)s0;
             return 2;
-        } else if ((s[sStart] & 0xE0) == 0xC0) {
-            o[oStart + 1] = (byte)(((s[sStart] & 0xFF) >> 2) & 0x07);
-            o[oStart] = (byte)(((s[sStart] & 0x03) << 6) | (s[sStart + 1] & 0x3F));
+        } else if ((s0 & 0xE0) == 0xC0) {
+            o[oStart + 1] = (byte)((s0 >> 2) & 0x07);
+            o[oStart] = (byte)(((s0 & 0x03) << 6) | (s1 & 0x3F));
             return 2;
-        } else if ((s[sStart] & 0xF0) == 0xE0) {
-            o[oStart + 1] = (byte)(((s[sStart] & 0xFF) << 4) | (((s[sStart + 1] & 0xFF) >> 2) ^ 0x20));
-            o[oStart] = (byte)(((s[sStart + 1] & 0xFF) << 6) | ((s[sStart + 2] & 0xFF) ^ 0x80));
+        } else if ((s0 & 0xF0) == 0xE0) {
+            int s2 = s[sStart+2] & 0xFF;
+            o[oStart + 1] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
+            o[oStart] = (byte)((s1 << 6) | (s1 ^ 0x80));
             return 2;
         } else {
-            int w = (((s[sStart] & 0x07) << 2) | (((s[sStart + 1] & 0xFF) >> 4) & 0x03)) - 1;
+            int s2 = s[sStart+2] & 0xFF;
+            int s3 = s[sStart+3] & 0xFF;
+            int w = (((s0 & 0x07) << 2) | ((s1 >> 4) & 0x03)) - 1;
             o[oStart + 1] = (byte)(0xD8 | (w >> 2));
-            o[oStart] = (byte)((w << 6) | ((s[sStart + 1] & 0x0F) << 2) | (((s[sStart + 2] & 0xFF) >> 4) - 8));
-            o[oStart + 3] = (byte)(0xDC | (((s[sStart + 2] & 0xFF) >> 2) & 0x03));
-            o[oStart + 2] = (byte)(((s[sStart + 2] & 0xFF) << 6) | ((s[sStart + 3] & 0xFF) & ~0x80));
+            o[oStart] = (byte)((w << 6) | ((s1 & 0x0F) << 2) | ((s2 >> 4) - 8));
+            o[oStart + 3] = (byte)(0xDC | ((s2 >> 2) & 0x03));
+            o[oStart + 2] = (byte)((s2 << 6) | (s3 & ~0x80));
             return 4;
         }
     }
@@ -103,45 +114,60 @@ public class TranscodeFunctions {
     }
 
     public static int funSoToUTF32LE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        o[oStart] = 0;
-        if ((s[sStart] & 0x80) == 0) {
+        o[oStart+3] = 0;
+        int s0 = s[sStart] & 0xFF;
+        if ((s0 & 0x80) == 0) {
             o[oStart + 2] = o[oStart+1] = 0x00;
-            o[oStart + 3] = s[sStart];
+            o[oStart + 3] = (byte)s0;
         } else if ((s[sStart] & 0xE0) == 0xC0) {
+            int s1 = s[sStart+1] & 0xFF;
             o[oStart + 2] = 0x00;
-            o[oStart + 1] = (byte)(((s[sStart] & 0xFF) >> 2) & 0x07);
-            o[oStart] = (byte)(((s[sStart] & 0x03) << 6) | (s[sStart + 1] & 0x3F));
+            o[oStart + 1] = (byte)((s0 >> 2) & 0x07);
+            o[oStart] = (byte)(((s0 & 0x03) << 6) | (s1 & 0x3F));
         } else if ((s[sStart] & 0xF0) == 0xE0) {
+            int s1 = s[sStart+1] & 0xFF;
+            int s2 = s[sStart+2] & 0xFF;
             o[oStart + 2] = 0x00;
-            o[oStart + 1] = (byte)((s[sStart + 0] << 4) | (((s[sStart + 1] & 0xFF) >> 2) ^ 0x20));
-            o[oStart] = (byte)((s[sStart + 1] << 6) | (s[sStart + 2] ^ 0x80));
+            o[oStart + 1] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
+            o[oStart] = (byte)((s1 << 6) | (s2 ^ 0x80));
         } else {
-            o[oStart + 2] = (byte)(((s[sStart + 0] & 0x07) << 2) | (((s[sStart + 1] & 0xFF) >> 4) & 0x03));
-            o[oStart + 1] = (byte)(((s[sStart + 1] & 0x0F) << 4) | (((s[sStart + 2] & 0xFF) >> 2) & 0x0F));
-            o[oStart] = (byte)(((s[sStart + 2] & 0x03) << 6) | (s[sStart + 3] & 0x3F));
+            int s1 = s[sStart+1] & 0xFF;
+            int s2 = s[sStart+2] & 0xFF;
+            int s3 = s[sStart+3] & 0xFF;
+            o[oStart + 2] = (byte)(((s0 & 0x07) << 2) | ((s1 >> 4) & 0x03));
+            o[oStart + 1] = (byte)(((s1 & 0x0F) << 4) | ((s2 >> 2) & 0x0F));
+            o[oStart] = (byte)(((s2 & 0x03) << 6) | (s3 & 0x3F));
         }
         return 4;
     }
 
     public static int funSiFromUTF32(byte[] statep, byte[] s, int sStart, int l) {
-        switch (statep[0]) {
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
+        int s3;
+        byte[] sp = statep;
+
+        switch (sp[0]) {
             case 0:
-                if (s[sStart] == 0 && s[sStart + 1] == 0 && s[sStart + 2] == 0xFE && s[sStart + 3] == 0xEE) {
-                    statep[0] = BE;
+                s3 = s[sStart+3] & 0xFF;
+                if (s0 == 0 && s1 == 0 && s2 == 0xFE && s3 == 0xEE) {
+                    sp[0] = BE;
                     return TranscodingInstruction.ZERObt;
-                } else if (s[sStart] == 0xFF && s[sStart + 1] == 0xFE && s[sStart + 2] == 0 && s[sStart + 3] == 0) {
-                    statep[0] = LE;
+                } else if (s0 == 0xFF && s1 == 0xFE && s2 == 0 && s3 == 0) {
+                    sp[0] = LE;
                     return TranscodingInstruction.ZERObt;
                 }
             case BE:
-                if (s[sStart] == 0 && ((0 < (s[sStart + 1] & 0xFF) && (s[sStart + 1] & 0xFF) <= 0x10)) ||
-                        (s[sStart + 1] == 0 && ((s[sStart + 2] & 0xFF) < 0xD8 && 0xDF < (s[sStart + 2] & 0xFF)))) {
+                if (s0 == 0 && ((0 < s1 && s1 <= 0x10)) ||
+                        (s1 == 0 && (s2 < 0xD8 && 0xDF < s2))) {
                     return TranscodingInstruction.FUNso;
                 }
                 break;
             case LE:
-                if (s[sStart + 3] == 0 && ((0 < (s[sStart + 2] & 0xFF) && (s[sStart + 2] & 0xFF) <= 0x10) ||
-                        (s[sStart + 2] == 0 && ((s[sStart + 1] + 0xFF) < 0xD8 || 0xDF < (s[sStart + 1] & 0xFF)))))
+                s3 = s[sStart+3] & 0xFF;
+                if (s3 == 0 && ((0 < s2 && s2 <= 0x10) ||
+                        (s2 == 0 && (s1 < 0xD8 || 0xDF < s1))))
                     return TranscodingInstruction.FUNso;
                 break;
         }
@@ -159,49 +185,56 @@ public class TranscodeFunctions {
     }
 
     public static int funSoFromUTF32BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        if (s[sStart + 1] == 0) {
-            if (s[sStart + 2] == 0 && (s[sStart + 3] & 0xFF) < 0x80) {
-                o[oStart] = s[sStart + 3];
+        int s0 = s[sStart+0] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
+        int s3 = s[sStart+3] & 0xFF;
+        if (s1 == 0) {
+            if (s2 == 0 && s3 < 0x80) {
+                o[oStart] = (byte)s3;
                 return 1;
-            } else if ((s[sStart + 2] & 0xFF) < 0x08) {
-                o[oStart] = (byte)(0xC0 | (s[sStart + 2] << 2) | ((s[sStart + 3] & 0xFF) >> 6));
-                o[oStart + 1] = (byte)(0x80 | (s[sStart + 3] & 0x3F));
+            } else if (s2 < 0x08) {
+                o[oStart] = (byte)(0xC0 | (s2 << 2) | (s3 >> 6));
+                o[oStart + 1] = (byte)(0x80 | (s3 & 0x3F));
                 return 2;
             } else {
-                o[oStart] = (byte)(0xE0 | ((s[sStart + 2] & 0xFF) >> 4));
-                o[oStart + 1] = (byte)(0x80 | ((s[sStart + 2] & 0x0F) << 2) | ((s[sStart + 3] & 0xFF) >> 6));
-                o[oStart + 2] = (byte)(0x80 | (s[sStart + 3] & 0x3F));
+                o[oStart] = (byte)(0xE0 | (s2 >> 4));
+                o[oStart + 1] = (byte)(0x80 | ((s2 & 0x0F) << 2) | (s3 >> 6));
+                o[oStart + 2] = (byte)(0x80 | (s3 & 0x3F));
                 return 3;
             }
         } else {
-            o[oStart] = (byte)(0xF0 | ((s[sStart + 1] & 0xFF) >> 2));
-            o[oStart + 1] = (byte)(0x80 | ((s[sStart + 1] & 0x03) << 4) | ((s[sStart + 2] & 0xFF) >> 4));
-            o[oStart + 2] = (byte)(0x80 | ((s[sStart + 2] & 0x0F) << 2) | ((s[sStart + 3] & 0xFF) >> 6));
-            o[oStart + 3] = (byte)(0x80 | (s[sStart + 3] & 0x3F));
+            o[oStart] = (byte)(0xF0 | (s1 >> 2));
+            o[oStart + 1] = (byte)(0x80 | ((s1 & 0x03) << 4) | (s2 >> 4));
+            o[oStart + 2] = (byte)(0x80 | ((s2 & 0x0F) << 2) | (s3 >> 6));
+            o[oStart + 3] = (byte)(0x80 | (s3 & 0x3F));
             return 4;
         }
     }
 
     public static int funSoFromUTF32LE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        if (s[sStart + 2] == 0) {
-            if (s[sStart + 1] == 0 && (s[sStart] & 0xFF) < 0x80) {
-                o[oStart] = s[sStart];
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
+        if (s2 == 0) {
+            if (s1 == 0 && s0 < 0x80) {
+                o[oStart] = (byte)s0;
                 return 1;
-            } else if ((s[sStart + 1] & 0xFF) < 0x08) {
-                o[oStart] = (byte)(0xC0 | (s[sStart + 1] << 2) | ((s[sStart] & 0xFF) >> 6));
-                o[oStart + 1] = (byte)(0x80 | (s[sStart] & 0x3F));
+            } else if (s1 < 0x08) {
+                o[oStart] = (byte)(0xC0 | (s1 << 2) | (s0 >> 6));
+                o[oStart + 1] = (byte)(0x80 | (s0 & 0x3F));
                 return 2;
             } else {
-                o[oStart] = (byte)(0xE0 | ((s[sStart + 1] & 0xFF) >> 4));
-                o[oStart + 1] = (byte)(0x80 | ((s[sStart + 1] & 0x0F) << 2) | ((s[sStart] & 0xFF) >> 6));
-                o[oStart + 2] = (byte)(0x80 | (s[sStart] & 0x3F));
+                o[oStart] = (byte)(0xE0 | (s1 >> 4));
+                o[oStart + 1] = (byte)(0x80 | ((s1 & 0x0F) << 2) | (s0 >> 6));
+                o[oStart + 2] = (byte)(0x80 | (s0 & 0x3F));
                 return 3;
             }
         } else {
-            o[oStart] = (byte)(0xF0 | ((s[sStart + 2] & 0xFF) >> 2));
-            o[oStart + 1] = (byte)(0x80 | ((s[sStart + 2] & 0x03) << 4) | ((s[sStart + 1] & 0xFF) >> 4));
-            o[oStart + 2] = (byte)(0x80 | ((s[sStart + 1] & 0x0F) << 2) | ((s[sStart] & 0xFF) >> 6));
-            o[oStart + 3] = (byte)(0x80 | (s[sStart] & 0x3F));
+            o[oStart] = (byte)(0xF0 | (s2 >> 2));
+            o[oStart + 1] = (byte)(0x80 | ((s2 & 0x03) << 4) | (s1 >> 4));
+            o[oStart + 2] = (byte)(0x80 | ((s1 & 0x0F) << 2) | (s0 >> 6));
+            o[oStart + 3] = (byte)(0x80 | (s0 & 0x3F));
             return 4;
         }
     }
@@ -210,27 +243,33 @@ public class TranscodeFunctions {
     public static final int from_UTF_16LE_00toFF_D8toDB = Transcoding.WORDINDEX2INFO(5);
 
     public static int funSiFromUTF16(byte[] statep, byte[] s, int sStart, int l) {
-        switch (statep[0]) {
+        int s0 = s[sStart] & 0xFF;
+        int s1;
+        byte[] sp = statep;
+
+        switch (sp[0]) {
             case 0:
-                if (s[sStart] == 0xFE && s[sStart + 1] == 0xFF) {
-                    statep[0] = BE;
+                s1 = s[sStart+1] & 0xFF;
+                if (s0 == 0xFE && s1 == 0xFF) {
+                    sp[0] = BE;
                     return TranscodingInstruction.ZERObt;
-                } else if (s[sStart] == 0xFF && s[sStart + 1] == 0xFE) {
-                    statep[0] = LE;
+                } else if (s0 == 0xFF && s1 == 0xFE) {
+                    sp[0] = LE;
                     return TranscodingInstruction.ZERObt;
                 }
                 break;
             case BE:
-                if ((s[sStart] & 0xFF) < 0xD8 || 0xDF < (s[sStart] & 0xFF)) {
+                if (s0 < 0xD8 || 0xDF < s0) {
                     return TranscodingInstruction.FUNso;
-                } else if ((s[sStart] & 0xFF) <= 0xDB) {
+                } else if (s0 <= 0xDB) {
                     return from_UTF_16BE_D8toDB_00toFF;
                 }
                 break;
             case LE:
-                if ((s[sStart + 1] & 0xFF) < 0xD8 || 0xDF < (s[sStart + 1] & 0xFF)) {
+                s1 = s[sStart+1] & 0xFF;
+                if (s1 < 0xD8 || 0xDF < s1) {
                     return TranscodingInstruction.FUNso;
-                } else if ((s[sStart + 1] & 0xFF) <= 0xDB) {
+                } else if (s1 <= 0xDB) {
                     return from_UTF_16LE_00toFF_D8toDB;
                 }
                 break;
@@ -249,61 +288,69 @@ public class TranscodeFunctions {
     }
 
     public static int funSoFromUTF16BE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        if (s[sStart] == 0 && (s[sStart + 1] & 0xFF) < 0x80) {
-            o[oStart] = s[sStart + 1];
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        if (s0 == 0 && s1 < 0x80) {
+            o[oStart] = (byte)s1;
             return 1;
-        } else if ((s[sStart] & 0xFF) < 0x08) {
-            o[oStart] = (byte)(0xC0 | ((s[sStart] & 0xFF) << 2) | ((s[sStart + 1] & 0xFF) >> 6));
-            o[oStart + 1] = (byte)(0x80 | (s[sStart + 1] & 0x3F));
+        } else if (s0 < 0x08) {
+            o[oStart] = (byte)(0xC0 | (s0 << 2) | (s1 >> 6));
+            o[oStart + 1] = (byte)(0x80 | (s1 & 0x3F));
             return 2;
-        } else if ((s[sStart] & 0xF8) != 0xD8) {
-            o[oStart] = (byte)(0xE0 | ((s[sStart] & 0xFF) >> 4));
-            o[oStart + 1] = (byte)(0x80 | ((s[sStart] & 0x0F) << 2) | ((s[sStart + 1] & 0xFF) >> 6));
-            o[oStart + 2] = (byte)(0x80 | (s[sStart + 1] & 0x3F));
+        } else if ((s0 & 0xF8) != 0xD8) {
+            o[oStart] = (byte)(0xE0 | (s0 >> 4));
+            o[oStart + 1] = (byte)(0x80 | ((s0 & 0x0F) << 2) | (s1 >> 6));
+            o[oStart + 2] = (byte)(0x80 | (s1 & 0x3F));
             return 3;
         } else {
-            long u = (((s[sStart] & 0x03) << 2) | ((s[sStart + 1] & 0xFF) >> 6)) + 1;
+            long u = (((s0 & 0x03) << 2) | (s1 >> 6)) + 1;
             o[oStart] = (byte)(0xF0 | (u >> 2));
-            o[oStart + 1] = (byte)(0x80 | ((u & 0x03) << 4) | (((s[sStart + 1] & 0xFF) >> 2) & 0x0F));
-            o[oStart + 2] = (byte)(0x80 | ((s[sStart + 1] & 0x03) << 4) | ((s[sStart + 2] & 0x03) << 2) | ((s[sStart + 3] & 0xFF) >> 6));
+            o[oStart + 1] = (byte)(0x80 | ((u & 0x03) << 4) | (((s1 >> 2) & 0x0F)));
+            o[oStart + 2] = (byte)(0x80 | ((s1 & 0x03) << 4) | ((s[sStart + 2] & 0x03) << 2) | ((s[sStart + 3] & 0xFF) >> 6));
             o[oStart + 3] = (byte)(0x80 | (s[sStart + 3] & 0x3F));
             return 4;
         }
     }
 
     public static int funSoFromUTF16LE(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        if (s[sStart + 1] == 0 && s[sStart] < 0x80) {
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        if (s1 == 0 && s0 < 0x80) {
             o[oStart] = s[sStart];
             return 1;
-        } else if ((s[sStart + 1] & 0xFF) < 0x08) {
-            o[oStart] = (byte)(0xC0 | (s[sStart + 1] << 2) | ((s[sStart] & 0xFF) >> 6));
-            o[oStart + 1] = (byte)(0x80 | (s[sStart] & 0x3F));
+        } else if (s1 < 0x08) {
+            o[oStart] = (byte)(0xC0 | (s1 << 2) | (s0 >> 6));
+            o[oStart + 1] = (byte)(0x80 | (s0 & 0x3F));
             return 2;
         } else if ((s[sStart + 1] & 0xF8) != 0xD8) {
-            o[oStart] = (byte)(0xE0 | ((s[sStart + 1] & 0xFF) >> 4));
-            o[oStart + 1] = (byte)(0x80 | ((s[sStart + 1] & 0x0F) << 2) | ((s[sStart] & 0xFF) >> 6));
-            o[oStart + 2] = (byte)(0x80 | (s[sStart] & 0x3F));
+            o[oStart] = (byte)(0xE0 | (s1 >> 4));
+            o[oStart + 1] = (byte)(0x80 | ((s1 & 0x0F) << 2) | (s0 >> 6));
+            o[oStart + 2] = (byte)(0x80 | (s0 & 0x3F));
             return 3;
         } else {
-            long u = (((s[sStart + 1] & 0x03) << 2) | ((s[sStart] & 0xFF) >> 6)) + 1;
+            int s2 = s[sStart+2] & 0xFF;
+            int s3 = s[sStart+3] & 0xFF;
+            long u = (((s1 & 0x03) << 2) | (s0 >> 6)) + 1;
             o[oStart] = (byte)(0xF0 | u >> 2);
-            o[oStart + 1] = (byte)(0x80 | ((u & 0x03) << 4) | (((s[sStart] + 0xFF) >> 2) & 0x0F));
-            o[oStart + 2] = (byte)(0x80 | ((s[sStart] & 0x03) << 4) | ((s[sStart + 3] & 0x03) << 2) | ((s[sStart + 2] & 0xFF) >> 6));
-            o[oStart + 3] = (byte)(0x80 | (s[sStart + 2] & 0x3F));
+            o[oStart + 1] = (byte)(0x80 | ((u & 0x03) << 4) | ((s0 >> 2) & 0x0F));
+            o[oStart + 2] = (byte)(0x80 | ((s0 & 0x03) << 4) | ((s3 & 0x03) << 2) | (s2 >> 6));
+            o[oStart + 3] = (byte)(0x80 | (s2 & 0x3F));
             return 4;
         }
     }
 
     public static int funSoEucjp2Sjis(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
-        if (s[sStart] == 0x8e) {
-            o[oStart] = s[sStart + 1];
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        if (s0 == 0x8e) {
+            o[oStart] = (byte)s1;
             return 1;
         } else {
             int h, m, l2;
-            m = s[sStart] & 1;
-            h = ((s[sStart] & 0xFF) + m) >> 1;
-            h += (s[sStart] & 0xFF) < 0xdf ? 0x30 : 0x70;
-            l2 = (s[sStart + 1] & 0xFF) - m * 94 - 3;
+            m = s0 & 1;
+            h = (s0 + m) >> 1;
+            h += s0 < 0xdf ? 0x30 : 0x70;
+            l2 = s1 - m * 94 - 3;
             if (0x7f <= l2)
                 l++;
             o[oStart] = (byte)h;
@@ -313,13 +360,14 @@ public class TranscodeFunctions {
     }
 
     public static int funSoSjis2Eucjp(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+        int s0 = s[sStart] & 0xFF;
         if (l == 1) {
             o[oStart] = (byte)0x8E;
-            o[oStart+1] = s[sStart];
+            o[oStart+1] = (byte)s0;
             return 2;
         } else {
             int h, l2;
-            h = s[sStart] & 0xFF;
+            h = s0;
             l2 = s[sStart + 1] & 0xFF;
             if (0xe0 <= h)
                 h -= 64;
@@ -337,49 +385,64 @@ public class TranscodeFunctions {
 
     public static int funSoFromGB18030(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize)
     {
-        long u = ((s[sStart] & 0xFF)-0x90)*10*126*10 + ((s[sStart+1] & 0xFF)-0x30)*126*10 + ((s[sStart+2]&0xFF)-0x81)*10 + ((s[sStart+3]&0xFF)-0x30) + 0x10000;
-        o[oStart] = (byte)(0xF0 | (u>>18));
-        o[oStart+1] = (byte)(0x80 | ((u>>12)&0x3F));
-        o[oStart+2] = (byte)(0x80 | ((u>>6)&0x3F));
-        o[oStart+3] = (byte)(0x80 | (u&0x3F));
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
+        int s3 = s[sStart+3] & 0xFF;
+        long u = (s0 - 0x90) * 10 * 126 * 10 + (s1 - 0x30) * 126 * 10 + (s2 - 0x81) * 10 + (s3 - 0x30) + 0x10000;
+        o[oStart] = (byte)(0xF0 | (u >> 18));
+        o[oStart+1] = (byte)(0x80 | ((u >> 12) & 0x3F));
+        o[oStart+2] = (byte)(0x80 | ((u >> 6) & 0x3F));
+        o[oStart+3] = (byte)(0x80 | (u & 0x3F));
         return 4;
     }
 
     public static int funSioFromGB18030(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int osize)
     {
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
+        int s3 = s[sStart+3] & 0xFF;
         long diff = info >> 8;
         long u;    /* Unicode Scalar Value */
         if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
-            u = (((s[sStart]&0xFF)*10+(s[sStart+1]&0xFF))*126+(s[sStart+2] & 0xFF))*10+(s[sStart+3]&0xFF) - diff - 0x170000;
+            u = ((s0 * 10 + s1) * 126 + s2) * 10 + s3 - diff - 0x170000;
         }
         else { /* GB18030 2 bytes */
-            u = (s[sStart]&0xFF)*256 + (s[sStart+1]&0xFF) + 24055 - diff;
+            u = s0*256 + s1 + 24055 - diff;
         }
-        o[oStart] = (byte)(0xE0 | (u>>12));
-        o[oStart+1] = (byte)(0x80 | ((u>>6)&0x3F));
-        o[oStart+2] = (byte)(0x80 | (u&0x3F));
+        o[oStart] = (byte)(0xE0 | (u >> 12));
+        o[oStart+1] = (byte)(0x80 | ((u >> 6) & 0x3F));
+        o[oStart+2] = (byte)(0x80 | (u & 0x3F));
         return 3;
     }
 
     public static int funSoToGB18030(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize)
     {
-        long u = ((s[sStart]&0x07)<<18) | ((s[sStart+1]&0x3F)<<12) | ((s[sStart+2]&0x3F)<<6) | (s[sStart+3]&0x3F);
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
+        int s3 = s[sStart+3] & 0xFF;
+        long u = ((s0 & 0x07) << 18) | ((s1 & 0x3F) << 12) | ((s2 & 0x3F) << 6) | (s3 & 0x3F);
         u -= 0x10000;
-        o[oStart+3] = (byte)(0x30 + u%10);
+        o[oStart+3] = (byte)(0x30 + u % 10);
         u /= 10;
-        o[oStart+2] = (byte)(0x81 + u%126);
+        o[oStart+2] = (byte)(0x81 + u % 126);
         u /= 126;
-        o[oStart+1] = (byte)(0x30 + u%10);
-        o[oStart] = (byte)(0x90 + u/10);
+        o[oStart+1] = (byte)(0x30 + u % 10);
+        o[oStart] = (byte)(0x90 + u / 10);
         return 4;
     }
 
     public static int funSioToGB18030(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int osize)
     {
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
+        int s2 = s[sStart+2] & 0xFF;
         long diff = info >> 8;
         long u;    /* Unicode Scalar Value */
 
-        u = ((s[sStart]&0x0F)<<12) | ((s[sStart+1]&0x3F)<<6) | (s[sStart+2]&0x3F);
+        u = ((s0 & 0x0F) << 12) | ((s1 & 0x3F) << 6) | (s2 & 0x3F);
 
         if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
             u += (diff + 0x170000);
@@ -428,6 +491,8 @@ public class TranscodeFunctions {
                     (byte)0x25, (byte)0x6B, (byte)0x25, (byte)0x6C, (byte)0x25, (byte)0x6D, (byte)0x25, (byte)0x6F, (byte)0x25, (byte)0x73, (byte)0x21, (byte)0x2B, (byte)0x21, (byte)0x2C};
 
     public static int funSoCp50220Encoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0;
+        int s1;
         int output0 = oStart;
         byte[] sp = statep;
 
@@ -442,8 +507,10 @@ public class TranscodeFunctions {
             }
             sp[0] = G0_JISX0208_1983;
             o[oStart++] = pBytes[p++];
-            if (l == 2 && (s[sStart] & 0xFF) == 0x8E) {
-                if ((s[sStart+1] & 0xFF) == 0xDE) {
+            s0 = s[sStart] & 0xFF;
+            s1 = s[sStart+1] & 0xFF;
+            if (l == 2 && s0 == 0x8E) {
+                if (s1 == 0xDE) {
                     o[oStart++] = (byte)(pBytes[p++] + 2);
                     return oStart - output0;
                 }
@@ -451,12 +518,14 @@ public class TranscodeFunctions {
             o[oStart++] = pBytes[p];
         }
 
-        if (l == 2 && (s[sStart] & 0xFF) == 0x8E) {
-            int p = ((s[sStart+1] & 0xFF) - 0xA1) * 2;
+        s0 = s[sStart] & 0xFF;
+        if (l == 2 && s0 == 0x8E) {
+            s1 = s[sStart+1] & 0xFF;
+            int p = (s1 - 0xA1) * 2;
             byte[] pBytes = tbl0208;
-            if ((0xA1 <= (s[sStart+1] & 0xFF) && (s[sStart+1] & 0xFF) <= 0xB5) ||
-                    (0xC5 <= (s[sStart+1] & 0xFF) && (s[sStart+1] & 0xFF) <= 0xC9) ||
-                    (0xCF <= (s[sStart+1] & 0xFF) && (s[sStart+1] & 0xFF) <= 0xDF)) {
+            if ((0xA1 <= s1 && s1 <= 0xB5) ||
+                    (0xC5 <= s1 && s1 <= 0xC9) ||
+                    (0xCF <= s1 && s1 <= 0xDF)) {
                 if (sp[0] != G0_JISX0208_1983) {
                     o[oStart++] = 0x1b;
                     o[oStart++] = '$';
@@ -468,7 +537,7 @@ public class TranscodeFunctions {
                 return oStart - output0;
             }
 
-            sp[2] = s[sStart+1];
+            sp[2] = (byte)s1;
             sp[1] = sp[0];
             sp[0] = G0_JISX0201_KATAKANA;
             return oStart - output0;
@@ -479,13 +548,14 @@ public class TranscodeFunctions {
     }
 
     public static int funSoCp5022xEncoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0, s1;
         byte[] sp = statep;
         int output0 = oStart;
         int newstate;
 
         if (l == 1)
             newstate = G0_ASCII;
-        else if (s[sStart] == 0x8E) {
+        else if ((s[sStart] & 0xFF) == 0x8E) {
             sStart++;
             l = 1;
             newstate = G0_JISX0201_KATAKANA;
@@ -512,12 +582,14 @@ public class TranscodeFunctions {
             sp[0] = (byte)newstate;
         }
 
+        s0 = s[sStart] & 0xFF;
         if (l == 1) {
-            o[oStart++] = (byte)(s[sStart] & 0x7f);
+            o[oStart++] = (byte)(s0 & 0x7f);
         }
         else {
-            o[oStart++] = (byte)(s[sStart] & 0x7f);
-            o[oStart++] = (byte)(s[sStart+1] & 0x7f);
+            s1 = s[sStart+1] & 0xFF;
+            o[oStart++] = (byte)(s0 & 0x7f);
+            o[oStart++] = (byte)(s1 & 0x7f);
         }
 
         return oStart - output0;
@@ -570,10 +642,12 @@ public class TranscodeFunctions {
     }
 
     public static int funSoIso50220jpDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0 = s[sStart] & 0xFF;
+        int s1 = s[sStart+1] & 0xFF;
         byte[] sp = statep;
-        if (s[sStart] == 0x1b) {
-            if (s[sStart+1] == '(') {
-                switch (s[sStart+l-1]) {
+        if (s0 == 0x1b) {
+            if (s1 == '(') {
+                switch (s[sStart+l-1] & 0xFF) {
                     case 'B':
                     case 'J':
                         sp[0] = G0_ASCII;
@@ -581,7 +655,7 @@ public class TranscodeFunctions {
                 }
             }
             else {
-                switch (s[l-1]) {
+                switch (s[sStart+l-1]) {
                     case '@':
                         sp[0] = G0_JISX0208_1978;
                         break;
@@ -599,8 +673,8 @@ public class TranscodeFunctions {
             } else {
                 o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1983;
             }
-            o[oStart+1] = (byte)(s[sStart] | 0x80);
-            o[oStart+2] = (byte)(s[sStart+1] | 0x80);
+            o[oStart+1] = (byte)(s0 | 0x80);
+            o[oStart+2] = (byte)(s1 | 0x80);
             return 3;
         }
     }
@@ -706,10 +780,13 @@ public class TranscodeFunctions {
     }
 
     public static int funSoCp50220Decoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0 = s[sStart]&0xFF;
+        int s1;
         byte[] sp = statep;
-        switch (s[sStart]&0xFF) {
+        switch (s0) {
             case 0x1b:
-                if ((s[sStart+1]&0xFF) == '(') {
+                s1 = s[sStart+1]&0xFF;
+                if (s1 == '(') {
                     switch ((s[sStart+l-1]&0xFF)) {
                         case 'B':
                         case 'J':
@@ -739,9 +816,9 @@ public class TranscodeFunctions {
                 return 0;
             default:
                 if (sp[0] == G0_JISX0201_KATAKANA ||
-                    (0xA1 <= (s[sStart]&0xFF) && (s[sStart]&0xFF) <= 0xDF && sp[0] == G0_ASCII)) {
+                    (0xA1 <= s0 && s0 <= 0xDF && sp[0] == G0_ASCII)) {
                 o[oStart] = (byte)0x8E;
-                o[oStart+1] = (byte)(s[sStart] | 0x80);
+                o[oStart+1] = (byte)(s0 | 0x80);
             }
         /* else if (0x7F == s[0] && s[0] <= 0x88) { */
             /* User Defined Characters */
@@ -757,8 +834,9 @@ public class TranscodeFunctions {
             /* JIS X 0208 */
             /* NEC Special Characters */
             /* NEC-selected IBM extended Characters */
-                o[oStart] = (byte)(s[sStart] | 0x80);
-                o[oStart+1] = (byte)(s[sStart+1] | 0x80);
+                s1 = s[sStart+1]&0xFF;
+                o[oStart] = (byte)(s0 | 0x80);
+                o[oStart+1] = (byte)(s1 | 0x80);
             }
             return 2;
         }
@@ -772,10 +850,11 @@ public class TranscodeFunctions {
     public static final int iso2022jp_kddi_decoder_jisx0208_rest = Transcoding.WORDINDEX2INFO(16);
 
     public static int funSiIso2022jpKddiDecoder(byte[] statep, byte[] s, int sStart, int l) {
+        int s0 = s[sStart]&0xFF;
         byte[] sp = statep;
         if (sp[0] == G0_ASCII) {
             return TranscodingInstruction.NOMAP;
-        } else if (0x21 <= (s[sStart]&0xFF) && (s[sStart]&0xFF) <= 0x7e) {
+        } else if (0x21 <= s0 && s0 <= 0x7e) {
             return iso2022jp_kddi_decoder_jisx0208_rest;
         } else {
             return TranscodingInstruction.INVALID;
@@ -783,9 +862,11 @@ public class TranscodeFunctions {
     }
 
     public static int funSoIso2022jpKddiDecoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0 = s[sStart]&0xFF;
+        int s1 = s[sStart+1]&0xFF;
         byte[] sp = statep;
-        if ((s[sStart]&0xFF) == 0x1b) {
-            if (s[sStart+1] == '(') {
+        if (s0 == 0x1b) {
+            if (s1 == '(') {
                 switch (s[sStart+l-1] & 0xFF) {
                     case 'B': /* US-ASCII */
                     case 'J': /* JIS X 0201 Roman */
@@ -812,13 +893,15 @@ public class TranscodeFunctions {
             } else {
                 o[oStart] = EMACS_MULE_LEADING_CODE_JISX0208_1983;
             }
-            o[oStart+1] = (byte)(s[sStart] | 0x80);
-            o[oStart+2] = (byte)(s[sStart+1] | 0x80);
+            o[oStart+1] = (byte)(s0 | 0x80);
+            o[oStart+2] = (byte)(s1 | 0x80);
             return 3;
         }
     }
 
     public static int funSoIso2022jpKddiEncoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0 = s[sStart] & 0xFF;
+        int s1, s2;
         byte[] sp = statep;
         int output0 = oStart;
         int newstate;
@@ -850,11 +933,13 @@ public class TranscodeFunctions {
         }
 
         if (l == 1) {
-            o[oStart++] = (byte)(s[sStart] & 0x7f);
+            o[oStart++] = (byte)(s0 & 0x7f);
         }
         else {
-            o[oStart++] = (byte)(s[sStart+1] & 0x7f);
-            o[oStart++] = (byte)(s[sStart+2] & 0x7f);
+            s1 = s[sStart+1] & 0xFF;
+            s2 = s[sStart+2] & 0xFF;
+            o[oStart++] = (byte)(s1 & 0x7f);
+            o[oStart++] = (byte)(s2 & 0x7f);
         }
 
         return oStart - output0;
@@ -1106,7 +1191,7 @@ public class TranscodeFunctions {
         int n = 0;
         if (sp[0] == ESCAPE_END) {
             sp[0] = ESCAPE_NORMAL;
-            o[n++] = '"';
+            o[oStart+n++] = '"';
         }
         o[oStart+n++] = s[sStart];
         return n;
@@ -1144,9 +1229,10 @@ public class TranscodeFunctions {
     }
 
     public static int funSoUniversalNewline(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
+        int s0 = s[sStart] & 0xFF;
         byte[] sp = statep;
         int len;
-        if (s[sStart] == '\n') {
+        if (s0 == '\n') {
             if (sp[0] == NEWLINE_NORMAL) {
                 sp[1] |= MET_LF;
             }
@@ -1168,7 +1254,7 @@ public class TranscodeFunctions {
                 sp[0] = NEWLINE_JUST_AFTER_CR;
             }
             else {
-                o[oStart+len++] = s[sStart];
+                o[oStart+len++] = (byte)s0;
                 sp[1] = NEWLINE_NORMAL;
             }
         }
