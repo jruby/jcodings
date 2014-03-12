@@ -331,7 +331,7 @@ public class Transcoding implements TranscodingInstruction {
                         ip = START;
                         continue;
                     } else {
-                        writeBuffLen = tr.infoToOutput(state, nextInfo, writeBuf, 0, writeBuffLen);
+                        writeBuffLen = tr.infoToOutput(state, nextInfo, writeBuf, 0, writeBuf.length);
                         writeBuffOff = 0;
                         ip = TRANSFER_WRITEBUF;
                         continue;
@@ -476,7 +476,7 @@ public class Transcoding implements TranscodingInstruction {
                     if (tr.maxOutput <= out_stop - out_p) {
                         out_p += tr.finish(state, out_bytes, out_p, out_stop - out_p);
                     } else {
-                        writeBuffLen = tr.finish(state, writeBuf, 0, writeBuffLen);
+                        writeBuffLen = tr.finish(state, writeBuf, 0, writeBuf.length);
                         writeBuffOff = 0;
                         while (writeBuffOff <= writeBuffLen) {
                             if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
