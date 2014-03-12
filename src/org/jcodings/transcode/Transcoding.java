@@ -480,16 +480,13 @@ public class Transcoding implements TranscodingInstruction {
                     continue;
                 case RESUME_STRING:
                     // continue loop from SUSPEND_OBUF
-                    while (out_stop - out_p < 1) {
-                        SUSPEND(this, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, EConvResult.DestinationBufferFull, RESUME_STRING);
-                        return suspendResult;
-                    }
+                    if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_STRING)) return suspendResult;
                     out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo)) + 1 + outputIndex];
                     outputIndex++;
                     // fall through
                 case STRING:
                     while (outputIndex < STR1_LENGTH(transcoder.byteArray, BYTE_ADDR(STR1_BYTEINDEX(nextInfo)))) {
-                        if (0 == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_STRING)) return suspendResult;
+                        if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_STRING)) return suspendResult;
                         out_bytes[out_p++] = transcoder.byteArray[BYTE_ADDR(STR1_BYTEINDEX(nextInfo)) + 1 + outputIndex];
                         outputIndex++;
                     }
