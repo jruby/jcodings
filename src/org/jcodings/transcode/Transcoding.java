@@ -116,7 +116,7 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     private static int STR1_BYTEINDEX(int w) {
-        return w >> 6;
+        return w >>> 6;
     }
 
     private EConvResult transcodeRestartable0(final byte[] in_bytes, Ptr in_pos, final byte[] out_bytes, Ptr out_pos, int in_stop, int out_stop, int opt) {
