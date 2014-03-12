@@ -132,7 +132,7 @@ public class TranscodeFunctions {
         int s0 = s[sStart] & 0xFF;
         if ((s0 & 0x80) == 0) {
             o[oStart + 2] = o[oStart+1] = 0x00;
-            o[oStart + 3] = (byte)s0;
+            o[oStart] = (byte)s0;
         } else if ((s[sStart] & 0xE0) == 0xC0) {
             int s1 = s[sStart+1] & 0xFF;
             o[oStart + 2] = 0x00;
