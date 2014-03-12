@@ -8,6 +8,7 @@ import org.jcodings.transcode.Transcoding;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -60,5 +61,31 @@ public class TestEConv {
         econv.convert(src, new Ptr(0), 7, dest, new Ptr(0), dest.length, 0);
 
         Assert.assertArrayEquals("foo\rbar".getBytes(), dest);
+    }
+
+    @Test
+    public void testXMLWithCharref() throws Exception {
+        EConv econv = TranscoderDB.open("utf-8".getBytes(), "euc-jp".getBytes(), EConvFlags.XML_ATTR_CONTENT_DECORATOR | EConvFlags.XML_ATTR_QUOTE_DECORATOR | EConvFlags.UNDEF_HEX_CHARREF);
+
+        byte[] src = "<\u2665>&\"\u2661\"".getBytes(UTF8);
+
+        byte[] dest = new byte[50];
+        Ptr destP = new Ptr(0);
+
+        econv.convert(src, new Ptr(0), src.length, dest, destP, dest.length, 0);
+
+        Assert.assertArrayEquals("\"&lt;&#x2665;&gt;&amp;&quot;&#x2661;&quot;\"".getBytes(), Arrays.copyOf(dest, destP.p));
+    }
+
+    private static final Charset UTF8;
+
+    static {
+        Charset utf8 = null;
+        try {
+            utf8 = Charset.forName("UTF-8");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        UTF8 = utf8;
     }
 }

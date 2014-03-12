@@ -23,6 +23,7 @@ import static org.jcodings.transcode.EConv.NULL_STRING;
 import static org.jcodings.util.CaseInsensitiveBytesHash.caseInsensitiveEquals;
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.jcodings.ObjPtr;
 import org.jcodings.exception.ErrorMessages;
@@ -167,7 +168,7 @@ public class TranscoderDB implements EConvFlags {
             } else {
                 byte[] bfsBaseEnc = queue.encoding;
 
-                for (Hash.HashEntry<Entry> o : table2.entryIterator()) {
+                for (Hash.HashEntry<Entry> o : (Iterable<Hash.HashEntry<Entry>>)table2.entryIterator()) {
                     CaseInsensitiveBytesHash.CaseInsensitiveBytesHashEntry<Entry> e = (CaseInsensitiveBytesHash.CaseInsensitiveBytesHashEntry<Entry>) o;
                     byte[] dname = e.bytes;
                     if (bfsVisited.get(dname) == null) {

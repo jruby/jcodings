@@ -75,21 +75,53 @@ public final class EConv implements EConvFlags {
     }
 
     public static final class LastError {
-        public EConvResult result;
-        public Transcoding errorTranscoding;
-        public byte[] source, destination;
+        EConvResult result;
+        Transcoding errorTranscoding;
+        byte[] source, destination;
 
-        public byte[] errorBytes;
-        public int errorBytesP, errorBytesEnd;
-        public int readAgainLength;
+        byte[] errorBytes;
+        int errorBytesP, errorBytesLength;
+        int readAgainLength;
 
         void reset() {
             result = null;
             errorTranscoding = null;
             source = destination = null;
             errorBytes = null;
-            errorBytesP = errorBytesEnd = 0;
+            errorBytesP = errorBytesLength = 0;
             readAgainLength = 0;
+        }
+
+        public EConvResult getResult() {
+            return result;
+        }
+
+        public Transcoding getErrorTranscoding() {
+            return errorTranscoding;
+        }
+
+        public byte[] getSource() {
+            return source;
+        }
+
+        public byte[] getDestination() {
+            return destination;
+        }
+
+        public byte[] getErrorBytes() {
+            return errorBytes;
+        }
+
+        public int getErrorBytesP() {
+            return errorBytesP;
+        }
+
+        public int getErrorBytesLength() {
+            return errorBytesLength;
+        }
+
+        public int getReadAgainLength() {
+            return readAgainLength;
         }
 
         @Override
@@ -97,7 +129,7 @@ public final class EConv implements EConvFlags {
             String s = "Last Error " + (source == null ? "null" : new String(source)) + " => " + (destination == null ? "null" : new String(destination))
                     + "\n";
             s += "  result: " + result.toString() + "\n";
-            s += "  error bytes: " + (errorBytes == null ? "null" : new String(errorBytes, errorBytesP, errorBytesP + errorBytesEnd)) + "\n";
+            s += "  error bytes: " + (errorBytes == null ? "null" : new String(errorBytes, errorBytesP, errorBytesP + errorBytesLength)) + "\n";
             s += "  read again length: " + readAgainLength;
             return s;
         }
@@ -391,7 +423,7 @@ public final class EConv implements EConvFlags {
             lastError.destination = errorTranscoding.transcoder.destination;
             lastError.errorBytes = errorTranscoding.readBuf;
             lastError.errorBytesP = 0;
-            lastError.errorBytesEnd = errorTranscoding.recognizedLength; // ???
+            lastError.errorBytesLength = errorTranscoding.recognizedLength;
             lastError.readAgainLength = errorTranscoding.readAgainLength;
         }
         return res;
@@ -435,12 +467,11 @@ public final class EConv implements EConvFlags {
         if (caseInsensitiveEquals(lastError.source, "UTF-32BE".getBytes())) {
             utfBytes = lastError.errorBytes;
             utfP = lastError.errorBytesP;
-            utfLen = lastError.errorBytesEnd - lastError.errorBytesP;
+            utfLen = lastError.errorBytesLength;
         } else {
             Ptr utfLenA = new Ptr();
-            byte[] utfBuf = new byte[1024]; // ??
-            utfBytes = allocateConvertedString(lastError.source, "UTF-32BE".getBytes(), lastError.errorBytes, lastError.errorBytesP, lastError.errorBytesEnd
-                    - lastError.errorBytesP, utfBuf, utfLenA);
+            byte[] utfBuf = new byte[1024]; // FIXME: wasteful
+            utfBytes = allocateConvertedString(lastError.source, "UTF-32BE".getBytes(), lastError.errorBytes, lastError.errorBytesP, lastError.errorBytesLength, utfBuf, utfLenA);
 
             if (utfBytes == null) return -1;
             utfP = 0;
@@ -455,8 +486,8 @@ public final class EConv implements EConvFlags {
             u += (utfBytes[p] & 0xff) << 24;
             u += (utfBytes[p + 1] & 0xff) << 16;
             u += (utfBytes[p + 2] & 0xff) << 8;
-            u += (utfBytes[p + 3]);
-            byte[] charrefbuf = String.format("&#x%X;", u).getBytes(); // use faster sprintf ??
+            u += (utfBytes[p + 3] & 0xff);
+            byte[] charrefbuf = String.format("&#x%X;", u).getBytes(); // FIXME: use faster sprintf ??
 
             if (insertOutput(charrefbuf, charrefbuf.length, "US-ASCII".getBytes()) == -1) return -1;
 
@@ -579,7 +610,7 @@ public final class EConv implements EConvFlags {
 
             if ((buf.bufEnd - buf.dataEnd) < need) {
                 int s = (buf.dataEnd - buf.bufStart) + need;
-                if (need > s) return -1;
+                if (s < need) return -1;
                 byte[] tmp = new byte[s];
                 System.arraycopy(buf.bytes, buf.bufStart, tmp, 0, s); // ??
                 buf.bytes = tmp;
@@ -594,7 +625,7 @@ public final class EConv implements EConvFlags {
         buf.dataEnd += insertLen;
         if (transcoding != null && transcoding.transcoder.compatibility.isEncoder()) {
             System.arraycopy(transcoding.readBuf, transcoding.recognizedLength, buf.bytes, buf.dataEnd, transcoding.readAgainLength);
-            buf.dataEnd = transcoding.readAgainLength;
+            buf.dataEnd += transcoding.readAgainLength;
             transcoding.readAgainLength = 0;
         }
 
