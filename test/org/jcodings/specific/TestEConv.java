@@ -7,6 +7,7 @@ import org.jcodings.transcode.TranscoderDB;
 import org.jcodings.transcode.Transcoding;
 import org.junit.Assert;
 import org.junit.Test;
+import sun.nio.cs.ext.ISO2022_JP;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -77,15 +78,35 @@ public class TestEConv {
         Assert.assertArrayEquals("\"&lt;&#x2665;&gt;&amp;&quot;&#x2661;&quot;\"".getBytes(), Arrays.copyOf(dest, destP.p));
     }
 
+    @Test
+    public void testXMLText() throws Exception {
+//        EConv econv = TranscoderDB.open("utf-8".getBytes(), "iso-2022-jp".getBytes(), EConvFlags.XML_TEXT_DECORATOR);
+//
+//        byte[] expected = "&amp;う&#x2665;&amp;\"'".getBytes(ISO2022_JP);
+//
+//        byte[] src = "&\u3046\u2665&\"'".getBytes(UTF8);
+//        byte[] dest = new byte[50];
+//        Ptr destP = new Ptr(0);
+//
+//        econv.convert(src, new Ptr(0), src.length, dest, destP, dest.length, 0);
+//
+////        Assert.assertArrayEquals(expected, Arrays.copyOf(dest, destP.p));
+//        Assert.assertEquals(new String(expected, ISO2022_JP), new String(Arrays.copyOf(dest, destP.p), ISO2022_JP));
+    }
+
     private static final Charset UTF8;
+    private static final Charset ISO2022_JP;
 
     static {
         Charset utf8 = null;
+        Charset iso2022_jp = null;
         try {
             utf8 = Charset.forName("UTF-8");
+            iso2022_jp = Charset.forName("ISO-2022-JP");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         UTF8 = utf8;
+        ISO2022_JP = iso2022_jp;
     }
 }
