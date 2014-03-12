@@ -130,6 +130,7 @@ public class Transcoding implements TranscodingInstruction {
         int out_p = out_pos.p;
 
         int[] char_len = null;
+        byte[][] outByteParam = null;
 
         int ip = resumePosition;
 
@@ -224,8 +225,9 @@ public class Transcoding implements TranscodingInstruction {
                         {
                             int char_start;
                             char_len = PREPARE_CHAR_LEN(char_len);
-                            char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                            nextInfo = tr.startToInfo(state, in_bytes, char_start, char_len[0]);
+                            outByteParam = PREPARE_OUT_BYTES(outByteParam);
+                            char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
+                            nextInfo = tr.startToInfo(state, outByteParam[0], char_start, char_len[0]);
                             ip = FOLLOW_INFO;
                             continue;
                         }
@@ -289,14 +291,15 @@ public class Transcoding implements TranscodingInstruction {
                 {
                     int char_start;
                     char_len = PREPARE_CHAR_LEN(char_len);
+                    outByteParam = PREPARE_OUT_BYTES(outByteParam);
                     if (tr.maxOutput <= out_stop - out_p) {
-                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                        out_p += tr.startToIOutput(state, in_bytes, char_start, char_len[0], nextInfo, out_bytes, out_p, out_stop - out_p);
+                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
+                        out_p += tr.startToIOutput(state, outByteParam[0], char_start, char_len[0], nextInfo, out_bytes, out_p, out_stop - out_p);
                         ip = START;
                         continue;
                     } else {
-                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                        writeBuffLen = tr.startToIOutput(state, in_bytes, char_start, char_len[0], nextInfo, writeBuf, 0, writeBuffLen);
+                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
+                        writeBuffLen = tr.startToIOutput(state, outByteParam[0], char_start, char_len[0], nextInfo, writeBuf, 0, writeBuf.length);
                         writeBuffOff = 0;
                         ip = TRANSFER_WRITEBUF;
                         continue;
@@ -316,14 +319,15 @@ public class Transcoding implements TranscodingInstruction {
                 {
                     int char_start;
                     char_len = PREPARE_CHAR_LEN(char_len);
+                    outByteParam = PREPARE_OUT_BYTES(outByteParam);
                     if (tr.maxOutput <= out_stop - out_p) {
-                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                        out_p += tr.startToOutput(state, in_bytes, char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
+                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
+                        out_p += tr.startToOutput(state, outByteParam[0], char_start, char_len[0], out_bytes, out_p, out_stop - out_p);
                         ip = START;
                         continue;
                     } else {
-                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len);
-                        writeBuffLen = tr.startToOutput(state, in_bytes, char_start, char_len[0], writeBuf, 0, writeBuffLen);
+                        char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
+                        writeBuffLen = tr.startToOutput(state, outByteParam[0], char_start, char_len[0], writeBuf, 0, writeBuf.length);
                         writeBuffOff = 0;
                         ip = TRANSFER_WRITEBUF;
                         continue;
@@ -581,16 +585,29 @@ public class Transcoding implements TranscodingInstruction {
         return char_len;
     }
 
-    private int transcode_char_start(byte[] in_bytes, int in_start, int inchar_start, int in_p, int[] char_len_ptr) {
+    private byte[][] PREPARE_OUT_BYTES(byte[][] outBytes) {
+        if (outBytes == null) {
+            outBytes = new byte[1][];
+        } else {
+            outBytes[0] = null;
+        }
+        return outBytes;
+    }
+
+    private int transcode_char_start(byte[] in_bytes, int in_start, int inchar_start, int in_p, int[] char_len_ptr, byte[][] retBytes) {
         int ptr;
+        byte[] bytes;
         if (inchar_start - in_start < recognizedLength) {
-            System.arraycopy(TRANSCODING_READBUF(this), recognizedLength, in_bytes, inchar_start, in_p - inchar_start);
+            System.arraycopy(in_bytes, inchar_start, TRANSCODING_READBUF(this), recognizedLength, in_p - inchar_start);
             ptr = 0;
+            bytes = TRANSCODING_READBUF(this);
         }
         else {
             ptr = inchar_start - recognizedLength;
+            bytes = in_bytes;
         }
         char_len_ptr[0] = recognizedLength + (in_p - inchar_start);
+        retBytes[0] = bytes;
         return ptr;
     }
 
