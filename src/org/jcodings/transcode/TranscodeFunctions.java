@@ -70,7 +70,7 @@ public class TranscodeFunctions {
             s1 = s[sStart+1] & 0xFF;
             int s2 = s[sStart+2] & 0xFF;
             o[oStart + 1] = (byte)((s0 << 4) | ((s1 >> 2) ^ 0x20));
-            o[oStart] = (byte)((s1 << 6) | (s1 ^ 0x80));
+            o[oStart] = (byte)((s1 << 6) | (s2 ^ 0x80));
             return 2;
         } else {
             s1 = s[sStart+1] & 0xFF;
@@ -332,7 +332,7 @@ public class TranscodeFunctions {
         int s0 = s[sStart] & 0xFF;
         int s1 = s[sStart+1] & 0xFF;
         if (s1 == 0 && s0 < 0x80) {
-            o[oStart] = s[sStart];
+            o[oStart] = (byte)s0;
             return 1;
         } else if (s1 < 0x08) {
             o[oStart] = (byte)(0xC0 | (s1 << 2) | (s0 >> 6));
@@ -347,7 +347,7 @@ public class TranscodeFunctions {
             int s2 = s[sStart+2] & 0xFF;
             int s3 = s[sStart+3] & 0xFF;
             long u = (((s1 & 0x03) << 2) | (s0 >> 6)) + 1;
-            o[oStart] = (byte)(0xF0 | u >> 2);
+            o[oStart] = (byte)(0xF0 | (u >> 2));
             o[oStart + 1] = (byte)(0x80 | ((u & 0x03) << 4) | ((s0 >> 2) & 0x0F));
             o[oStart + 2] = (byte)(0x80 | ((s0 & 0x03) << 4) | ((s3 & 0x03) << 2) | (s2 >> 6));
             o[oStart + 3] = (byte)(0x80 | (s2 & 0x3F));
