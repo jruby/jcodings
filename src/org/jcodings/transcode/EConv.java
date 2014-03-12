@@ -671,7 +671,8 @@ public final class EConv implements EConvFlags {
         return addConverter(NULL_STRING, decorator, n);
     }
 
-    /* rb_econv_decorate_at_last */
+    /* rb_econv_decorate_at_first */
+    // NOTE: Unused in MRI proper; for C exts, presumably
     boolean decorateAtFirst(byte[] decorator) {
         if (numTranscoders == 0) return decorateAt(decorator, 0);
         Transcoder transcoder = elements[0].transcoding.transcoder;
@@ -688,7 +689,7 @@ public final class EConv implements EConvFlags {
         if (numTranscoders == 0) return decorateAt(decorator, 0);
         Transcoder transcoder = elements[numTranscoders - 1].transcoding.transcoder;
 
-        if (!decorator(transcoder.source, transcoder.destination) && transcoder.compatibility.isDecoder()) {
+        if (!decorator(transcoder.source, transcoder.destination) && transcoder.compatibility.isEncoder()) {
             return decorateAt(decorator, numTranscoders - 1);
         }
 
