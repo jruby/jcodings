@@ -41,11 +41,11 @@ public class Cp50220_decoder_Transcoder extends Transcoder {
     }
 
     public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
-        return TranscodeFunctions.funSiCp50220Decoder(statep, s, sStart, l);
+        return TranscodeFunctions.funSiCp50221Decoder(statep, s, sStart, l);
     }
 
     @Override
     public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
-        return TranscodeFunctions.funSoCp50220Decoder(statep, s, sStart, l, o, oStart, oSize);
+        return TranscodeFunctions.funSoCp50221Decoder(statep, s, sStart, l, o, oStart, oSize);
     }
 }
