@@ -572,7 +572,7 @@ public final class EConv implements EConvFlags {
             insertLen = strLen;
         } else {
             Ptr insertLenP = new Ptr();
-            insertBuf = new byte[4096];
+            insertBuf = new byte[4096]; // FIXME: wasteful
             insertStr = allocateConvertedString(strEncoding, insertEncoding, str, 0, strLen, insertBuf, insertLenP);
             insertLen = insertLenP.p;
             if (insertStr == null) return -1;
