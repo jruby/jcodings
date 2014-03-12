@@ -24,6 +24,7 @@ import static org.jcodings.util.CaseInsensitiveBytesHash.caseInsensitiveEquals;
 import org.jcodings.Encoding;
 import org.jcodings.Ptr;
 import org.jcodings.exception.InternalException;
+import org.jcodings.specific.UTF32BEEncoding;
 
 public final class EConv implements EConvFlags {
     int flags;
@@ -470,7 +471,9 @@ public final class EConv implements EConvFlags {
             utfLen = lastError.errorBytesLength;
         } else {
             Ptr utfLenA = new Ptr();
-            byte[] utfBuf = new byte[1024]; // FIXME: wasteful
+
+            // TODO: better calculation?
+            byte[] utfBuf = new byte[lastError.errorBytesLength * UTF32BEEncoding.INSTANCE.maxLength()];
             utfBytes = allocateConvertedString(lastError.source, "UTF-32BE".getBytes(), lastError.errorBytes, lastError.errorBytesP, lastError.errorBytesLength, utfBuf, utfLenA);
 
             if (utfBytes == null) return -1;
