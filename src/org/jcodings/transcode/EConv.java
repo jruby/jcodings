@@ -604,20 +604,20 @@ public final class EConv implements EConvFlags {
             buf = new Buffer();
             buf.allocate(need);
         } else if ((buf.bufEnd - buf.dataEnd) < need) {
+            // try to compact buffer by moving data portion back to bufStart
             System.arraycopy(buf.bytes, buf.dataStart, buf.bytes, buf.bufStart, buf.dataEnd - buf.dataStart);
-            buf.dataEnd = buf.dataStart + (buf.dataEnd - buf.dataStart);
+            buf.dataEnd = buf.bufStart + (buf.dataEnd - buf.dataStart);
             buf.dataStart = buf.bufStart;
 
             if ((buf.bufEnd - buf.dataEnd) < need) {
+                // still not enough room; use a separate buffer
                 int s = (buf.dataEnd - buf.bufStart) + need;
                 if (s < need) return -1;
-                byte[] tmp = new byte[s];
-                System.arraycopy(buf.bytes, buf.bufStart, tmp, 0, s); // ??
-                buf.bytes = tmp;
-                buf.dataStart = 0;
-                buf.dataEnd = buf.dataEnd - buf.bufStart;
-                buf.bufStart = 0;
-                buf.bufEnd = 0;
+                Buffer buf2 = buf = new Buffer();
+                buf2.allocate(s);
+                System.arraycopy(buf.bytes, buf.bufStart, buf2.bytes, 0, s); // ??
+                buf2.dataStart = 0;
+                buf2.dataEnd = buf.dataEnd - buf.bufStart;
             }
         }
 
