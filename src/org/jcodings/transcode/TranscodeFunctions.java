@@ -355,46 +355,48 @@ public class TranscodeFunctions {
         }
     }
 
-    public static int funSoEucjp2Sjis(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+    public static int funSoEucjp2Sjis(byte[] statep, byte[] s, int sStart, int _l, byte[] o, int oStart, int osize) {
         int s0 = s[sStart] & 0xFF;
         int s1 = s[sStart+1] & 0xFF;
         if (s0 == 0x8e) {
             o[oStart] = (byte)s1;
             return 1;
         } else {
-            int h, m, l2;
+            int h, m, l;
             m = s0 & 1;
             h = (s0 + m) >> 1;
             h += s0 < 0xdf ? 0x30 : 0x70;
-            l2 = s1 - m * 94 - 3;
-            if (0x7f <= l2)
+            l = s1 - m * 94 - 3;
+            if (0x7f <= l) {
                 l++;
+            }
             o[oStart] = (byte)h;
-            o[oStart+1] = (byte)l2;
+            o[oStart+1] = (byte)l;
             return 2;
         }
     }
 
-    public static int funSoSjis2Eucjp(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+    public static int funSoSjis2Eucjp(byte[] statep, byte[] s, int sStart, int _l, byte[] o, int oStart, int osize) {
         int s0 = s[sStart] & 0xFF;
-        if (l == 1) {
+        if (_l == 1) {
             o[oStart] = (byte)0x8E;
             o[oStart+1] = (byte)s0;
             return 2;
         } else {
-            int h, l2;
+            int h, l;
             h = s0;
-            l2 = s[sStart + 1] & 0xFF;
-            if (0xe0 <= h)
+            l = s[sStart + 1] & 0xFF;
+            if (0xe0 <= h) {
                 h -= 64;
-            l2 += l2 < 0x80 ? 0x61 : 0x60;
+            }
+            l += l < 0x80 ? 0x61 : 0x60;
             h = h * 2 - 0x61;
-            if (0xfe < l2) {
-                l2 -= 94;
+            if (0xfe < l) {
+                l -= 94;
                 h += 1;
             }
             o[oStart] = (byte)h;
-            o[oStart+1] = (byte)l2;
+            o[oStart+1] = (byte)l;
             return 2;
         }
     }
@@ -425,7 +427,7 @@ public class TranscodeFunctions {
             u = ((s0 * 10 + s1) * 126 + s2) * 10 + s3 - diff - 0x170000;
         }
         else { /* GB18030 2 bytes */
-            u = s0*256 + s1 + 24055 - diff;
+            u = s0 * 256 + s1 + 24055 - diff;
         }
         o[oStart] = (byte)(0xE0 | (u >> 12));
         o[oStart+1] = (byte)(0x80 | ((u >> 6) & 0x3F));
@@ -455,7 +457,7 @@ public class TranscodeFunctions {
         int s0 = s[sStart] & 0xFF;
         int s1 = s[sStart+1] & 0xFF;
         int s2 = s[sStart+2] & 0xFF;
-        long diff = info >> 8;
+        long diff = info >>> 8;
         long u;    /* Unicode Scalar Value */
 
         u = ((s0 & 0x0F) << 12) | ((s1 & 0x3F) << 6) | (s2 & 0x3F);
