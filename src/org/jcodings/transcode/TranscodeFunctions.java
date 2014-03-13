@@ -443,11 +443,11 @@ public class TranscodeFunctions {
         int s3 = s[sStart+3] & 0xFF;
         long u = ((s0 & 0x07) << 18) | ((s1 & 0x3F) << 12) | ((s2 & 0x3F) << 6) | (s3 & 0x3F);
         u -= 0x10000;
-        o[oStart+3] = (byte)(0x30 + u % 10);
+        o[oStart+3] = (byte)(0x30 + (u % 10));
         u /= 10;
-        o[oStart+2] = (byte)(0x81 + u % 126);
+        o[oStart+2] = (byte)(0x81 + (u % 126));
         u /= 126;
-        o[oStart+1] = (byte)(0x30 + u % 10);
+        o[oStart+1] = (byte)(0x30 + (u % 10));
         o[oStart] = (byte)(0x90 + u / 10);
         return 4;
     }
@@ -466,21 +466,21 @@ public class TranscodeFunctions {
             u += (diff + 0x170000);
             u -= 1688980;
             u += 0x2;
-            o[oStart+3] = (byte)(0x30 + u%10);
+            o[oStart+3] = (byte)(0x30 + (u % 10));
             u /= 10;
             u += 0x32;
-            o[oStart+2] = (byte)(0x81 + u%126);
+            o[oStart+2] = (byte)(0x81 + (u % 126));
             u /= 126;
             u += 0x1;
-            o[oStart+1] = (byte)(0x30 + u%10);
+            o[oStart+1] = (byte)(0x30 + (u % 10));
             u /= 10;
             o[oStart] = (byte)(0x81 + u);
             return 4;
         }
         else { /* GB18030 2 bytes */
             u += (diff - 24055);
-            o[oStart+1] = (byte)(u%256);
-            o[oStart] = (byte)(u/256);
+            o[oStart+1] = (byte)(u % 256);
+            o[oStart] = (byte)(u / 256);
             return 2;
         }
     }

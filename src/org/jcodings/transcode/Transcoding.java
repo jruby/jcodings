@@ -175,14 +175,7 @@ public class Transcoding implements TranscodingInstruction {
                             writeBuffOff = 0;
                             ip = NOMAP_TRANSFER;
                             continue;
-                        case 0x00:
-                        case 0x04:
-                        case 0x08:
-                        case 0x0C:
-                        case 0x10:
-                        case 0x14:
-                        case 0x18:
-                        case 0x1C:
+                        case 0x00: case 0x04: case 0x08: case 0x0C: case 0x10: case 0x14: case 0x18: case 0x1C:
                             if (SUSPEND == SUSPEND_AFTER_OUTPUT(this, opt, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, SELECT_TABLE)) return suspendResult;
                             ip = SELECT_TABLE;
                             continue;
