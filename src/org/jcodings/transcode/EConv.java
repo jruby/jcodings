@@ -801,7 +801,7 @@ public final class EConv implements EConvFlags {
         } else {
             Ptr len2p = new Ptr();
             str2 = allocateConvertedString(encname, encname2, str, p, len, null, len2p);
-            if (str == null) return -1;
+            if (str2 == null) return -1;
             len2 = len2p.p;
         }
 
