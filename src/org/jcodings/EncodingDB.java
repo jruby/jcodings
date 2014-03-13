@@ -134,7 +134,7 @@ public class EncodingDB {
         "UTF-32LE",     "UTF32LE",
         "Windows-1251", "CP1251",
         "GB2312",       "EUCKR",         // done via rb_enc_register
-        "Windows-31J",  "SJIS"           // TODO: Windows-31J is actually a variant of SJIS
+        "Windows-31J",  "Windows_31J"           // TODO: Windows-31J is actually a variant of SJIS
     };
 
     static Entry ascii;

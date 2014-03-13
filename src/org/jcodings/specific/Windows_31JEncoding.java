@@ -19,16 +19,26 @@
  */
 package org.jcodings.specific;
 
-public final class NonStrictSJISEncoding extends BaseSJISEncoding {
+import org.jcodings.Config;
 
-    protected NonStrictSJISEncoding() {
-        super("Shift_JIS", null);
+public final class Windows_31JEncoding extends BaseSJISEncoding {
+    protected Windows_31JEncoding() {
+        super("Windows-31J", SJISEncoding.SjisTrans);
+    }
+
+    @Override
+    public String getCharsetName() {
+        return "Windows-31J";
     }
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        return length(bytes[p]);
+        if (Config.VANILLA) {
+            return length(bytes[p]);
+        } else {
+            return safeLengthForUptoTwo(bytes, p, end);
+        }
     }
 
-    public static final NonStrictSJISEncoding INSTANCE = new NonStrictSJISEncoding();
+    public static final Windows_31JEncoding INSTANCE = new Windows_31JEncoding();
 }
