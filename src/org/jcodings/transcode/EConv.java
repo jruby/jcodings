@@ -605,7 +605,7 @@ public final class EConv implements EConvFlags {
             buf = elements[lastTranscodingIndex];
         }
 
-        if (buf == null) {
+        if (buf == null || buf.bytes == null) {
             buf = new Buffer();
             buf.allocate(need);
         } else if ((buf.bufEnd - buf.dataEnd) < need) {
