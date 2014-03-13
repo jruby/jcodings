@@ -494,7 +494,7 @@ public final class EConv implements EConvFlags {
             u += (utfBytes[p + 3] & 0xff);
             byte[] charrefbuf = String.format("&#x%X;", u).getBytes(); // FIXME: use faster sprintf ??
 
-            if (insertOutput(charrefbuf, charrefbuf.length, "US-ASCII".getBytes()) == -1) return -1;
+            if (insertOutput(charrefbuf, 0, charrefbuf.length, "US-ASCII".getBytes()) == -1) return -1;
 
             p += 4;
             utfLen -= 4;
@@ -504,7 +504,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_encoding_to_insert_output */
-    private byte[] encodingToInsertOutput() {
+    public byte[] encodingToInsertOutput() {
         Transcoding transcoding = lastTranscoding;
         if (transcoding == null) return NULL_STRING;
         Transcoder transcoder = transcoding.transcoder;
@@ -559,7 +559,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_insert_output */
-    public int insertOutput(byte[] str, int strLen, byte[] strEncoding) {
+    public int insertOutput(byte[] str, int strP, int strLen, byte[] strEncoding) {
         byte[] insertEncoding = encodingToInsertOutput();
         byte[] insertBuf = null;
 
@@ -568,15 +568,18 @@ public final class EConv implements EConvFlags {
         if (strLen == 0) return 0;
 
         final byte[] insertStr;
+        final int insertP;
         final int insertLen;
         if (caseInsensitiveEquals(insertEncoding, strEncoding)) {
             insertStr = str;
+            insertP = 0;
             insertLen = strLen;
         } else {
             Ptr insertLenP = new Ptr();
             insertBuf = new byte[4096]; // FIXME: wasteful
-            insertStr = allocateConvertedString(strEncoding, insertEncoding, str, 0, strLen, insertBuf, insertLenP);
+            insertStr = allocateConvertedString(strEncoding, insertEncoding, str, strP, strLen, insertBuf, insertLenP);
             insertLen = insertLenP.p;
+            insertP = insertStr == str ? strP : 0;
             if (insertStr == null) return -1;
         }
 
@@ -626,7 +629,7 @@ public final class EConv implements EConvFlags {
             }
         }
 
-        System.arraycopy(insertStr, 0, buf.bytes, buf.dataEnd, insertLen);
+        System.arraycopy(insertStr, insertP, buf.bytes, buf.dataEnd, insertLen);
         buf.dataEnd += insertLen;
         if (transcoding != null && transcoding.transcoder.compatibility.isEncoder()) {
             System.arraycopy(transcoding.readBuf, transcoding.recognizedLength, buf.bytes, buf.dataEnd, transcoding.readAgainLength);
@@ -806,7 +809,7 @@ public final class EConv implements EConvFlags {
     /* output_replacement_character */
     int outputReplacementCharacter() {
         if (makeReplacement() == -1) return -1;
-        if (insertOutput(replacementString, replacementLength, replacementEncoding) == -1) return -1;
+        if (insertOutput(replacementString, 0, replacementLength, replacementEncoding) == -1) return -1;
         return 0;
     }
 
