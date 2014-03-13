@@ -337,7 +337,7 @@ public final class EConv implements EConvFlags {
                     return convertInternalResult(EConvResult.DestinationBufferFull, null);
                 }
                 len = inBuf.dataEnd - inBuf.dataStart;
-                System.arraycopy(inBuf, inBuf.dataStart, out, outPtr.p, len);
+                System.arraycopy(inBuf.bytes, inBuf.dataStart, out, outPtr.p, len);
                 outPtr.p += len;
                 inBuf.dataStart = inBuf.dataEnd = inBuf.bufStart;
                 if ((flags & AFTER_OUTPUT) != 0) return convertInternalResult(EConvResult.AfterOutput, null);
@@ -608,9 +608,14 @@ public final class EConv implements EConvFlags {
             buf = elements[lastTranscodingIndex];
         }
 
-        if (buf == null || buf.bytes == null) {
+        if (buf == null) {
             buf = new Buffer();
             buf.allocate(need);
+        } else if (buf.bytes == null) {
+            buf.bytes = new byte[need];
+            buf.dataStart = 0;
+            buf.dataEnd = 0;
+            buf.bufEnd = need;
         } else if ((buf.bufEnd - buf.dataEnd) < need) {
             // try to compact buffer by moving data portion back to bufStart
             System.arraycopy(buf.bytes, buf.dataStart, buf.bytes, buf.bufStart, buf.dataEnd - buf.dataStart);
