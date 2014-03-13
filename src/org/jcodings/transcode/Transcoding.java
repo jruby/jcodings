@@ -287,12 +287,12 @@ public class Transcoding implements TranscodingInstruction {
                     outByteParam = PREPARE_OUT_BYTES(outByteParam);
                     if (tr.maxOutput <= out_stop - out_p) {
                         char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
-                        out_p += tr.startToIOutput(state, outByteParam[0], char_start, char_len[0], nextInfo, out_bytes, out_p, out_stop - out_p);
+                        out_p += tr.startInfoToOutput(state, outByteParam[0], char_start, char_len[0], nextInfo, out_bytes, out_p, out_stop - out_p);
                         ip = START;
                         continue;
                     } else {
                         char_start = transcode_char_start(in_bytes, in_pos.p, inchar_start, in_p, char_len, outByteParam);
-                        writeBuffLen = tr.startToIOutput(state, outByteParam[0], char_start, char_len[0], nextInfo, writeBuf, 0, writeBuf.length);
+                        writeBuffLen = tr.startInfoToOutput(state, outByteParam[0], char_start, char_len[0], nextInfo, writeBuf, 0, writeBuf.length);
                         writeBuffOff = 0;
                         ip = TRANSFER_WRITEBUF;
                         continue;

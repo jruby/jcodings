@@ -122,8 +122,8 @@ public abstract class Transcoder implements TranscodingInstruction {
         throw new RuntimeException("unimplemented startToOutput needed in " + this);
     }
 
-    public int startToIOutput(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int oSize) {
-        throw new RuntimeException("unimplemented startToIOutput needed in " + this);
+    public int startInfoToOutput(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int oSize) {
+        throw new RuntimeException("unimplemented startInfoToOutput needed in " + this);
     }
 
     /* rb_transcoding_open_by_transcoder */

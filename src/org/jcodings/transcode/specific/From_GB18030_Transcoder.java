@@ -36,7 +36,7 @@ public class From_GB18030_Transcoder extends Transcoder {
     }
 
     @Override
-    public int startToIOutput(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int oSize) {
+    public int startInfoToOutput(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int oSize) {
         return TranscodeFunctions.funSioFromGB18030(statep, s, sStart, l, info, o, oStart, oSize);
     }
 }
