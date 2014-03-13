@@ -26,6 +26,8 @@ import org.jcodings.Ptr;
 import org.jcodings.exception.InternalException;
 import org.jcodings.specific.UTF32BEEncoding;
 
+import java.util.Arrays;
+
 public final class EConv implements EConvFlags {
     int flags;
     public byte[] source, destination; // source/destination encoding names
@@ -823,5 +825,45 @@ public final class EConv implements EConvFlags {
         s += "  last error: " + (lastError == null ? "null" : lastError.toString());
 
         return s;
+    }
+
+    // econv_equal
+    @Override
+    public boolean equals(Object other) {
+        if (!(other instanceof EConv)) return false;
+
+        EConv ec1 = this;
+        EConv ec2 = (EConv)other;
+        int i;
+
+        if (ec2 == null) return false;
+        if (ec1.source != ec2.source &&
+                !Arrays.equals(ec1.source, ec2.source))
+            return false;
+        if (ec1.destination != ec2.destination &&
+                !Arrays.equals(ec1.destination, ec2.destination))
+            return false;
+        if (ec1.flags != ec2.flags) return false;
+        if (ec1.replacementEncoding != ec2.replacementEncoding &&
+                !Arrays.equals(ec1.replacementEncoding, ec2.replacementEncoding))
+            return false;
+        if (ec1.replacementLength != ec2.replacementLength) return false;
+        if (ec1.replacementString != ec2.replacementString &&
+                !memcmp(ec1.replacementString, ec2.replacementString, ec2.replacementLength))
+            return false;
+
+        if (ec1.numTranscoders != ec2.numTranscoders) return false;
+        for (i = 0; i < ec1.numTranscoders; i++) {
+            if (ec1.elements[i].transcoding.transcoder != ec2.elements[i].transcoding.transcoder)
+                return false;
+        }
+        return true;
+    }
+
+    private static boolean memcmp(byte[] a, byte[] b, int len) {
+        for (int i = 0; i < len; i++) {
+            if (a[i] != b[i]) return false;
+        }
+        return true;
     }
 }
