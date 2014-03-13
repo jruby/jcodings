@@ -120,7 +120,7 @@ public class TranscodeFunctions {
             s1 = s[sStart+1] & 0xFF;
             s2 = s[sStart+2] & 0xFF;
             s3 = s[sStart+3] & 0xFF;
-            o[oStart + 1] = (byte)(((s0 & 0x07) << 2) | ((s2 >> 4) & 0x03));
+            o[oStart + 1] = (byte)(((s0 & 0x07) << 2) | ((s1 >> 4) & 0x03));
             o[oStart + 2] = (byte)(((s1 & 0x0F) << 4) | ((s2 >> 2) & 0x0F));
             o[oStart + 3] = (byte)(((s2 & 0x03) << 6) | (s3 & 0x3F));
         }
