@@ -707,7 +707,7 @@ public final class EConv implements EConvFlags {
     }
 
     /* rb_econv_binmode */
-    private void binmode() {
+    public void binmode() {
         Transcoder[] transcoders = new Transcoder[3];
         int n = 0;
         if ((flags & UNIVERSAL_NEWLINE_DECORATOR) != 0) {
