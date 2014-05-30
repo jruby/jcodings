@@ -436,7 +436,17 @@ public final class EConv implements EConvFlags {
     public EConvResult convert(byte[] in, Ptr inPtr, int inStop, byte[] out, Ptr outPtr, int outStop, int flags) {
         started = true;
 
-        // null check
+        if (in == null || inPtr == null) {
+            in = NULL_STRING;
+            inPtr = Ptr.NULL;
+            inStop = 0;
+        }
+
+        if (out == null || outPtr == null) {
+            out = NULL_STRING;
+            outPtr = Ptr.NULL;
+            outStop = 0;
+        }
 
         resume: while (true) {
             EConvResult ret = convertInternal(in, inPtr, inStop, out, outPtr, outStop, flags);

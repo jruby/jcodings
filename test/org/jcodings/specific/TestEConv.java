@@ -3,6 +3,7 @@ package org.jcodings.specific;
 import org.jcodings.Ptr;
 import org.jcodings.transcode.EConv;
 import org.jcodings.transcode.EConvFlags;
+import org.jcodings.transcode.EConvResult;
 import org.jcodings.transcode.TranscoderDB;
 import org.jcodings.transcode.Transcoding;
 import org.junit.Assert;
@@ -92,6 +93,17 @@ public class TestEConv {
 //
 ////        Assert.assertArrayEquals(expected, Arrays.copyOf(dest, destP.p));
 //        Assert.assertEquals(new String(expected, ISO2022_JP), new String(Arrays.copyOf(dest, destP.p), ISO2022_JP));
+    }
+
+    @Test
+    public void testEmptyStrings() throws Exception {
+        EConv econv = TranscoderDB.open("UTF-8".getBytes(), "UTF-16".getBytes(), 0);
+
+        byte[] notEmpty = new byte["foo".getBytes("UTF-16").length];
+
+        EConvResult result = econv.convert(null, null, 0, notEmpty, new Ptr(0), notEmpty.length, 0);
+
+        Assert.assertEquals(EConvResult.Finished, result);
     }
 
     private static final Charset UTF8;
