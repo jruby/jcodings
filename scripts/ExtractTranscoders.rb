@@ -83,7 +83,12 @@ template = open("TranscoderTemplate.java").read
 transcoder_list = []
 generic_list = []
 
-Dir["#{trans_path}/*.c"].reject{|f| f =~ /transdb/}.each do |f|
+transcoder_srcs = Dir["#{trans_path}/*.c"].reject{|f| f =~ /transdb/}
+
+# newline.c generates into ruby root, for whatever reason
+transcoder_srcs << "#{repo_path}/newline.c"
+
+transcoder_srcs.each do |f|
     src = open(f).read
     defs = Hash[src.scan(/#define\s+(.*?)\s+(.*)/)]
     src = src.gsub(/#define\s+(.*?)\s+(.*)/, "")
