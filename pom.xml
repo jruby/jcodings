@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jruby.jcodings</groupId>
   <artifactId>jcodings</artifactId>
-  <version>1.0.12-SNAPSHOT</version>
+  <version>1.0.12</version>
   <name>JCodings</name>
   <description>
     Byte based encoding support library for java
