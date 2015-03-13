@@ -545,41 +545,34 @@ public abstract class Encoding implements Cloneable {
     public static final byte NEW_LINE = (byte)0x0a;
 
     public static Encoding load(String name) {
-        String encClassName = "org.jcodings.specific." + name + "Encoding";
+        return loadDummyOrEncoding(name, false);
+    }
 
+    public static Encoding loadForDummy(String name) {
+        return loadDummyOrEncoding(name, true);
+    }
+
+    private static Encoding loadDummyOrEncoding(String name, boolean dummy) {
+        String encClassName = "org.jcodings.specific." + name + "Encoding";
         Class<?> encClass;
         try {
             encClass = Class.forName(encClassName);
         } catch (ClassNotFoundException cnfe) {
             throw new InternalException(ErrorMessages.ERR_ENCODING_CLASS_DEF_NOT_FOUND, encClassName);
+        }
+
+        if (dummy) {
+            try {
+                return (Encoding) encClass.getField("DUMMY").get(encClass);
+            } catch (Exception e) {
+                // try to fall back on normal instance
+            }
         }
 
         try {
             return (Encoding)encClass.getField("INSTANCE").get(encClass);
-        } catch (Exception e) {
+        } catch (Exception e2) {
             throw new InternalException(ErrorMessages.ERR_ENCODING_LOAD_ERROR, encClassName);
-        }
-    }
-
-    public static Encoding loadForDummy(String name) {
-        String encClassName = "org.jcodings.specific." + name + "Encoding";
-
-        Class<?> encClass;
-        try {
-            encClass = Class.forName(encClassName);
-        } catch (ClassNotFoundException cnfe) {
-            throw new InternalException(ErrorMessages.ERR_ENCODING_CLASS_DEF_NOT_FOUND, encClassName);
-        }
-
-        try {
-            return (Encoding)encClass.getField("DUMMY").get(encClass);
-        } catch (Exception e) {
-            // try to fall back on normal instance
-            try {
-                return (Encoding)encClass.getField("INSTANCE").get(encClass);
-            } catch (Exception e2) {
-                throw new InternalException(ErrorMessages.ERR_ENCODING_LOAD_ERROR, encClassName);
-            }
         }
     }
 }

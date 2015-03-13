@@ -58,7 +58,7 @@ public class EncodingDB {
             this(name, ascii.encodingClass, ascii, true);
         }
 
-        // dummy unicode
+        // dummy with base
         Entry(byte[]name, Entry base, boolean dummy) {
             this(name, base.encodingClass, base, dummy);
         }
@@ -77,7 +77,11 @@ public class EncodingDB {
                 if (name == null) {
                     encoding = Encoding.load(encodingClass);
                 } else {
-                    encoding = Encoding.loadForDummy(encodingClass).replicate(name, isDummy);
+                    if (isDummy) {
+                        encoding = Encoding.loadForDummy(encodingClass).replicate(name, isDummy);
+                    } else {
+                        encoding = Encoding.load(encodingClass).replicate(name);
+                    }
                 }
             }
             return encoding;
