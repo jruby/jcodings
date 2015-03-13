@@ -58,6 +58,11 @@ public class EncodingDB {
             this(name, ascii.encodingClass, ascii, true);
         }
 
+        // dummy unicode
+        Entry(byte[]name, Entry base, boolean dummy) {
+            this(name, base.encodingClass, base, dummy);
+        }
+
         @Override
         public int hashCode() {
             return encodingClass.hashCode();
@@ -72,11 +77,7 @@ public class EncodingDB {
                 if (name == null) {
                     encoding = Encoding.load(encodingClass);
                 } else {
-                    if (isDummy) {
-                        encoding = ASCIIEncoding.DUMMY.replicate(name);
-                    } else {
-                        encoding = Encoding.load(encodingClass).replicate(name);
-                    }
+                    encoding = Encoding.loadForDummy(encodingClass).replicate(name, isDummy);
                 }
             }
             return encoding;
@@ -166,12 +167,16 @@ public class EncodingDB {
     }
 
     public static void replicate(String replica, String original) {
+        replicate(replica, original, false);
+    }
+
+    private static void replicate(String replica, String original, boolean dummy) {
         byte[]origBytes = original.getBytes();
         Entry originalEntry = encodings.get(origBytes);
         if (originalEntry == null) throw new InternalException(ErrorMessages.ERR_NO_SUCH_ENCODNG, original);
         byte[]replicaBytes = replica.getBytes();
         if (encodings.get(replicaBytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_REPLICA_ALREADY_REGISTERED, replica);
-        encodings.putDirect(replicaBytes, new Entry(replicaBytes, originalEntry));
+        encodings.putDirect(replicaBytes, new Entry(replicaBytes, originalEntry, dummy));
     }
 
     public static void set_base(String name, String original) {
@@ -186,6 +191,10 @@ public class EncodingDB {
 
     public static void dummy(String name) {
         dummy(name.getBytes());
+    }
+
+    public static void dummyUnicode(String replica) {
+        replicate(replica, replica + "BE", true);
     }
 
     static {
@@ -212,6 +221,9 @@ public class EncodingDB {
                 break;
             case 'D':
                 dummy(enc[1]);
+                break;
+            case 'U': // ENC_DUMMY_UNICODE from encdb.c
+                dummyUnicode(enc[1]);
                 break;
             default:
                 Thread.dumpStack();

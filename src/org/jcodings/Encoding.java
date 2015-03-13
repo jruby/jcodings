@@ -33,12 +33,13 @@ public abstract class Encoding implements Cloneable {
     private static int count;
 
     protected final int minLength, maxLength;
-    protected final boolean isFixedWidth, isSingleByte, isDummy, isAsciiCompatible;
+    protected final boolean isFixedWidth, isSingleByte, isAsciiCompatible;
 
     protected byte[]name;
     protected int hashCode;
     private int index;
     protected Charset charset = null;
+    protected boolean isDummy;
 
     protected Encoding(String name, int minLength, int maxLength, boolean isDummy) {
         setName(name);
@@ -65,6 +66,10 @@ public abstract class Encoding implements Cloneable {
     protected final void setName(byte[]name) {
         this.name = name;
         this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
+    }
+
+    protected final void setDummy(boolean dummy) {
+        this.isDummy = dummy;
     }
 
     @Override
@@ -120,9 +125,14 @@ public abstract class Encoding implements Cloneable {
     }
 
     public Encoding replicate(byte[]name) {
+        return replicate(name, false);
+    }
+
+    public Encoding replicate(byte[]name, boolean dummy) {
         try {
             Encoding clone = (Encoding)clone();
             clone.setName(name);
+            clone.setDummy(dummy);
             clone.index = count++;
             return clone;
         } catch (CloneNotSupportedException cnse){
@@ -548,6 +558,28 @@ public abstract class Encoding implements Cloneable {
             return (Encoding)encClass.getField("INSTANCE").get(encClass);
         } catch (Exception e) {
             throw new InternalException(ErrorMessages.ERR_ENCODING_LOAD_ERROR, encClassName);
+        }
+    }
+
+    public static Encoding loadForDummy(String name) {
+        String encClassName = "org.jcodings.specific." + name + "Encoding";
+
+        Class<?> encClass;
+        try {
+            encClass = Class.forName(encClassName);
+        } catch (ClassNotFoundException cnfe) {
+            throw new InternalException(ErrorMessages.ERR_ENCODING_CLASS_DEF_NOT_FOUND, encClassName);
+        }
+
+        try {
+            return (Encoding)encClass.getField("DUMMY").get(encClass);
+        } catch (Exception e) {
+            // try to fall back on normal instance
+            try {
+                return (Encoding)encClass.getField("INSTANCE").get(encClass);
+            } catch (Exception e2) {
+                throw new InternalException(ErrorMessages.ERR_ENCODING_LOAD_ERROR, encClassName);
+            }
         }
     }
 }
