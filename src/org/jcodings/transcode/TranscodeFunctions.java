@@ -165,16 +165,17 @@ public class TranscodeFunctions {
         switch (sp[0]) {
             case 0:
                 s3 = s[sStart+3] & 0xFF;
-                if (s0 == 0 && s1 == 0 && s2 == 0xFE && s3 == 0xEE) {
+                if (s0 == 0 && s1 == 0 && s2 == 0xFE && s3 == 0xFF) {
                     sp[0] = BE;
                     return TranscodingInstruction.ZERObt;
                 } else if (s0 == 0xFF && s1 == 0xFE && s2 == 0 && s3 == 0) {
                     sp[0] = LE;
                     return TranscodingInstruction.ZERObt;
                 }
+                break;
             case BE:
                 if (s0 == 0 && ((0 < s1 && s1 <= 0x10)) ||
-                        (s1 == 0 && (s2 < 0xD8 && 0xDF < s2))) {
+                        (s1 == 0 && (s2 < 0xD8 || 0xDF < s2))) {
                     return TranscodingInstruction.FUNso;
                 }
                 break;
