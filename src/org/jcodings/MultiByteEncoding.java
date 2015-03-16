@@ -187,7 +187,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     }
 
     protected final boolean mb2IsCodeCType(int code, int ctype) {
-        if (code < 128) {
+        if ((code & 0xFFFFFFFFL) < 128) { // unsigned 32-bit
             return isCodeCTypeInternal(code, ctype); // configured with ascii
         } else {
             if (isWordGraphPrint(ctype)) {
