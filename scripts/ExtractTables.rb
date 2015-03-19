@@ -4,6 +4,7 @@ repo_path = ARGV.first # path to ruby repo
 enc_path = "#{repo_path}/enc"
 folds_src = open("#{enc_path}/unicode.c").read
 unicode_src = open("#{enc_path}/unicode/name2ctype.src").read
+additional_unicode_src = open("additional_name2ctype.src").read
 
 dst_dir = "../src/org/jcodings"
 dst_bin_dir = "../resources/tables"
@@ -72,7 +73,8 @@ folds = folds_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).
   end
 end
 
-unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
+(unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m) +
+additional_unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m)).each do |(type, name, tab)|
   tab = tab.split(",").map { |e| e.strip }
   assert_eq(tab.last, "")
   tab.pop
@@ -96,7 +98,7 @@ unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each d
 end
 
 
-cr_map = unicode_src.scan(/#define (CR_.*?) (.*)/).inject(Hash.new { |h, k| k }) { |h, (k, v)| h[k] = v; h }
+cr_map = (unicode_src.scan(/#define (CR_.*?) (.*)/) + additional_unicode_src.scan(/#define (CR_.*?) (.*)/)).inject(Hash.new { |h, k| k }) { |h, (k, v)| h[k] = v; h }
 
 aliases = unicode_src[/%%(.*?)%%/m, 1].scan(/(.*?),\s+(\d+)/).inject(Hash.new { |h, k| h[k] = [] }) { |h, (name, num)| h[num.to_i] << name; h }.inject({}) do |h, (k, v)|
   full, *abbr = v.map { |e| e.strip }
@@ -104,26 +106,24 @@ aliases = unicode_src[/%%(.*?)%%/m, 1].scan(/(.*?),\s+(\d+)/).inject(Hash.new { 
   h
 end
 
-unicode_src.scan(/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m) do |e|
-  names = e.first.scan(/CR_\w+/)
+e = unicode_src.scan(/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m)[0][0] + additional_unicode_src.scan(/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m)[0][0]
 
-  cnames = names.map do |c|
-    n = c[/CR_(.*)/, 1]
-    px = case n
-           when /Age_(\d)_(\d)/
-             "age=#{$1}.#{$2}"
-           else
-             n.tr('_', '').downcase
-         end
+cnames = e.scan(/CR_\w+/).map do |c|
+  n = c[/CR_(.*)/, 1]
+  px = case n
+         when /Age_(\d)_(\d)/
+           "age=#{$1}.#{$2}"
+         else
+           n.tr('_', '').downcase
+       end
 
-    ([px] + aliases[px].to_a).map { |n| "#{INDENT * 4}new CodeRangeEntry(\"#{n}\", \"#{cr_map[c]}\")" }.join(",\n")
-  end
+  ([px] + aliases[px].to_a).map { |n| "#{INDENT * 4}new CodeRangeEntry(\"#{n}\", \"#{cr_map[c]}\")" }.join(",\n")
+end
 
-  open("#{enc_dir}/UnicodeProperties.java", "wb") do |f|
-    f << open("UnicodePropertiesTemplate.java", "rb").read.
-        sub(/%\{stdcrs\}/, cnames[0..14].join(",\n")).
-        sub(/%\{extcrs\}/, cnames.join(",\n"))
-  end
+open("#{enc_dir}/UnicodeProperties.java", "wb") do |f|
+  f << open("UnicodePropertiesTemplate.java", "rb").read.
+      sub(/%\{stdcrs\}/, cnames[0..14].join(",\n")).
+      sub(/%\{extcrs\}/, cnames.join(",\n"))
 end
 
 enc_db = open("#{repo_path}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).reject { |a, b| a =~ /DEFINE/ }
