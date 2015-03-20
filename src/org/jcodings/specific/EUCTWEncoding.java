@@ -82,7 +82,8 @@ public final class EUCTWEncoding extends EucEncoding {
         if (Config.VANILLA) {
             return ((c < 0xa1 && c != 0x8e) || c == 0xff);
         } else {
-            return (c - 0xa1) > 0xfe - 0xa1;
+            // 0xff equivalent to casting to unsigned char
+            return ((c - 0xa1) & 0xff) > 0xfe - 0xa1;
         }
     }
 
