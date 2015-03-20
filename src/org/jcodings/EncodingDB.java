@@ -171,13 +171,20 @@ public class EncodingDB {
     }
 
     public static void replicate(String replica, String original) {
-        replicate(replica, original, false);
+        byte[]origBytes = original.getBytes();
+        Entry originalEntry = encodings.get(origBytes);
+        if (originalEntry == null) throw new InternalException(ErrorMessages.ERR_NO_SUCH_ENCODNG, original);
+        finishReplica(replica, originalEntry.isDummy, originalEntry);
     }
 
     private static void replicate(String replica, String original, boolean dummy) {
         byte[]origBytes = original.getBytes();
         Entry originalEntry = encodings.get(origBytes);
         if (originalEntry == null) throw new InternalException(ErrorMessages.ERR_NO_SUCH_ENCODNG, original);
+        finishReplica(replica, dummy, originalEntry);
+    }
+
+    private static void finishReplica(String replica, boolean dummy, Entry originalEntry) {
         byte[]replicaBytes = replica.getBytes();
         if (encodings.get(replicaBytes) != null) throw new InternalException(ErrorMessages.ERR_ENCODING_REPLICA_ALREADY_REGISTERED, replica);
         encodings.putDirect(replicaBytes, new Entry(replicaBytes, originalEntry, dummy));
