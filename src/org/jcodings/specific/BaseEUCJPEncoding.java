@@ -48,9 +48,11 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
             if ((code & 0xff0000) != 0) return 3;
             if ((code &   0xff00) != 0) return 2;
         } else {
-            if (code > 0xffffff) return 0;
-            if ((code & 0xff0000) >= 0x800000) return 3;
-            if ((code & 0xff00) >= 0x8000) return 2;
+            if (code > 0x00ffffff) {
+                throw new EncodingException(ErrorMessages.ERR_TOO_BIG_WIDE_CHAR_VALUE);
+            }
+            else if ((code & 0xff808080) == 0x00808080) return 3;
+            else if ((code & 0xffff8080) == 0x00008080) return 2;
         }
         throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
     }
