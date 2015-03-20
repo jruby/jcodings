@@ -76,7 +76,7 @@ public final class EUCTWEncoding extends EucEncoding {
         return null;
     }
 
-    // euckr_islead
+    // euctw_islead
     @Override
     protected boolean isLead(int c) {
         if (Config.VANILLA) {
