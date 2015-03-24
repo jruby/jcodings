@@ -26,6 +26,7 @@ import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.EncodingException;
+import org.jcodings.exception.ErrorCodes;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
 import org.jcodings.util.BytesHash;
@@ -51,10 +52,18 @@ abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
         if (code < 256) {
             return SjisEncLen[code] == 1 ? 1 : 0;
         } else if (code <= 0xffff) {
+            int low = code & 0xff;
+            if (!SJIS_ISMB_TRAIL(low)) {
+                return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
+            }
             return 2;
         } else {
-            throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+            return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         }
+    }
+
+    private static boolean SJIS_ISMB_TRAIL(int code) {
+        return SJIS_CAN_BE_TRAIL_TABLE[code];
     }
 
     @Override
