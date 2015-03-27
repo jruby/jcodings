@@ -24,10 +24,14 @@ import org.jcodings.EucEncoding;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 
-public final class EUCKREncoding extends EucEncoding {
+public class EUCKREncoding extends EucEncoding {
 
     protected EUCKREncoding() {
-        super("EUC-KR", 1, 2, EUCKREncLen, EUCKRTrans, AsciiTables.AsciiCtypeTable);
+        this("EUC-KR");
+    }
+
+    protected EUCKREncoding(String name) {
+        super(name, 1, 2, EUCKREncLen, EUCKRTrans, AsciiTables.AsciiCtypeTable);
     }
 
     @Override
