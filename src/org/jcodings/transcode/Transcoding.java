@@ -471,7 +471,7 @@ public class Transcoding implements TranscodingInstruction {
                     } else {
                         writeBuffLen = tr.finish(state, writeBuf, 0, writeBuf.length);
                         writeBuffOff = 0;
-                        while (writeBuffOff <= writeBuffLen) {
+                        while (writeBuffOff < writeBuffLen) {
                             if (SUSPEND == SUSPEND_OBUF(this, out_stop, in_bytes, in_p, inchar_start, in_pos, out_pos, out_p, readagain_len, RESUME_FINISH_WRITEBUF)) return suspendResult;
                             out_bytes[out_p++] = writeBuf[writeBuffOff++];
                         }
