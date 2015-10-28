@@ -40,14 +40,14 @@ import org.jcodings.util.IntHash;
 public abstract class UnicodeEncoding extends MultiByteEncoding {
     private static final int PROPERTY_NAME_MAX_SIZE = 20;
 
-    protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen) {
-        // ASCII type tables for all Unicode encodings
-        super(name, minLength, maxLength, EncLen, null, UNICODE_ISO_8859_1_CTypeTable);
-    }
-
     protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans) {
         // ASCII type tables for all Unicode encodings
         super(name, minLength, maxLength, EncLen, Trans, UNICODE_ISO_8859_1_CTypeTable);
+        isUnicode = true;
+    }
+
+    protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen) {
+        this(name, minLength, maxLength, EncLen, null);
     }
 
     @Override
