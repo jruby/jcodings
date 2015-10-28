@@ -27,10 +27,6 @@ public final class ASCIIEncoding extends SingleByteEncoding {
         super("ASCII-8BIT", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable);
     }
 
-    protected ASCIIEncoding(boolean isDummy) {
-        super(isDummy ? "DUMMY" : "ASCII-8BIT", AsciiTables.AsciiCtypeTable, AsciiTables.ToLowerCaseTable, isDummy);
-    }
-
     @Override
     public final byte[] toLowerCaseTable() {
         return LowerCaseTable;
@@ -49,5 +45,10 @@ public final class ASCIIEncoding extends SingleByteEncoding {
     }
 
     public static final ASCIIEncoding INSTANCE = new ASCIIEncoding();
-    public static final ASCIIEncoding DUMMY = new ASCIIEncoding(true);
+    public static final ASCIIEncoding DUMMY;
+    static {
+        DUMMY = new ASCIIEncoding();
+        DUMMY.setName("DUMMY");
+        DUMMY.setDummy();
+    }
 }

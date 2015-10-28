@@ -33,11 +33,6 @@ abstract class AbstractEncoding extends Encoding {
         this.CTypeTable = CTypeTable;
     }
 
-    protected AbstractEncoding(String name, int minLength, int maxLength, short[]CTypeTable, boolean isDummy) {
-        super(name, minLength, maxLength, isDummy);
-        this.CTypeTable = CTypeTable;
-    }
-
     /** CTYPE_TO_BIT
      */
     private static int CTypeToBit(int ctype) {

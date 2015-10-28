@@ -33,15 +33,16 @@ public abstract class Encoding implements Cloneable {
     private static int count;
 
     protected final int minLength, maxLength;
-    protected final boolean isFixedWidth, isSingleByte, isAsciiCompatible;
+    private final boolean isFixedWidth, isSingleByte;
+    private boolean isAsciiCompatible;
 
-    protected byte[]name;
-    protected int hashCode;
+    private byte[]name;
+    private int hashCode;
     private int index;
-    protected Charset charset = null;
-    protected boolean isDummy;
+    private Charset charset = null;
+    private boolean isDummy = false;
 
-    protected Encoding(String name, int minLength, int maxLength, boolean isDummy) {
+    protected Encoding(String name, int minLength, int maxLength) {
         setName(name);
 
         this.minLength = minLength;
@@ -50,12 +51,7 @@ public abstract class Encoding implements Cloneable {
         this.isSingleByte = isFixedWidth && minLength == 1;
         this.index = count++;
 
-        this.isDummy = isDummy;
-        this.isAsciiCompatible = minLength == 1 && !isDummy;
-    }
-
-    protected Encoding(String name, int minLength, int maxLength) {
-        this(name, minLength, maxLength, false);
+        this.isAsciiCompatible = minLength == 1;
     }
 
     protected final void setName(String name) {
@@ -68,8 +64,9 @@ public abstract class Encoding implements Cloneable {
         this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
     }
 
-    protected final void setDummy(boolean dummy) {
-        this.isDummy = dummy;
+    protected final void setDummy() {
+        isDummy = true;
+        isAsciiCompatible = false;
     }
 
     @Override
@@ -124,15 +121,11 @@ public abstract class Encoding implements Cloneable {
         return null;
     }
 
-    public Encoding replicate(byte[]name) {
-        return replicate(name, false);
-    }
-
-    public Encoding replicate(byte[]name, boolean dummy) {
+    Encoding replicate(byte[]name, boolean dummy) {
         try {
             Encoding clone = (Encoding)clone();
             clone.setName(name);
-            clone.setDummy(dummy);
+            if (dummy) clone.setDummy();
             clone.index = count++;
             return clone;
         } catch (CloneNotSupportedException cnse){

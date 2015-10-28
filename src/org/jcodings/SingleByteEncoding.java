@@ -32,13 +32,8 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
         this.LowerCaseTable = LowerCaseTable;
     }
 
-    protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable, boolean isDummy) {
-        super(name, 1, 1, CTypeTable, isDummy);
-        this.LowerCaseTable = LowerCaseTable;
-    }
-    
-    protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable, boolean isDummy, int codeSize) {
-        this(name, CTypeTable, LowerCaseTable, isDummy);
+    protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable, int codeSize) {
+        this(name, CTypeTable, LowerCaseTable);
         this.codeSize = codeSize;
     }
 

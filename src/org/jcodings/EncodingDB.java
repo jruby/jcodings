@@ -78,9 +78,9 @@ public class EncodingDB {
                     encoding = Encoding.load(encodingClass);
                 } else {
                     if (isDummy) {
-                        encoding = Encoding.loadForDummy(encodingClass).replicate(name, isDummy);
+                        encoding = Encoding.loadForDummy(encodingClass).replicate(name, true);
                     } else {
-                        encoding = Encoding.load(encodingClass).replicate(name);
+                        encoding = Encoding.load(encodingClass).replicate(name, false);
                     }
                 }
             }
