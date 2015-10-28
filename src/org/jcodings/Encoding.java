@@ -126,11 +126,10 @@ public abstract class Encoding implements Cloneable {
         return null;
     }
 
-    Encoding replicate(byte[]name, boolean dummy) {
+    Encoding replicate(byte[]name) {
         try {
             Encoding clone = (Encoding)clone();
             clone.setName(name);
-            if (dummy) clone.setDummy();
             clone.index = count++;
             return clone;
         } catch (CloneNotSupportedException cnse){
@@ -542,15 +541,7 @@ public abstract class Encoding implements Cloneable {
 
     public static final byte NEW_LINE = (byte)0x0a;
 
-    public static Encoding load(String name) {
-        return loadDummyOrEncoding(name, false);
-    }
-
-    public static Encoding loadForDummy(String name) {
-        return loadDummyOrEncoding(name, true);
-    }
-
-    private static Encoding loadDummyOrEncoding(String name, boolean dummy) {
+    static Encoding loadDummyOrEncoding(String name, boolean dummy) {
         String encClassName = "org.jcodings.specific." + name + "Encoding";
         Class<?> encClass;
         try {

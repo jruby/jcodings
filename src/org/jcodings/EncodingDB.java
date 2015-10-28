@@ -75,13 +75,10 @@ public class EncodingDB {
         public Encoding getEncoding() {
             if (encoding == null) {
                 if (name == null) {
-                    encoding = Encoding.load(encodingClass);
+                    encoding = Encoding.loadDummyOrEncoding(encodingClass, false);
                 } else {
-                    if (isDummy) {
-                        encoding = Encoding.loadForDummy(encodingClass).replicate(name, true);
-                    } else {
-                        encoding = Encoding.load(encodingClass).replicate(name, false);
-                    }
+                    encoding = Encoding.loadDummyOrEncoding(encodingClass, isDummy).replicate(name);
+                    if (isDummy) encoding.setDummy();
                 }
             }
             return encoding;
