@@ -35,7 +35,7 @@ public abstract class Encoding implements Cloneable {
     protected final int minLength, maxLength;
     private final boolean isFixedWidth, isSingleByte;
     private boolean isAsciiCompatible;
-    protected boolean isUnicode = false;
+    protected boolean isUnicode = false, isUTF8 = false;
 
     private byte[]name;
     private int hashCode;
@@ -103,6 +103,10 @@ public abstract class Encoding implements Cloneable {
 
     public final boolean isUnicode() {
         return isUnicode;
+    }
+
+    public final boolean isUTF8() {
+        return isUTF8;
     }
 
     /**
