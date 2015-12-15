@@ -45,10 +45,4 @@ public final class ASCIIEncoding extends SingleByteEncoding {
     }
 
     public static final ASCIIEncoding INSTANCE = new ASCIIEncoding();
-    public static final ASCIIEncoding DUMMY;
-    static {
-        DUMMY = new ASCIIEncoding();
-        DUMMY.setName("DUMMY");
-        DUMMY.setDummy();
-    }
 }

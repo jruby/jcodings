@@ -541,21 +541,13 @@ public abstract class Encoding implements Cloneable {
 
     public static final byte NEW_LINE = (byte)0x0a;
 
-    static Encoding loadDummyOrEncoding(String name, boolean dummy) {
+    public static Encoding load(String name) {
         String encClassName = "org.jcodings.specific." + name + "Encoding";
         Class<?> encClass;
         try {
             encClass = Class.forName(encClassName);
         } catch (ClassNotFoundException cnfe) {
             throw new InternalException(ErrorMessages.ERR_ENCODING_CLASS_DEF_NOT_FOUND, encClassName);
-        }
-
-        if (dummy) {
-            try {
-                return (Encoding) encClass.getField("DUMMY").get(encClass);
-            } catch (Exception e) {
-                // try to fall back on normal instance
-            }
         }
 
         try {
