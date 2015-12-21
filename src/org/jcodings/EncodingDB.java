@@ -137,7 +137,7 @@ public class EncodingDB {
         "Windows-31J",  "Windows_31J",           // TODO: Windows-31J is actually a variant of SJIS
         "Windows-1250",  "Windows_1250",
         "Windows-1251",  "Windows_1251",
-        "Windows-1251",  "Windows_1251"
+        "Windows-1252",  "Windows_1252"
     };
 
     static Entry ascii;
