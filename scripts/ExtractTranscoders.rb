@@ -86,7 +86,7 @@ generic_list = []
 transcoder_srcs = Dir["#{trans_path}/*.c"].reject{|f| f =~ /transdb/}
 
 # newline.c generates into ruby root, for whatever reason
-transcoder_srcs << "#{repo_path}/newline.c"
+# transcoder_srcs << "#{repo_path}/newline.c" -- in 2.3 it's back in trans dir
 
 transcoder_srcs.each do |f|
     src = open(f).read
