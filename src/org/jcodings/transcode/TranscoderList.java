@@ -22,202 +22,202 @@ package org.jcodings.transcode;
 import org.jcodings.transcode.Transcoder.GenericTranscoderEntry;
 
 final class TranscoderList {
-    static final String[][] LIST = new String[][] {
-        {"Big5", "UTF-8", null /*From_Big5*/},
-        {"UTF-8", "Big5", null /*To_Big5*/},
-        {"CP950", "UTF-8", null /*From_CP950*/},
-        {"UTF-8", "CP950", null /*To_CP950*/},
-        {"Big5-HKSCS", "UTF-8", null /*From_Big5_HKSCS*/},
-        {"UTF-8", "Big5-HKSCS", null /*To_Big5_HKSCS*/},
-        {"CP951", "UTF-8", null /*From_CP951*/},
-        {"UTF-8", "CP951", null /*To_CP951*/},
-        {"Big5-UAO", "UTF-8", null /*From_Big5_UAO*/},
-        {"UTF-8", "Big5-UAO", null /*To_Big5_UAO*/},
-        {"GB2312", "UTF-8", null /*From_GB2312*/},
-        {"GB12345", "UTF-8", null /*From_GB12345*/},
-        {"UTF-8", "GB2312", null /*To_GB2312*/},
-        {"UTF-8", "GB12345", null /*To_GB12345*/},
-        {"IBM037", "ISO-8859-1", null /*From_IBM037_to_ISO_8859_1*/},
-        {"ISO-8859-1", "IBM037", null /*From_ISO_8859_1_to_IBM037*/},
-        {"UTF8-DoCoMo", "UTF8-KDDI", null /*From_UTF8_DoCoMo_to_UTF8_KDDI*/},
-        {"UTF8-DoCoMo", "UTF8-SoftBank", null /*From_UTF8_DoCoMo_to_UTF8_SoftBank*/},
-        {"UTF8-DoCoMo", "UTF-8", null /*From_UTF8_DoCoMo*/},
-        {"UTF8-KDDI", "UTF8-DoCoMo", null /*From_UTF8_KDDI_to_UTF8_DoCoMo*/},
-        {"UTF8-KDDI", "UTF8-SoftBank", null /*From_UTF8_KDDI_to_UTF8_SoftBank*/},
-        {"UTF8-KDDI", "UTF-8", null /*From_UTF8_KDDI*/},
-        {"UTF8-SoftBank", "UTF8-DoCoMo", null /*From_UTF8_SoftBank_to_UTF8_DoCoMo*/},
-        {"UTF8-SoftBank", "UTF8-KDDI", null /*From_UTF8_SoftBank_to_UTF8_KDDI*/},
-        {"UTF8-SoftBank", "UTF-8", null /*From_UTF8_SoftBank*/},
-        {"UTF-8", "UTF8-DoCoMo", null /*To_UTF8_DoCoMo*/},
-        {"UTF-8", "UTF8-KDDI", null /*To_UTF8_KDDI*/},
-        {"UTF-8", "UTF8-SoftBank", null /*To_UTF8_SoftBank*/},
-        {"stateless-ISO-2022-JP-KDDI", "UTF8-KDDI", null /*From_stateless_ISO_2022_JP_KDDI_to_UTF8_KDDI*/},
-        {"UTF8-KDDI", "stateless-ISO-2022-JP-KDDI", null /*From_UTF8_KDDI_to_stateless_ISO_2022_JP_KDDI*/},
-        {"ISO-2022-JP-KDDI", "stateless-ISO-2022-JP-KDDI", "Iso2022jp_kddi_decoder"},
-        {"stateless-ISO-2022-JP-KDDI", "ISO-2022-JP-KDDI", "Iso2022jp_kddi_encoder"},
-        {"SJIS-DOCOMO", "UTF8-DOCOMO", null /*From_SJIS_DOCOMO_to_UTF8_DOCOMO*/},
-        {"UTF8-DOCOMO", "SJIS-DOCOMO", null /*From_UTF8_DOCOMO_to_SJIS_DOCOMO*/},
-        {"SJIS-KDDI", "UTF8-KDDI", null /*From_SJIS_KDDI_to_UTF8_KDDI*/},
-        {"UTF8-KDDI", "SJIS-KDDI", null /*From_UTF8_KDDI_to_SJIS_KDDI*/},
-        {"SJIS-SoftBank", "UTF8-SoftBank", null /*From_SJIS_SoftBank_to_UTF8_SoftBank*/},
-        {"UTF8-SoftBank", "SJIS-SoftBank", null /*From_UTF8_SoftBank_to_SJIS_SoftBank*/},
-        {"", "amp_escape", null /*From__to_amp_escape*/},
-        {"", "xml_text_escape", null /*From__to_xml_text_escape*/},
-        {"", "xml_attr_content_escape", null /*From__to_xml_attr_content_escape*/},
-        {"", "xml_attr_quote", "Escape_xml_attr_quote"},
-        {"GB18030", "UTF-8", "From_GB18030"},
-        {"UTF-8", "GB18030", "To_GB18030"},
-        {"GBK", "UTF-8", null /*From_GBK*/},
-        {"UTF-8", "GBK", null /*To_GBK*/},
-        {"ISO-2022-JP", "stateless-ISO-2022-JP", "Iso2022jp_decoder"},
-        {"stateless-ISO-2022-JP", "ISO-2022-JP", "Iso2022jp_encoder"},
-        {"stateless-ISO-2022-JP", "EUC-JP", "Stateless_iso2022jp_to_eucjp"},
-        {"EUC-JP", "stateless-ISO-2022-JP", "Eucjp_to_stateless_iso2022jp"},
-        {"CP50220", "cp51932", "Cp50220_decoder"},
-        {"CP50221", "cp51932", "Cp50221_decoder"},
-        {"CP51932", "CP50221", "Cp50221_encoder"},
-        {"CP51932", "CP50220", "Cp50220_encoder"},
-        {"EUC-JP", "Shift_JIS", "Eucjp2sjis"},
-        {"Shift_JIS", "EUC-JP", "Sjis2eucjp"},
-        {"EUC-JP", "UTF-8", null /*From_EUC_JP*/},
-        {"eucJP-ms", "UTF-8", null /*From_eucJP_ms*/},
-        {"CP51932", "UTF-8", null /*From_CP51932*/},
-        {"EUC-JIS-2004", "UTF-8", null /*From_EUC_JIS_2004*/},
-        {"UTF-8", "EUC-JP", null /*To_EUC_JP*/},
-        {"UTF-8", "eucJP-ms", null /*To_eucJP_ms*/},
-        {"UTF-8", "CP51932", null /*To_CP51932*/},
-        {"UTF-8", "EUC-JIS-2004", null /*To_EUC_JIS_2004*/},
-        {"Shift_JIS", "UTF-8", null /*From_Shift_JIS*/},
-        {"Windows-31J", "UTF-8", null /*From_Windows_31J*/},
-        {"UTF-8", "Shift_JIS", null /*To_Shift_JIS*/},
-        {"UTF-8", "Windows-31J", null /*To_Windows_31J*/},
-        {"UTF-8", "EUC-KR", null /*To_EUC_KR*/},
-        {"EUC-KR", "UTF-8", null /*From_EUC_KR*/},
-        {"UTF-8", "CP949", null /*To_CP949*/},
-        {"CP949", "UTF-8", null /*From_CP949*/},
-        {"", "universal_newline", "Universal_newline"},
-        {"", "crlf_newline", null /*Crlf_newline*/},
-        {"", "cr_newline", null /*Cr_newline*/},
-        {"US-ASCII", "UTF-8", null /*From_US_ASCII*/},
-        {"UTF-8", "US-ASCII", null /*To_US_ASCII*/},
-        {"ASCII-8BIT", "UTF-8", null /*From_ASCII_8BIT*/},
-        {"UTF-8", "ASCII-8BIT", null /*To_ASCII_8BIT*/},
-        {"ISO-8859-1", "UTF-8", null /*From_ISO_8859_1*/},
-        {"UTF-8", "ISO-8859-1", null /*To_ISO_8859_1*/},
-        {"ISO-8859-2", "UTF-8", null /*From_ISO_8859_2*/},
-        {"UTF-8", "ISO-8859-2", null /*To_ISO_8859_2*/},
-        {"ISO-8859-3", "UTF-8", null /*From_ISO_8859_3*/},
-        {"UTF-8", "ISO-8859-3", null /*To_ISO_8859_3*/},
-        {"ISO-8859-4", "UTF-8", null /*From_ISO_8859_4*/},
-        {"UTF-8", "ISO-8859-4", null /*To_ISO_8859_4*/},
-        {"ISO-8859-5", "UTF-8", null /*From_ISO_8859_5*/},
-        {"UTF-8", "ISO-8859-5", null /*To_ISO_8859_5*/},
-        {"ISO-8859-6", "UTF-8", null /*From_ISO_8859_6*/},
-        {"UTF-8", "ISO-8859-6", null /*To_ISO_8859_6*/},
-        {"ISO-8859-7", "UTF-8", null /*From_ISO_8859_7*/},
-        {"UTF-8", "ISO-8859-7", null /*To_ISO_8859_7*/},
-        {"ISO-8859-8", "UTF-8", null /*From_ISO_8859_8*/},
-        {"UTF-8", "ISO-8859-8", null /*To_ISO_8859_8*/},
-        {"ISO-8859-9", "UTF-8", null /*From_ISO_8859_9*/},
-        {"UTF-8", "ISO-8859-9", null /*To_ISO_8859_9*/},
-        {"ISO-8859-10", "UTF-8", null /*From_ISO_8859_10*/},
-        {"UTF-8", "ISO-8859-10", null /*To_ISO_8859_10*/},
-        {"ISO-8859-11", "UTF-8", null /*From_ISO_8859_11*/},
-        {"UTF-8", "ISO-8859-11", null /*To_ISO_8859_11*/},
-        {"ISO-8859-13", "UTF-8", null /*From_ISO_8859_13*/},
-        {"UTF-8", "ISO-8859-13", null /*To_ISO_8859_13*/},
-        {"ISO-8859-14", "UTF-8", null /*From_ISO_8859_14*/},
-        {"UTF-8", "ISO-8859-14", null /*To_ISO_8859_14*/},
-        {"ISO-8859-15", "UTF-8", null /*From_ISO_8859_15*/},
-        {"UTF-8", "ISO-8859-15", null /*To_ISO_8859_15*/},
-        {"ISO-8859-16", "UTF-8", null /*From_ISO_8859_16*/},
-        {"UTF-8", "ISO-8859-16", null /*To_ISO_8859_16*/},
-        {"WINDOWS-874", "UTF-8", null /*From_WINDOWS_874*/},
-        {"UTF-8", "WINDOWS-874", null /*To_WINDOWS_874*/},
-        {"WINDOWS-1250", "UTF-8", null /*From_WINDOWS_1250*/},
-        {"UTF-8", "WINDOWS-1250", null /*To_WINDOWS_1250*/},
-        {"WINDOWS-1251", "UTF-8", null /*From_WINDOWS_1251*/},
-        {"UTF-8", "WINDOWS-1251", null /*To_WINDOWS_1251*/},
-        {"WINDOWS-1252", "UTF-8", null /*From_WINDOWS_1252*/},
-        {"UTF-8", "WINDOWS-1252", null /*To_WINDOWS_1252*/},
-        {"WINDOWS-1253", "UTF-8", null /*From_WINDOWS_1253*/},
-        {"UTF-8", "WINDOWS-1253", null /*To_WINDOWS_1253*/},
-        {"WINDOWS-1254", "UTF-8", null /*From_WINDOWS_1254*/},
-        {"UTF-8", "WINDOWS-1254", null /*To_WINDOWS_1254*/},
-        {"WINDOWS-1255", "UTF-8", null /*From_WINDOWS_1255*/},
-        {"UTF-8", "WINDOWS-1255", null /*To_WINDOWS_1255*/},
-        {"WINDOWS-1256", "UTF-8", null /*From_WINDOWS_1256*/},
-        {"UTF-8", "WINDOWS-1256", null /*To_WINDOWS_1256*/},
-        {"WINDOWS-1257", "UTF-8", null /*From_WINDOWS_1257*/},
-        {"UTF-8", "WINDOWS-1257", null /*To_WINDOWS_1257*/},
-        {"IBM437", "UTF-8", null /*From_IBM437*/},
-        {"UTF-8", "IBM437", null /*To_IBM437*/},
-        {"IBM775", "UTF-8", null /*From_IBM775*/},
-        {"UTF-8", "IBM775", null /*To_IBM775*/},
-        {"IBM737", "UTF-8", null /*From_IBM737*/},
-        {"UTF-8", "IBM737", null /*To_IBM737*/},
-        {"IBM852", "UTF-8", null /*From_IBM852*/},
-        {"UTF-8", "IBM852", null /*To_IBM852*/},
-        {"IBM855", "UTF-8", null /*From_IBM855*/},
-        {"UTF-8", "IBM855", null /*To_IBM855*/},
-        {"IBM857", "UTF-8", null /*From_IBM857*/},
-        {"UTF-8", "IBM857", null /*To_IBM857*/},
-        {"IBM860", "UTF-8", null /*From_IBM860*/},
-        {"UTF-8", "IBM860", null /*To_IBM860*/},
-        {"IBM861", "UTF-8", null /*From_IBM861*/},
-        {"UTF-8", "IBM861", null /*To_IBM861*/},
-        {"IBM862", "UTF-8", null /*From_IBM862*/},
-        {"UTF-8", "IBM862", null /*To_IBM862*/},
-        {"IBM863", "UTF-8", null /*From_IBM863*/},
-        {"UTF-8", "IBM863", null /*To_IBM863*/},
-        {"IBM865", "UTF-8", null /*From_IBM865*/},
-        {"UTF-8", "IBM865", null /*To_IBM865*/},
-        {"IBM866", "UTF-8", null /*From_IBM866*/},
-        {"UTF-8", "IBM866", null /*To_IBM866*/},
-        {"IBM869", "UTF-8", null /*From_IBM869*/},
-        {"UTF-8", "IBM869", null /*To_IBM869*/},
-        {"MACCROATIAN", "UTF-8", null /*From_MACCROATIAN*/},
-        {"UTF-8", "MACCROATIAN", null /*To_MACCROATIAN*/},
-        {"MACCYRILLIC", "UTF-8", null /*From_MACCYRILLIC*/},
-        {"UTF-8", "MACCYRILLIC", null /*To_MACCYRILLIC*/},
-        {"MACGREEK", "UTF-8", null /*From_MACGREEK*/},
-        {"UTF-8", "MACGREEK", null /*To_MACGREEK*/},
-        {"MACICELAND", "UTF-8", null /*From_MACICELAND*/},
-        {"UTF-8", "MACICELAND", null /*To_MACICELAND*/},
-        {"MACROMAN", "UTF-8", null /*From_MACROMAN*/},
-        {"UTF-8", "MACROMAN", null /*To_MACROMAN*/},
-        {"MACROMANIA", "UTF-8", null /*From_MACROMANIA*/},
-        {"UTF-8", "MACROMANIA", null /*To_MACROMANIA*/},
-        {"MACTURKISH", "UTF-8", null /*From_MACTURKISH*/},
-        {"UTF-8", "MACTURKISH", null /*To_MACTURKISH*/},
-        {"MACUKRAINE", "UTF-8", null /*From_MACUKRAINE*/},
-        {"UTF-8", "MACUKRAINE", null /*To_MACUKRAINE*/},
-        {"KOI8-U", "UTF-8", null /*From_KOI8_U*/},
-        {"UTF-8", "KOI8-U", null /*To_KOI8_U*/},
-        {"KOI8-R", "UTF-8", null /*From_KOI8_R*/},
-        {"UTF-8", "KOI8-R", null /*To_KOI8_R*/},
-        {"TIS-620", "UTF-8", null /*From_TIS_620*/},
-        {"UTF-8", "TIS-620", null /*To_TIS_620*/},
-        {"CP850", "UTF-8", null /*From_CP850*/},
-        {"UTF-8", "CP850", null /*To_CP850*/},
-        {"CP852", "UTF-8", null /*From_CP852*/},
-        {"UTF-8", "CP852", null /*To_CP852*/},
-        {"CP855", "UTF-8", null /*From_CP855*/},
-        {"UTF-8", "CP855", null /*To_CP855*/},
-        {"UTF-8", "UTF8-MAC", null /*To_UTF8_MAC*/},
-        {"UTF8-MAC", "UTF-8", "From_UTF8_MAC"},
-        {"UTF-16BE", "UTF-8", "From_UTF_16BE"},
-        {"UTF-8", "UTF-16BE", "To_UTF_16BE"},
-        {"UTF-16LE", "UTF-8", "From_UTF_16LE"},
-        {"UTF-8", "UTF-16LE", "To_UTF_16LE"},
-        {"UTF-32BE", "UTF-8", "From_UTF_32BE"},
-        {"UTF-8", "UTF-32BE", "To_UTF_32BE"},
-        {"UTF-32LE", "UTF-8", "From_UTF_32LE"},
-        {"UTF-8", "UTF-32LE", "To_UTF_32LE"},
-        {"UTF-16", "UTF-8", "From_UTF_16"},
-        {"UTF-32", "UTF-8", "From_UTF_32"},
-        {"UTF-8", "UTF-16", "To_UTF_16"},
-        {"UTF-8", "UTF-32", "To_UTF_32"}
+    static void load() {
+        TranscoderDB.declare("Big5", "UTF-8", null /*From_Big5*/);
+        TranscoderDB.declare("UTF-8", "Big5", null /*To_Big5*/);
+        TranscoderDB.declare("CP950", "UTF-8", null /*From_CP950*/);
+        TranscoderDB.declare("UTF-8", "CP950", null /*To_CP950*/);
+        TranscoderDB.declare("Big5-HKSCS", "UTF-8", null /*From_Big5_HKSCS*/);
+        TranscoderDB.declare("UTF-8", "Big5-HKSCS", null /*To_Big5_HKSCS*/);
+        TranscoderDB.declare("CP951", "UTF-8", null /*From_CP951*/);
+        TranscoderDB.declare("UTF-8", "CP951", null /*To_CP951*/);
+        TranscoderDB.declare("Big5-UAO", "UTF-8", null /*From_Big5_UAO*/);
+        TranscoderDB.declare("UTF-8", "Big5-UAO", null /*To_Big5_UAO*/);
+        TranscoderDB.declare("GB2312", "UTF-8", null /*From_GB2312*/);
+        TranscoderDB.declare("GB12345", "UTF-8", null /*From_GB12345*/);
+        TranscoderDB.declare("UTF-8", "GB2312", null /*To_GB2312*/);
+        TranscoderDB.declare("UTF-8", "GB12345", null /*To_GB12345*/);
+        TranscoderDB.declare("IBM037", "ISO-8859-1", null /*From_IBM037_to_ISO_8859_1*/);
+        TranscoderDB.declare("ISO-8859-1", "IBM037", null /*From_ISO_8859_1_to_IBM037*/);
+        TranscoderDB.declare("UTF8-DoCoMo", "UTF8-KDDI", null /*From_UTF8_DoCoMo_to_UTF8_KDDI*/);
+        TranscoderDB.declare("UTF8-DoCoMo", "UTF8-SoftBank", null /*From_UTF8_DoCoMo_to_UTF8_SoftBank*/);
+        TranscoderDB.declare("UTF8-DoCoMo", "UTF-8", null /*From_UTF8_DoCoMo*/);
+        TranscoderDB.declare("UTF8-KDDI", "UTF8-DoCoMo", null /*From_UTF8_KDDI_to_UTF8_DoCoMo*/);
+        TranscoderDB.declare("UTF8-KDDI", "UTF8-SoftBank", null /*From_UTF8_KDDI_to_UTF8_SoftBank*/);
+        TranscoderDB.declare("UTF8-KDDI", "UTF-8", null /*From_UTF8_KDDI*/);
+        TranscoderDB.declare("UTF8-SoftBank", "UTF8-DoCoMo", null /*From_UTF8_SoftBank_to_UTF8_DoCoMo*/);
+        TranscoderDB.declare("UTF8-SoftBank", "UTF8-KDDI", null /*From_UTF8_SoftBank_to_UTF8_KDDI*/);
+        TranscoderDB.declare("UTF8-SoftBank", "UTF-8", null /*From_UTF8_SoftBank*/);
+        TranscoderDB.declare("UTF-8", "UTF8-DoCoMo", null /*To_UTF8_DoCoMo*/);
+        TranscoderDB.declare("UTF-8", "UTF8-KDDI", null /*To_UTF8_KDDI*/);
+        TranscoderDB.declare("UTF-8", "UTF8-SoftBank", null /*To_UTF8_SoftBank*/);
+        TranscoderDB.declare("stateless-ISO-2022-JP-KDDI", "UTF8-KDDI", null /*From_stateless_ISO_2022_JP_KDDI_to_UTF8_KDDI*/);
+        TranscoderDB.declare("UTF8-KDDI", "stateless-ISO-2022-JP-KDDI", null /*From_UTF8_KDDI_to_stateless_ISO_2022_JP_KDDI*/);
+        TranscoderDB.declare("ISO-2022-JP-KDDI", "stateless-ISO-2022-JP-KDDI", "Iso2022jp_kddi_decoder");
+        TranscoderDB.declare("stateless-ISO-2022-JP-KDDI", "ISO-2022-JP-KDDI", "Iso2022jp_kddi_encoder");
+        TranscoderDB.declare("SJIS-DOCOMO", "UTF8-DOCOMO", null /*From_SJIS_DOCOMO_to_UTF8_DOCOMO*/);
+        TranscoderDB.declare("UTF8-DOCOMO", "SJIS-DOCOMO", null /*From_UTF8_DOCOMO_to_SJIS_DOCOMO*/);
+        TranscoderDB.declare("SJIS-KDDI", "UTF8-KDDI", null /*From_SJIS_KDDI_to_UTF8_KDDI*/);
+        TranscoderDB.declare("UTF8-KDDI", "SJIS-KDDI", null /*From_UTF8_KDDI_to_SJIS_KDDI*/);
+        TranscoderDB.declare("SJIS-SoftBank", "UTF8-SoftBank", null /*From_SJIS_SoftBank_to_UTF8_SoftBank*/);
+        TranscoderDB.declare("UTF8-SoftBank", "SJIS-SoftBank", null /*From_UTF8_SoftBank_to_SJIS_SoftBank*/);
+        TranscoderDB.declare("", "amp_escape", null /*From__to_amp_escape*/);
+        TranscoderDB.declare("", "xml_text_escape", null /*From__to_xml_text_escape*/);
+        TranscoderDB.declare("", "xml_attr_content_escape", null /*From__to_xml_attr_content_escape*/);
+        TranscoderDB.declare("", "xml_attr_quote", "Escape_xml_attr_quote");
+        TranscoderDB.declare("GB18030", "UTF-8", "From_GB18030");
+        TranscoderDB.declare("UTF-8", "GB18030", "To_GB18030");
+        TranscoderDB.declare("GBK", "UTF-8", null /*From_GBK*/);
+        TranscoderDB.declare("UTF-8", "GBK", null /*To_GBK*/);
+        TranscoderDB.declare("ISO-2022-JP", "stateless-ISO-2022-JP", "Iso2022jp_decoder");
+        TranscoderDB.declare("stateless-ISO-2022-JP", "ISO-2022-JP", "Iso2022jp_encoder");
+        TranscoderDB.declare("stateless-ISO-2022-JP", "EUC-JP", "Stateless_iso2022jp_to_eucjp");
+        TranscoderDB.declare("EUC-JP", "stateless-ISO-2022-JP", "Eucjp_to_stateless_iso2022jp");
+        TranscoderDB.declare("CP50220", "cp51932", "Cp50220_decoder");
+        TranscoderDB.declare("CP50221", "cp51932", "Cp50221_decoder");
+        TranscoderDB.declare("CP51932", "CP50221", "Cp50221_encoder");
+        TranscoderDB.declare("CP51932", "CP50220", "Cp50220_encoder");
+        TranscoderDB.declare("EUC-JP", "Shift_JIS", "Eucjp2sjis");
+        TranscoderDB.declare("Shift_JIS", "EUC-JP", "Sjis2eucjp");
+        TranscoderDB.declare("EUC-JP", "UTF-8", null /*From_EUC_JP*/);
+        TranscoderDB.declare("eucJP-ms", "UTF-8", null /*From_eucJP_ms*/);
+        TranscoderDB.declare("CP51932", "UTF-8", null /*From_CP51932*/);
+        TranscoderDB.declare("EUC-JIS-2004", "UTF-8", null /*From_EUC_JIS_2004*/);
+        TranscoderDB.declare("UTF-8", "EUC-JP", null /*To_EUC_JP*/);
+        TranscoderDB.declare("UTF-8", "eucJP-ms", null /*To_eucJP_ms*/);
+        TranscoderDB.declare("UTF-8", "CP51932", null /*To_CP51932*/);
+        TranscoderDB.declare("UTF-8", "EUC-JIS-2004", null /*To_EUC_JIS_2004*/);
+        TranscoderDB.declare("Shift_JIS", "UTF-8", null /*From_Shift_JIS*/);
+        TranscoderDB.declare("Windows-31J", "UTF-8", null /*From_Windows_31J*/);
+        TranscoderDB.declare("UTF-8", "Shift_JIS", null /*To_Shift_JIS*/);
+        TranscoderDB.declare("UTF-8", "Windows-31J", null /*To_Windows_31J*/);
+        TranscoderDB.declare("UTF-8", "EUC-KR", null /*To_EUC_KR*/);
+        TranscoderDB.declare("EUC-KR", "UTF-8", null /*From_EUC_KR*/);
+        TranscoderDB.declare("UTF-8", "CP949", null /*To_CP949*/);
+        TranscoderDB.declare("CP949", "UTF-8", null /*From_CP949*/);
+        TranscoderDB.declare("", "universal_newline", "Universal_newline");
+        TranscoderDB.declare("", "crlf_newline", null /*Crlf_newline*/);
+        TranscoderDB.declare("", "cr_newline", null /*Cr_newline*/);
+        TranscoderDB.declare("US-ASCII", "UTF-8", null /*From_US_ASCII*/);
+        TranscoderDB.declare("UTF-8", "US-ASCII", null /*To_US_ASCII*/);
+        TranscoderDB.declare("ASCII-8BIT", "UTF-8", null /*From_ASCII_8BIT*/);
+        TranscoderDB.declare("UTF-8", "ASCII-8BIT", null /*To_ASCII_8BIT*/);
+        TranscoderDB.declare("ISO-8859-1", "UTF-8", null /*From_ISO_8859_1*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-1", null /*To_ISO_8859_1*/);
+        TranscoderDB.declare("ISO-8859-2", "UTF-8", null /*From_ISO_8859_2*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-2", null /*To_ISO_8859_2*/);
+        TranscoderDB.declare("ISO-8859-3", "UTF-8", null /*From_ISO_8859_3*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-3", null /*To_ISO_8859_3*/);
+        TranscoderDB.declare("ISO-8859-4", "UTF-8", null /*From_ISO_8859_4*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-4", null /*To_ISO_8859_4*/);
+        TranscoderDB.declare("ISO-8859-5", "UTF-8", null /*From_ISO_8859_5*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-5", null /*To_ISO_8859_5*/);
+        TranscoderDB.declare("ISO-8859-6", "UTF-8", null /*From_ISO_8859_6*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-6", null /*To_ISO_8859_6*/);
+        TranscoderDB.declare("ISO-8859-7", "UTF-8", null /*From_ISO_8859_7*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-7", null /*To_ISO_8859_7*/);
+        TranscoderDB.declare("ISO-8859-8", "UTF-8", null /*From_ISO_8859_8*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-8", null /*To_ISO_8859_8*/);
+        TranscoderDB.declare("ISO-8859-9", "UTF-8", null /*From_ISO_8859_9*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-9", null /*To_ISO_8859_9*/);
+        TranscoderDB.declare("ISO-8859-10", "UTF-8", null /*From_ISO_8859_10*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-10", null /*To_ISO_8859_10*/);
+        TranscoderDB.declare("ISO-8859-11", "UTF-8", null /*From_ISO_8859_11*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-11", null /*To_ISO_8859_11*/);
+        TranscoderDB.declare("ISO-8859-13", "UTF-8", null /*From_ISO_8859_13*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-13", null /*To_ISO_8859_13*/);
+        TranscoderDB.declare("ISO-8859-14", "UTF-8", null /*From_ISO_8859_14*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-14", null /*To_ISO_8859_14*/);
+        TranscoderDB.declare("ISO-8859-15", "UTF-8", null /*From_ISO_8859_15*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-15", null /*To_ISO_8859_15*/);
+        TranscoderDB.declare("ISO-8859-16", "UTF-8", null /*From_ISO_8859_16*/);
+        TranscoderDB.declare("UTF-8", "ISO-8859-16", null /*To_ISO_8859_16*/);
+        TranscoderDB.declare("WINDOWS-874", "UTF-8", null /*From_WINDOWS_874*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-874", null /*To_WINDOWS_874*/);
+        TranscoderDB.declare("WINDOWS-1250", "UTF-8", null /*From_WINDOWS_1250*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1250", null /*To_WINDOWS_1250*/);
+        TranscoderDB.declare("WINDOWS-1251", "UTF-8", null /*From_WINDOWS_1251*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1251", null /*To_WINDOWS_1251*/);
+        TranscoderDB.declare("WINDOWS-1252", "UTF-8", null /*From_WINDOWS_1252*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1252", null /*To_WINDOWS_1252*/);
+        TranscoderDB.declare("WINDOWS-1253", "UTF-8", null /*From_WINDOWS_1253*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1253", null /*To_WINDOWS_1253*/);
+        TranscoderDB.declare("WINDOWS-1254", "UTF-8", null /*From_WINDOWS_1254*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1254", null /*To_WINDOWS_1254*/);
+        TranscoderDB.declare("WINDOWS-1255", "UTF-8", null /*From_WINDOWS_1255*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1255", null /*To_WINDOWS_1255*/);
+        TranscoderDB.declare("WINDOWS-1256", "UTF-8", null /*From_WINDOWS_1256*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1256", null /*To_WINDOWS_1256*/);
+        TranscoderDB.declare("WINDOWS-1257", "UTF-8", null /*From_WINDOWS_1257*/);
+        TranscoderDB.declare("UTF-8", "WINDOWS-1257", null /*To_WINDOWS_1257*/);
+        TranscoderDB.declare("IBM437", "UTF-8", null /*From_IBM437*/);
+        TranscoderDB.declare("UTF-8", "IBM437", null /*To_IBM437*/);
+        TranscoderDB.declare("IBM775", "UTF-8", null /*From_IBM775*/);
+        TranscoderDB.declare("UTF-8", "IBM775", null /*To_IBM775*/);
+        TranscoderDB.declare("IBM737", "UTF-8", null /*From_IBM737*/);
+        TranscoderDB.declare("UTF-8", "IBM737", null /*To_IBM737*/);
+        TranscoderDB.declare("IBM852", "UTF-8", null /*From_IBM852*/);
+        TranscoderDB.declare("UTF-8", "IBM852", null /*To_IBM852*/);
+        TranscoderDB.declare("IBM855", "UTF-8", null /*From_IBM855*/);
+        TranscoderDB.declare("UTF-8", "IBM855", null /*To_IBM855*/);
+        TranscoderDB.declare("IBM857", "UTF-8", null /*From_IBM857*/);
+        TranscoderDB.declare("UTF-8", "IBM857", null /*To_IBM857*/);
+        TranscoderDB.declare("IBM860", "UTF-8", null /*From_IBM860*/);
+        TranscoderDB.declare("UTF-8", "IBM860", null /*To_IBM860*/);
+        TranscoderDB.declare("IBM861", "UTF-8", null /*From_IBM861*/);
+        TranscoderDB.declare("UTF-8", "IBM861", null /*To_IBM861*/);
+        TranscoderDB.declare("IBM862", "UTF-8", null /*From_IBM862*/);
+        TranscoderDB.declare("UTF-8", "IBM862", null /*To_IBM862*/);
+        TranscoderDB.declare("IBM863", "UTF-8", null /*From_IBM863*/);
+        TranscoderDB.declare("UTF-8", "IBM863", null /*To_IBM863*/);
+        TranscoderDB.declare("IBM865", "UTF-8", null /*From_IBM865*/);
+        TranscoderDB.declare("UTF-8", "IBM865", null /*To_IBM865*/);
+        TranscoderDB.declare("IBM866", "UTF-8", null /*From_IBM866*/);
+        TranscoderDB.declare("UTF-8", "IBM866", null /*To_IBM866*/);
+        TranscoderDB.declare("IBM869", "UTF-8", null /*From_IBM869*/);
+        TranscoderDB.declare("UTF-8", "IBM869", null /*To_IBM869*/);
+        TranscoderDB.declare("MACCROATIAN", "UTF-8", null /*From_MACCROATIAN*/);
+        TranscoderDB.declare("UTF-8", "MACCROATIAN", null /*To_MACCROATIAN*/);
+        TranscoderDB.declare("MACCYRILLIC", "UTF-8", null /*From_MACCYRILLIC*/);
+        TranscoderDB.declare("UTF-8", "MACCYRILLIC", null /*To_MACCYRILLIC*/);
+        TranscoderDB.declare("MACGREEK", "UTF-8", null /*From_MACGREEK*/);
+        TranscoderDB.declare("UTF-8", "MACGREEK", null /*To_MACGREEK*/);
+        TranscoderDB.declare("MACICELAND", "UTF-8", null /*From_MACICELAND*/);
+        TranscoderDB.declare("UTF-8", "MACICELAND", null /*To_MACICELAND*/);
+        TranscoderDB.declare("MACROMAN", "UTF-8", null /*From_MACROMAN*/);
+        TranscoderDB.declare("UTF-8", "MACROMAN", null /*To_MACROMAN*/);
+        TranscoderDB.declare("MACROMANIA", "UTF-8", null /*From_MACROMANIA*/);
+        TranscoderDB.declare("UTF-8", "MACROMANIA", null /*To_MACROMANIA*/);
+        TranscoderDB.declare("MACTURKISH", "UTF-8", null /*From_MACTURKISH*/);
+        TranscoderDB.declare("UTF-8", "MACTURKISH", null /*To_MACTURKISH*/);
+        TranscoderDB.declare("MACUKRAINE", "UTF-8", null /*From_MACUKRAINE*/);
+        TranscoderDB.declare("UTF-8", "MACUKRAINE", null /*To_MACUKRAINE*/);
+        TranscoderDB.declare("KOI8-U", "UTF-8", null /*From_KOI8_U*/);
+        TranscoderDB.declare("UTF-8", "KOI8-U", null /*To_KOI8_U*/);
+        TranscoderDB.declare("KOI8-R", "UTF-8", null /*From_KOI8_R*/);
+        TranscoderDB.declare("UTF-8", "KOI8-R", null /*To_KOI8_R*/);
+        TranscoderDB.declare("TIS-620", "UTF-8", null /*From_TIS_620*/);
+        TranscoderDB.declare("UTF-8", "TIS-620", null /*To_TIS_620*/);
+        TranscoderDB.declare("CP850", "UTF-8", null /*From_CP850*/);
+        TranscoderDB.declare("UTF-8", "CP850", null /*To_CP850*/);
+        TranscoderDB.declare("CP852", "UTF-8", null /*From_CP852*/);
+        TranscoderDB.declare("UTF-8", "CP852", null /*To_CP852*/);
+        TranscoderDB.declare("CP855", "UTF-8", null /*From_CP855*/);
+        TranscoderDB.declare("UTF-8", "CP855", null /*To_CP855*/);
+        TranscoderDB.declare("UTF-8", "UTF8-MAC", null /*To_UTF8_MAC*/);
+        TranscoderDB.declare("UTF8-MAC", "UTF-8", "From_UTF8_MAC");
+        TranscoderDB.declare("UTF-16BE", "UTF-8", "From_UTF_16BE");
+        TranscoderDB.declare("UTF-8", "UTF-16BE", "To_UTF_16BE");
+        TranscoderDB.declare("UTF-16LE", "UTF-8", "From_UTF_16LE");
+        TranscoderDB.declare("UTF-8", "UTF-16LE", "To_UTF_16LE");
+        TranscoderDB.declare("UTF-32BE", "UTF-8", "From_UTF_32BE");
+        TranscoderDB.declare("UTF-8", "UTF-32BE", "To_UTF_32BE");
+        TranscoderDB.declare("UTF-32LE", "UTF-8", "From_UTF_32LE");
+        TranscoderDB.declare("UTF-8", "UTF-32LE", "To_UTF_32LE");
+        TranscoderDB.declare("UTF-16", "UTF-8", "From_UTF_16");
+        TranscoderDB.declare("UTF-32", "UTF-8", "From_UTF_32");
+        TranscoderDB.declare("UTF-8", "UTF-16", "To_UTF_16");
+        TranscoderDB.declare("UTF-8", "UTF-32", "To_UTF_32");
     };
 
     static final GenericTranscoderEntry[] GENERIC_LIST = new GenericTranscoderEntry[] {

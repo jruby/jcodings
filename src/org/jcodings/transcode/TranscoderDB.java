@@ -108,8 +108,8 @@ public class TranscoderDB implements EConvFlags {
     }
 
     /* declare_transcoder */
-    static void declare(byte[] source, byte[] destination, String transcoderClass) {
-        Entry entry = makeEntry(source, destination);
+    static void declare(String source, String destination, String transcoderClass) {
+        Entry entry = makeEntry(source.getBytes(), destination.getBytes());
         entry.transcoderClass = transcoderClass;
     }
 
@@ -308,11 +308,6 @@ public class TranscoderDB implements EConvFlags {
     }
 
     static {
-        String[][] transList = TranscoderList.LIST;
-
-        for (int i = 0; i < transList.length; i++) {
-            String[] trans = transList[i];
-            declare(trans[0].getBytes(), trans[1].getBytes(), trans[2]);
-        }
+        TranscoderList.load();
     }
 }
