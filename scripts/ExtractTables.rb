@@ -129,4 +129,4 @@ end
 enc_db = open("#{repo_path}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).reject { |a, b| a =~ /DEFINE/ }
 
 open("#{dst_dir}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
-    sub(/%\{body\}/, enc_db.map { |cmd, from, to| "#{INDENT*2}{\"#{cmd[0, 1]}\", #{from}#{to.nil? ? "" : to}}" }.join(",\n")) }
+    sub(/%\{body\}/, enc_db.map { |cmd, from, to| "#{INDENT*2}new EncodingType(EncodingFlag.#{cmd}, #{from}#{to.nil? ? "" : to})" }.join(",\n")) }

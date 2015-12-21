@@ -18,9 +18,11 @@
  * SOFTWARE.
  */
 package org.jcodings;
+import org.jcodings.constants.EncodingType;
+import org.jcodings.constants.EncodingFlag;
 
 final class EncodingList {
-    static final String[][] LIST = new String[][] {
+    static final EncodingType[] LIST = new EncodingType[] {
 %{body}
     };
 }
