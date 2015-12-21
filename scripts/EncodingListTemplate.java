@@ -18,11 +18,11 @@
  * SOFTWARE.
  */
 package org.jcodings;
-import org.jcodings.constants.EncodingType;
-import org.jcodings.constants.EncodingFlag;
 
 final class EncodingList {
-    static final EncodingType[] LIST = new EncodingType[] {
-%{body}
-    };
+    static final void load() {
+%{defines}
+        EncodingDB.ascii = EncodingDB.encodings.get("ASCII-8BIT".getBytes());
+%{other}
+    }
 }

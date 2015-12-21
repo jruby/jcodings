@@ -10,6 +10,49 @@ dst_bin_dir = "../resources/tables"
 enc_dir = "#{dst_dir}/unicode"
 INDENT = " " * 4
 
+CLASS_MAP = {
+  "ASCII-8BIT" =>   "ASCII",
+  "UTF-8" =>        "UTF8",
+  "US-ASCII" =>     "USASCII",
+  "Big5" =>         "BIG5",
+  "Big5-HKSCS" =>   "Big5HKSCS",
+  "Big5-UAO" =>     "Big5UAO",
+  "CP949" =>        "CP949",
+  "Emacs-Mule" =>   "EmacsMule",
+  "EUC-JP" =>       "EUCJP",
+  "EUC-KR" =>       "EUCKR",
+  "EUC-TW" =>       "EUCTW",
+  "GB2312" =>       "GB2312",
+  "GB18030" =>      "GB18030",
+  "GBK" =>          "GBK",
+  "ISO-8859-1" =>   "ISO8859_1",
+  "ISO-8859-2" =>   "ISO8859_2",
+  "ISO-8859-3" =>   "ISO8859_3",
+  "ISO-8859-4" =>   "ISO8859_4",
+  "ISO-8859-5" =>   "ISO8859_5",
+  "ISO-8859-6" =>   "ISO8859_6",
+  "ISO-8859-7" =>   "ISO8859_7",
+  "ISO-8859-8" =>   "ISO8859_8",
+  "ISO-8859-9" =>   "ISO8859_9",
+  "ISO-8859-10" =>  "ISO8859_10",
+  "ISO-8859-11" =>  "ISO8859_11",
+  "ISO-8859-13" =>  "ISO8859_13",
+  "ISO-8859-14" =>  "ISO8859_14",
+  "ISO-8859-15" =>  "ISO8859_15",
+  "ISO-8859-16" =>  "ISO8859_16",
+  "KOI8-R" =>       "KOI8R",
+  "KOI8-U" =>       "KOI8U",
+  "Shift_JIS" =>    "SJIS",
+  "UTF-16BE" =>     "UTF16BE",
+  "UTF-16LE" =>     "UTF16LE",
+  "UTF-32BE" =>     "UTF32BE",
+  "UTF-32LE" =>     "UTF32LE",
+  "Windows-31J" =>  "Windows_31J",           # TODO: Windows-31J is actually a variant of SJIS
+  "Windows-1250" => "Windows_1250",
+  "Windows-1251" => "Windows_1251",
+  "Windows-1252" => "Windows_1252"
+}
+
 def assert_eq a, b, msg = ""
   raise "unmet condition: #{a.inspect} == #{b.inspect}, info #{msg}" unless a == b
 end
@@ -126,7 +169,8 @@ unicode_src.scan(/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m) do |e|
   end
 end
 
-enc_db = open("#{repo_path}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).reject { |a, b| a =~ /DEFINE/ }
+defines, other = open("#{repo_path}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).partition { |a, b| a =~ /DEFINE/ }
 
 open("#{dst_dir}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
-    sub(/%\{body\}/, enc_db.map { |cmd, from, to| "#{INDENT*2}new EncodingType(EncodingFlag.#{cmd}, #{from}#{to.nil? ? "" : to})" }.join(",\n")) }
+    sub(/%\{defines\}/, defines.map { |cmd, name| "#{INDENT*2}EncodingDB.declare(#{name}, \"#{CLASS_MAP[name[/[^"]+/]] || (raise 'class not found for encoding ' + name)}\");" }.join("\n")).
+    sub(/%\{other\}/, other.map { |cmd, from, to| "#{INDENT*2}EncodingDB.#{cmd.downcase}(#{from}#{to.nil? ? "" : to});" }.join("\n")) }
