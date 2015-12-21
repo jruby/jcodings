@@ -19,9 +19,9 @@
  */
 package org.jcodings;
 
+import org.jcodings.constants.EncodingType;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
-import org.jcodings.specific.ASCIIEncoding;
 import org.jcodings.util.CaseInsensitiveBytesHash;
 
 public class EncodingDB {
@@ -99,6 +99,8 @@ public class EncodingDB {
 
     private static String[] builtin = {
         "ASCII-8BIT",   "ASCII",
+        "UTF-8",        "UTF8",
+        "US-ASCII",     "USASCII",
         "Big5",         "BIG5",
         "Big5-HKSCS",   "Big5HKSCS",
         "Big5-UAO",     "Big5UAO",
@@ -107,6 +109,7 @@ public class EncodingDB {
         "EUC-JP",       "EUCJP",
         "EUC-KR",       "EUCKR",
         "EUC-TW",       "EUCTW",
+        "GB2312",       "GB2312",
         "GB18030",      "GB18030",
         "GBK",          "GBK",
         "ISO-8859-1",   "ISO8859_1",
@@ -120,7 +123,6 @@ public class EncodingDB {
         "ISO-8859-9",   "ISO8859_9",
         "ISO-8859-10",  "ISO8859_10",
         "ISO-8859-11",  "ISO8859_11",
-        // "ISO-8859-12",  "ISO8859_12",
         "ISO-8859-13",  "ISO8859_13",
         "ISO-8859-14",  "ISO8859_14",
         "ISO-8859-15",  "ISO8859_15",
@@ -128,15 +130,14 @@ public class EncodingDB {
         "KOI8-R",       "KOI8R",
         "KOI8-U",       "KOI8U",
         "Shift_JIS",    "SJIS",
-        "US-ASCII",     "USASCII",
-        "UTF-8",        "UTF8",
         "UTF-16BE",     "UTF16BE",
         "UTF-16LE",     "UTF16LE",
         "UTF-32BE",     "UTF32BE",
         "UTF-32LE",     "UTF32LE",
-        "Windows-1251", "CP1251",
-        "GB2312",       "GB2312",
-        "Windows-31J",  "Windows_31J"           // TODO: Windows-31J is actually a variant of SJIS
+        "Windows-31J",  "Windows_31J",           // TODO: Windows-31J is actually a variant of SJIS
+        "Windows-1250",  "Windows_1250",
+        "Windows-1251",  "Windows_1251",
+        "Windows-1251",  "Windows_1251"
     };
 
     static Entry ascii;
@@ -213,29 +214,27 @@ public class EncodingDB {
 
         ascii = encodings.get("ASCII-8BIT".getBytes());
 
-        String[][]encList = EncodingList.LIST;
+        EncodingType[]encList = EncodingList.LIST;
         for (int i = 0; i < encList.length; i++) {
-            String[]enc = encList[i];
-
-            switch (enc[0].charAt(0)) {
-            case 'R':
-                replicate(enc[1], enc[2]);
+            EncodingType enc = encList[i];
+            String name = enc.getName();
+            String otherName = enc.getOtherName();
+            switch (enc.getFlag()) {
+            case REPLICATE:
+                replicate(name, otherName);
                 break;
-            case 'A':
-                alias(enc[1], enc[2]);
+            case ALIAS:
+                alias(name, otherName);
                 break;
-            case 'S':
-                set_base(enc[1], enc[2]);
+            case SET_BASE:
+                set_base(name, otherName);
                 break;
-            case 'D':
-                dummy(enc[1]);
+            case DUMMY:
+                dummy(name);
                 break;
-            case 'U': // ENC_DUMMY_UNICODE from encdb.c
-                dummyUnicode(enc[1]);
+            case DUMMY_UNICODE: // ENC_DUMMY_UNICODE from encdb.c
+                dummyUnicode(name);
                 break;
-            default:
-                Thread.dumpStack();
-                throw new InternalException("Unknown flag: " + enc[0].charAt(0));
             }
         }
     }
