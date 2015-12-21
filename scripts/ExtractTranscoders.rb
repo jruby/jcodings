@@ -207,7 +207,7 @@ transcoder_srcs.each do |f|
     end
 end
 open("#{trans_dir}/TranscoderList.java", "wb") << open("TranscoderListTemplate.java").read.
-    sub(/%\{list\}/, transcoder_list.map{|src, dst, cls, specific| "#{INDENT*2}{#{src}, #{dst}, #{specific ? '"' + cls + '"' : 'null /*' + cls + '*/'}}"}.join(",\n")).
+    sub(/%\{list\}/, transcoder_list.map{|src, dst, cls, specific| "#{INDENT*2}TranscoderDB.declare(#{src}, #{dst}, #{specific ? '"' + cls + '"' : 'null /*' + cls + '*/'});"}.join("\n")).
     sub(/%\{generic\}/, generic_list.map{|g| "#{INDENT*2}new GenericTranscoderEntry(#{g.join(', ')})"}.join(",\n"))
 
 

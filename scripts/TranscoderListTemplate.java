@@ -22,7 +22,7 @@ package org.jcodings.transcode;
 import org.jcodings.transcode.Transcoder.GenericTranscoderEntry;
 
 final class TranscoderList {
-    static final String[][] LIST = new String[][] {
+    static void load() {
 %{list}
     };
 
