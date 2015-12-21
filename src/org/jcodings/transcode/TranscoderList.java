@@ -37,6 +37,8 @@ final class TranscoderList {
         {"GB12345", "UTF-8", null /*From_GB12345*/},
         {"UTF-8", "GB2312", null /*To_GB2312*/},
         {"UTF-8", "GB12345", null /*To_GB12345*/},
+        {"IBM037", "ISO-8859-1", null /*From_IBM037_to_ISO_8859_1*/},
+        {"ISO-8859-1", "IBM037", null /*From_ISO_8859_1_to_IBM037*/},
         {"UTF8-DoCoMo", "UTF8-KDDI", null /*From_UTF8_DoCoMo_to_UTF8_KDDI*/},
         {"UTF8-DoCoMo", "UTF8-SoftBank", null /*From_UTF8_DoCoMo_to_UTF8_SoftBank*/},
         {"UTF8-DoCoMo", "UTF-8", null /*From_UTF8_DoCoMo*/},
@@ -93,6 +95,9 @@ final class TranscoderList {
         {"EUC-KR", "UTF-8", null /*From_EUC_KR*/},
         {"UTF-8", "CP949", null /*To_CP949*/},
         {"CP949", "UTF-8", null /*From_CP949*/},
+        {"", "universal_newline", "Universal_newline"},
+        {"", "crlf_newline", null /*Crlf_newline*/},
+        {"", "cr_newline", null /*Cr_newline*/},
         {"US-ASCII", "UTF-8", null /*From_US_ASCII*/},
         {"UTF-8", "US-ASCII", null /*To_US_ASCII*/},
         {"ASCII-8BIT", "UTF-8", null /*From_ASCII_8BIT*/},
@@ -212,10 +217,7 @@ final class TranscoderList {
         {"UTF-16", "UTF-8", "From_UTF_16"},
         {"UTF-32", "UTF-8", "From_UTF_32"},
         {"UTF-8", "UTF-16", "To_UTF_16"},
-        {"UTF-8", "UTF-32", "To_UTF_32"},
-        {"", "universal_newline", "Universal_newline"},
-        {"", "crlf_newline", null /*Crlf_newline*/},
-        {"", "cr_newline", null /*Cr_newline*/}
+        {"UTF-8", "UTF-32", "To_UTF_32"}
     };
 
     static final GenericTranscoderEntry[] GENERIC_LIST = new GenericTranscoderEntry[] {
@@ -233,6 +235,8 @@ final class TranscoderList {
         new GenericTranscoderEntry("GB12345", "UTF-8", 59848, "Chinese", 1, 2, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "GB2312", 96820, "Chinese", 1, 4, 2, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "GB12345", 130816, "Chinese", 1, 4, 2, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("IBM037", "ISO-8859-1", 948, "Ebcdic", 1, 1, 1, AsciiCompatibility.DECODER, 0),
+        new GenericTranscoderEntry("ISO-8859-1", "IBM037", 1904, "Ebcdic", 1, 1, 1, AsciiCompatibility.ENCODER, 0),
         new GenericTranscoderEntry("UTF8-DoCoMo", "UTF8-KDDI", 1176, "Emoji", 1, 4, 6, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF8-DoCoMo", "UTF8-SoftBank", 2148, "Emoji", 1, 4, 6, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF8-DoCoMo", "UTF-8", 2616, "Emoji", 1, 4, 4, AsciiCompatibility.CONVERTER, 0),
@@ -289,6 +293,9 @@ final class TranscoderList {
         new GenericTranscoderEntry("EUC-KR", "UTF-8", 78500, "Korean", 1, 2, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "CP949", 126176, "Korean", 1, 4, 2, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("CP949", "UTF-8", 196644, "Korean", 1, 2, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("", "universal_newline", 4, "Newline", 1, 1, 2, AsciiCompatibility.CONVERTER, 2),
+        new GenericTranscoderEntry("", "crlf_newline", 20, "Newline", 1, 1, 2, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("", "cr_newline", 36, "Newline", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("US-ASCII", "UTF-8", 8, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "US-ASCII", 132, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("ASCII-8BIT", "UTF-8", 148, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
@@ -408,9 +415,6 @@ final class TranscoderList {
         new GenericTranscoderEntry("UTF-16", "UTF-8", 276, "Utf1632", 2, 4, 4, AsciiCompatibility.DECODER, 1),
         new GenericTranscoderEntry("UTF-32", "UTF-8", 300, "Utf1632", 4, 4, 4, AsciiCompatibility.DECODER, 1),
         new GenericTranscoderEntry("UTF-8", "UTF-16", 416, "Utf1632", 1, 4, 4, AsciiCompatibility.ENCODER, 1),
-        new GenericTranscoderEntry("UTF-8", "UTF-32", 416, "Utf1632", 1, 4, 4, AsciiCompatibility.ENCODER, 1),
-        new GenericTranscoderEntry("", "universal_newline", 4, "Newline", 1, 1, 2, AsciiCompatibility.CONVERTER, 2),
-        new GenericTranscoderEntry("", "crlf_newline", 20, "Newline", 1, 1, 2, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("", "cr_newline", 36, "Newline", 1, 1, 1, AsciiCompatibility.CONVERTER, 0)
+        new GenericTranscoderEntry("UTF-8", "UTF-32", 416, "Utf1632", 1, 4, 4, AsciiCompatibility.ENCODER, 1)
     };
 }
