@@ -19,7 +19,6 @@
  */
 package org.jcodings;
 
-import org.jcodings.constants.EncodingType;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
 import org.jcodings.util.CaseInsensitiveBytesHash;
@@ -97,53 +96,9 @@ public class EncodingDB {
         }
     }
 
-    private static String[] builtin = {
-        "ASCII-8BIT",   "ASCII",
-        "UTF-8",        "UTF8",
-        "US-ASCII",     "USASCII",
-        "Big5",         "BIG5",
-        "Big5-HKSCS",   "Big5HKSCS",
-        "Big5-UAO",     "Big5UAO",
-        "CP949",        "CP949",
-        "Emacs-Mule",   "EmacsMule",
-        "EUC-JP",       "EUCJP",
-        "EUC-KR",       "EUCKR",
-        "EUC-TW",       "EUCTW",
-        "GB2312",       "GB2312",
-        "GB18030",      "GB18030",
-        "GBK",          "GBK",
-        "ISO-8859-1",   "ISO8859_1",
-        "ISO-8859-2",   "ISO8859_2",
-        "ISO-8859-3",   "ISO8859_3",
-        "ISO-8859-4",   "ISO8859_4",
-        "ISO-8859-5",   "ISO8859_5",
-        "ISO-8859-6",   "ISO8859_6",
-        "ISO-8859-7",   "ISO8859_7",
-        "ISO-8859-8",   "ISO8859_8",
-        "ISO-8859-9",   "ISO8859_9",
-        "ISO-8859-10",  "ISO8859_10",
-        "ISO-8859-11",  "ISO8859_11",
-        "ISO-8859-13",  "ISO8859_13",
-        "ISO-8859-14",  "ISO8859_14",
-        "ISO-8859-15",  "ISO8859_15",
-        "ISO-8859-16",  "ISO8859_16",
-        "KOI8-R",       "KOI8R",
-        "KOI8-U",       "KOI8U",
-        "Shift_JIS",    "SJIS",
-        "UTF-16BE",     "UTF16BE",
-        "UTF-16LE",     "UTF16LE",
-        "UTF-32BE",     "UTF32BE",
-        "UTF-32LE",     "UTF32LE",
-        "Windows-31J",  "Windows_31J",           // TODO: Windows-31J is actually a variant of SJIS
-        "Windows-1250",  "Windows_1250",
-        "Windows-1251",  "Windows_1251",
-        "Windows-1252",  "Windows_1252"
-    };
-
     static Entry ascii;
-
-    static final CaseInsensitiveBytesHash<Entry> encodings = new CaseInsensitiveBytesHash<Entry>(builtin.length);
-    static final CaseInsensitiveBytesHash<Entry> aliases = new CaseInsensitiveBytesHash<Entry>(builtin.length);
+    static final CaseInsensitiveBytesHash<Entry> encodings = new CaseInsensitiveBytesHash<Entry>(50);
+    static final CaseInsensitiveBytesHash<Entry> aliases = new CaseInsensitiveBytesHash<Entry>(150);
 
     public static final CaseInsensitiveBytesHash<Entry> getEncodings() {
         return encodings;
@@ -202,40 +157,11 @@ public class EncodingDB {
         dummy(name.getBytes());
     }
 
-    public static void dummyUnicode(String replica) {
+    public static void dummy_unicode(String replica) {
         replicate(replica, replica + "BE", true);
     }
 
     static {
-        for (int i = 0; i < builtin.length / 2; i++) {
-            declare(builtin[i << 1], builtin[(i << 1) + 1]);
-        }
-        builtin = null;
-
-        ascii = encodings.get("ASCII-8BIT".getBytes());
-
-        EncodingType[]encList = EncodingList.LIST;
-        for (int i = 0; i < encList.length; i++) {
-            EncodingType enc = encList[i];
-            String name = enc.getName();
-            String otherName = enc.getOtherName();
-            switch (enc.getFlag()) {
-            case REPLICATE:
-                replicate(name, otherName);
-                break;
-            case ALIAS:
-                alias(name, otherName);
-                break;
-            case SET_BASE:
-                set_base(name, otherName);
-                break;
-            case DUMMY:
-                dummy(name);
-                break;
-            case DUMMY_UNICODE: // ENC_DUMMY_UNICODE from encdb.c
-                dummyUnicode(name);
-                break;
-            }
-        }
+        EncodingList.load();
     }
 }
