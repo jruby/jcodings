@@ -31,6 +31,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
 
     protected BaseUTF8Encoding(int[]EncLen, int[][]Trans) {
         super("UTF-8", 1, 6, EncLen, Trans);
+        isUTF8 = true;
     }
 
     @Override

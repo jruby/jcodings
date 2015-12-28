@@ -25,7 +25,6 @@ public final class UTF8Encoding extends BaseUTF8Encoding {
 
     protected UTF8Encoding() {
         super(UTF8EncLen, UTF8Trans);
-        isUTF8 = true;
     }
 
     @Override
