@@ -3,6 +3,7 @@ repo_path = ARGV.first # path to ruby repo
 
 enc_path = "#{repo_path}/enc"
 folds_src = open("#{enc_path}/unicode.c").read
+unicode_h = open("#{enc_path}/unicode/name2ctype.h").read
 unicode_src = open("#{enc_path}/unicode/name2ctype.src").read
 
 dst_dir = "../src/org/jcodings"
@@ -115,7 +116,7 @@ folds = folds_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).
   end
 end
 
-unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
+unicode_h.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
   tab = tab.split(",").map { |e| e.strip }
   assert_eq(tab.last, "")
   tab.pop
