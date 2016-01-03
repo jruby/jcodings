@@ -169,6 +169,8 @@ unicode_src.scan(/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m) do |e|
   end
 end
 
+raise 'can\'t find encdb.h - you need to configure and build MRI' unless File.exist? "#{repo_path}/encdb.h"
+
 defines, other = open("#{repo_path}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).partition { |a, b| a =~ /DEFINE/ }
 
 open("#{dst_dir}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
