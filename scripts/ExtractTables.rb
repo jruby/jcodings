@@ -3,6 +3,7 @@ repo_path = ARGV.first # path to ruby repo
 
 enc_path = "#{repo_path}/enc"
 folds_src = open("#{enc_path}/unicode.c").read
+unicode_h = open("#{enc_path}/unicode/name2ctype.h").read
 unicode_src = open("#{enc_path}/unicode/name2ctype.src").read
 
 dst_dir = "../src/org/jcodings"
@@ -115,7 +116,7 @@ folds = folds_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).
   end
 end
 
-unicode_src.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
+unicode_h.scan(/static\s+const\s+(\w+)\s+(\w+)\[\]\s+=\s+\{(.*?)\}\;/m).each do |(type, name, tab)|
   tab = tab.split(",").map { |e| e.strip }
   assert_eq(tab.last, "")
   tab.pop
@@ -168,6 +169,8 @@ unicode_src.scan(/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m) do |e|
         sub(/%\{extcrs\}/, cnames.join(",\n"))
   end
 end
+
+raise 'can\'t find encdb.h - you need to configure and build MRI' unless File.exist? "#{repo_path}/encdb.h"
 
 defines, other = open("#{repo_path}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).partition { |a, b| a =~ /DEFINE/ }
 
