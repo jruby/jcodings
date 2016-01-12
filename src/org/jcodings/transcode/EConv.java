@@ -803,7 +803,7 @@ public final class EConv implements EConvFlags {
         final int p2 = 0;
         final int len2;
 
-        if (caseInsensitiveEquals(encname, encname2)) {
+        if (encname2.length == 0 || caseInsensitiveEquals(encname, encname2)) {
             str2 = new byte[len];
             System.arraycopy(str, p, str2, 0, len); // ??
             len2 = len;
