@@ -60,7 +60,7 @@ def g4 b0, b1, b2, b3
 end
 
 def funsio diff
-    (diff << 8) & FUNsio
+    (diff << 8) | FUNsio
 end
 
 def assert_eq a, b, msg = ""
