@@ -404,10 +404,10 @@ public class TranscodeFunctions {
 
     public static int funSoFromGB18030(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize)
     {
-        int s0 = s[sStart] & 0xFF;
-        int s1 = s[sStart+1] & 0xFF;
-        int s2 = s[sStart+2] & 0xFF;
-        int s3 = s[sStart+3] & 0xFF;
+        long s0 = s[sStart] & 0xFF;
+        long s1 = s[sStart+1] & 0xFF;
+        long s2 = s[sStart+2] & 0xFF;
+        long s3 = s[sStart+3] & 0xFF;
         long u = ((s0 - 0x90) * 10 * 126 * 10 + (s1 - 0x30) * 126 * 10 + (s2 - 0x81) * 10 + (s3 - 0x30) + 0x10000) & 0xFFFFFFFFL;
         o[oStart] = (byte)(0xF0 | (u >>> 18));
         o[oStart+1] = (byte)(0x80 | ((u >>> 12) & 0x3F));
@@ -418,10 +418,10 @@ public class TranscodeFunctions {
 
     public static int funSioFromGB18030(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int osize)
     {
-        int s0 = s[sStart] & 0xFF;
-        int s1 = s[sStart+1] & 0xFF;
-        int s2 = s[sStart+2] & 0xFF;
-        int s3 = s[sStart+3] & 0xFF;
+        long s0 = s[sStart] & 0xFF;
+        long s1 = s[sStart+1] & 0xFF;
+        long s2 = s[sStart+2] & 0xFF;
+        long s3 = s[sStart+3] & 0xFF;
         long diff = info >> 8;
         long u;    /* Unicode Scalar Value */
         if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
@@ -438,10 +438,10 @@ public class TranscodeFunctions {
 
     public static int funSoToGB18030(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize)
     {
-        int s0 = s[sStart] & 0xFF;
-        int s1 = s[sStart+1] & 0xFF;
-        int s2 = s[sStart+2] & 0xFF;
-        int s3 = s[sStart+3] & 0xFF;
+        long s0 = s[sStart] & 0xFF;
+        long s1 = s[sStart+1] & 0xFF;
+        long s2 = s[sStart+2] & 0xFF;
+        long s3 = s[sStart+3] & 0xFF;
         long u = ((s0 & 0x07) << 18) | ((s1 & 0x3F) << 12) | ((s2 & 0x3F) << 6) | (s3 & 0x3F);
         u -= 0x10000;
         o[oStart+3] = (byte)(0x30 + (u % 10));
@@ -455,9 +455,9 @@ public class TranscodeFunctions {
 
     public static int funSioToGB18030(byte[] statep, byte[] s, int sStart, int l, int info, byte[] o, int oStart, int osize)
     {
-        int s0 = s[sStart] & 0xFF;
-        int s1 = s[sStart+1] & 0xFF;
-        int s2 = s[sStart+2] & 0xFF;
+        long s0 = s[sStart] & 0xFF;
+        long s1 = s[sStart+1] & 0xFF;
+        long s2 = s[sStart+2] & 0xFF;
         long diff = info >>> 8;
         long u;    /* Unicode Scalar Value */
 
