@@ -132,223 +132,278 @@ public final class GB18030Encoding extends MultiByteEncoding {
     };
 
     @Override
-    public int leftAdjustCharHead(byte[]bytes, int p, int s, int end) {
+    public int leftAdjustCharHead(byte[]bytes, int start, int s, int end) {
         State state = State.START;
 
-        for (int p_ = s; p_ >= p; p_--) {
+        for (int p = s; p >= start; p--) {
+            int pByte = bytes[p] & 0xff;
             switch (state) {
-            case START:
-                switch (GB18030_MAP[bytes[p_] & 0xff]) {
-                case C1:    return s;
-                case C2:    state = State.One_C2; /* C2 */
+                case START:
+                    switch (GB18030_MAP[pByte]) {
+                    case C1:
+                        return s;
+                    case C2:
+                        state = State.One_C2; /* C2 */
+                        break;
+                    case C4:
+                        state = State.One_C4; /* C4 */
+                        break;
+                    case CM:
+                        state = State.One_CM; /* CM */
+                        break;
+                    }
                     break;
-                case C4:    state = State.One_C4; /* C4 */
-                    break;
-                case CM:    state = State.One_CM; /* CM */
-                    break;
-                }
-                break;
                 case One_C2: /* C2 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return s;
-                    case CM:    state = State.Odd_CM_One_CX; /* CM C2 */
+                    case C4:
+                        return s;
+                    case CM:
+                        state = State.Odd_CM_One_CX; /* CM C2 */
                         break;
                     }
                     break;
                 case One_C4: /* C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return s;
-                    case CM:    state = State.One_CMC4;
+                    case C4:
+                        return s;
+                    case CM:
+                        state = State.One_CMC4;
                         break;
                     }
                     break;
                 case One_CM: /* CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
-                    case C2:    return s;
-                    case C4:    state = State.Odd_C4CM;
+                    case C2:
+                        return s;
+                    case C4:
+                        state = State.Odd_C4CM;
                         break;
-                    case CM:    state = State.Odd_CM_One_CX; /* CM CM */
+                    case CM:
+                        state = State.Odd_CM_One_CX; /* CM CM */
                         break;
                     }
                     break;
                 case Odd_CM_One_CX: /* CM C2 */ /* CM CM */ /* CM CM CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 1);
-                    case CM:    state = State.Even_CM_One_CX;
+                    case C4:
+                        return (s - 1);
+                    case CM:
+                        state = State.Even_CM_One_CX;
                         break;
                     }
                     break;
                 case Even_CM_One_CX: /* CM CM C2 */ /* CM CM CM */ /* CM CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return s;
-                    case CM:    state = State.Odd_CM_One_CX;
+                    case C4:
+                        return s;
+                    case CM:
+                        state = State.Odd_CM_One_CX;
                         break;
                     }
                     break;
                 case One_CMC4: /* CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
-                    case C2:    return (s - 1);
-                    case C4:    state = State.One_C4_Odd_CMC4; /* C4 CM C4 */
+                    case C2:
+                        return (s - 1);
+                    case C4:
+                        state = State.One_C4_Odd_CMC4; /* C4 CM C4 */
                         break;
-                    case CM:    state = State.Even_CM_One_CX; /* CM CM C4 */
+                    case CM:
+                        state = State.Even_CM_One_CX; /* CM CM C4 */
                         break;
                     }
                     break;
                 case Odd_CMC4: /* CM C4 CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
-                    case C2:    return (s - 1);
-                    case C4:    state = State.One_C4_Odd_CMC4;
+                    case C2:
+                        return (s - 1);
+                    case C4:
+                        state = State.One_C4_Odd_CMC4;
                         break;
-                    case CM:    state = State.Odd_CM_Odd_CMC4;
+                    case CM:
+                        state = State.Odd_CM_Odd_CMC4;
                         break;
                     }
                     break;
                 case One_C4_Odd_CMC4: /* C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 1);
-                    case CM:    state = State.Even_CMC4; /* CM C4 CM C4 */
+                    case C4:
+                        return (s - 1);
+                    case CM:
+                        state = State.Even_CMC4; /* CM C4 CM C4 */
                         break;
                     }
                     break;
                 case Even_CMC4: /* CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
-                    case C2:    return (s - 3);
-                    case C4:    state = State.One_C4_Even_CMC4;
+                    case C2:
+                        return (s - 3);
+                    case C4:
+                        state = State.One_C4_Even_CMC4;
                         break;
-                    case CM:    state = State.Odd_CM_Even_CMC4;
+                    case CM:
+                        state = State.Odd_CM_Even_CMC4;
                         break;
                     }
                     break;
                 case One_C4_Even_CMC4: /* C4 CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 3);
-                    case CM:    state = State.Odd_CMC4;
+                    case C4:
+                        return (s - 3);
+                    case CM:
+                        state = State.Odd_CMC4;
                         break;
                     }
                     break;
                 case Odd_CM_Odd_CMC4: /* CM CM C4 CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 3);
-                    case CM:    state = State.Even_CM_Odd_CMC4;
+                    case C4:
+                        return (s - 3);
+                    case CM:
+                        state = State.Even_CM_Odd_CMC4;
                         break;
                     }
                     break;
                 case Even_CM_Odd_CMC4: /* CM CM CM C4 CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 1);
-                    case CM:    state = State.Odd_CM_Odd_CMC4;
+                    case C4:
+                        return (s - 1);
+                    case CM:
+                        state = State.Odd_CM_Odd_CMC4;
                         break;
                     }
                     break;
                 case Odd_CM_Even_CMC4: /* CM CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 1);
-                    case CM:    state = State.Even_CM_Even_CMC4;
+                    case C4:
+                        return (s - 1);
+                    case CM:
+                        state = State.Even_CM_Even_CMC4;
                         break;
                     }
                     break;
                 case Even_CM_Even_CMC4: /* CM CM CM C4 CM C4 */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 3);
-                    case CM:    state = State.Odd_CM_Even_CMC4;
+                    case C4:
+                        return (s - 3);
+                    case CM:
+                        state = State.Odd_CM_Even_CMC4;
                         break;
                     }
                     break;
                 case Odd_C4CM: /* C4 CM */  /* C4 CM C4 CM C4 CM*/
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return s;
-                    case CM:    state = State.One_CM_Odd_C4CM; /* CM C4 CM */
+                    case C4:
+                        return s;
+                    case CM:
+                        state = State.One_CM_Odd_C4CM; /* CM C4 CM */
                         break;
                     }
                     break;
                 case One_CM_Odd_C4CM: /* CM C4 CM */ /* CM C4 CM C4 CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
-                    case C2:    return (s - 2); /* |CM C4 CM */
-                    case C4:    state = State.Even_C4CM;
+                    case C2:
+                        return (s - 2); /* |CM C4 CM */
+                    case C4:
+                        state = State.Even_C4CM;
                         break;
-                    case CM:    state = State.Even_CM_Odd_C4CM;
+                    case CM:
+                        state = State.Even_CM_Odd_C4CM;
                         break;
                     }
                     break;
                 case Even_C4CM: /* C4 CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 2);  /* C4|CM C4 CM */
-                    case CM:    state = State.One_CM_Even_C4CM;
+                    case C4:
+                        return (s - 2);  /* C4|CM C4 CM */
+                    case CM:
+                        state = State.One_CM_Even_C4CM;
                         break;
                     }
                     break;
                 case One_CM_Even_C4CM: /* CM C4 CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
-                    case C2:    return (s - 0);  /*|CM C4 CM C4|CM */
-                    case C4:    state = State.Odd_C4CM;
+                    case C2:
+                        return (s - 0);  /*|CM C4 CM C4|CM */
+                    case C4:
+                        state = State.Odd_C4CM;
                         break;
-                    case CM:    state = State.Even_CM_Even_C4CM;
+                    case CM:
+                        state = State.Even_CM_Even_C4CM;
                         break;
                     }
                     break;
                 case Even_CM_Odd_C4CM: /* CM CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 0); /* |CM CM|C4|CM */
-                    case CM:    state = State.Odd_CM_Odd_C4CM;
+                    case C4:
+                        return (s - 0); /* |CM CM|C4|CM */
+                    case CM:
+                        state = State.Odd_CM_Odd_C4CM;
                         break;
                     }
                     break;
                 case Odd_CM_Odd_C4CM: /* CM CM CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 2); /* |CM CM|CM C4 CM */
-                    case CM:    state = State.Even_CM_Odd_C4CM;
+                    case C4:
+                        return (s - 2); /* |CM CM|CM C4 CM */
+                    case CM:
+                        state = State.Even_CM_Odd_C4CM;
                         break;
                     }
                     break;
                 case Even_CM_Even_C4CM: /* CM CM C4 CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 2); /* |CM CM|C4|CM C4 CM */
-                    case CM:    state = State.Odd_CM_Even_C4CM;
+                    case C4:
+                        return (s - 2); /* |CM CM|C4|CM C4 CM */
+                    case CM:
+                        state = State.Odd_CM_Even_C4CM;
                         break;
                     }
                     break;
                 case Odd_CM_Even_C4CM: /* CM CM CM C4 CM C4 CM */
-                    switch (GB18030_MAP[bytes[p_] & 0xff]) {
+                    switch (GB18030_MAP[pByte]) {
                     case C1:
                     case C2:
-                    case C4:    return (s - 0);  /* |CM CM|CM C4 CM C4|CM */
-                    case CM:    state = State.Even_CM_Even_C4CM;
+                    case C4:
+                        return (s - 0);  /* |CM CM|CM C4 CM C4|CM */
+                    case CM:
+                        state = State.Even_CM_Even_C4CM;
                         break;
                     }
                     break;

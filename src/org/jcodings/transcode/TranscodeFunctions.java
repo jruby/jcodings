@@ -408,10 +408,10 @@ public class TranscodeFunctions {
         int s1 = s[sStart+1] & 0xFF;
         int s2 = s[sStart+2] & 0xFF;
         int s3 = s[sStart+3] & 0xFF;
-        long u = (s0 - 0x90) * 10 * 126 * 10 + (s1 - 0x30) * 126 * 10 + (s2 - 0x81) * 10 + (s3 - 0x30) + 0x10000;
-        o[oStart] = (byte)(0xF0 | (u >> 18));
-        o[oStart+1] = (byte)(0x80 | ((u >> 12) & 0x3F));
-        o[oStart+2] = (byte)(0x80 | ((u >> 6) & 0x3F));
+        long u = ((s0 - 0x90) * 10 * 126 * 10 + (s1 - 0x30) * 126 * 10 + (s2 - 0x81) * 10 + (s3 - 0x30) + 0x10000) & 0xFFFFFFFFL;
+        o[oStart] = (byte)(0xF0 | (u >>> 18));
+        o[oStart+1] = (byte)(0x80 | ((u >>> 12) & 0x3F));
+        o[oStart+2] = (byte)(0x80 | ((u >>> 6) & 0x3F));
         o[oStart+3] = (byte)(0x80 | (u & 0x3F));
         return 4;
     }
@@ -425,13 +425,13 @@ public class TranscodeFunctions {
         long diff = info >> 8;
         long u;    /* Unicode Scalar Value */
         if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
-            u = ((s0 * 10 + s1) * 126 + s2) * 10 + s3 - diff - 0x170000;
+            u = (((s0 * 10 + s1) * 126 + s2) * 10 + s3 - diff - 0x170000) & 0xFFFFFFFFL;
         }
         else { /* GB18030 2 bytes */
-            u = s0 * 256 + s1 + 24055 - diff;
+            u = (s0 * 256 + s1 + 24055 - diff) & 0xFFFFFFFFL;
         }
-        o[oStart] = (byte)(0xE0 | (u >> 12));
-        o[oStart+1] = (byte)(0x80 | ((u >> 6) & 0x3F));
+        o[oStart] = (byte)(0xE0 | (u >>> 12));
+        o[oStart+1] = (byte)(0x80 | ((u >>> 6) & 0x3F));
         o[oStart+2] = (byte)(0x80 | (u & 0x3F));
         return 3;
     }
