@@ -53,13 +53,6 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         return missing(EncLen[b] - delta);
     }
 
-    protected final int safeLengthForUptoFourGreatedThan127(byte[]bytes, int p ,int end) {
-        int b = bytes[p] & 0xff;
-        int s = TransZero[b];
-        if (s < 0) return s == A ? 1 : CHAR_INVALID;
-        return lengthForTwoUptoFour(bytes, p, end, b, s);
-    }
-
     protected final int safeLengthForUptoFour(byte[]bytes, int p ,int end) {
         int b = bytes[p] & 0xff;
         int s = TransZero[b];
