@@ -331,7 +331,7 @@ public final class EConv implements EConvFlags {
             if (inBuf.bytes != null && inBuf.dataStart != inBuf.dataEnd) {
                 if (outStop - outPtr.p < inBuf.dataEnd - inBuf.dataStart) {
                     len = outStop - outPtr.p;
-                    System.arraycopy(inBuf, inBuf.dataStart, out, outPtr.p, len);
+                    System.arraycopy(inBuf.bytes, inBuf.dataStart, out, outPtr.p, len);
                     outPtr.p = outStop;
                     inBuf.dataStart += len;
                     return convertInternalResult(EConvResult.DestinationBufferFull, null);
