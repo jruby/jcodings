@@ -21,19 +21,7 @@ package org.jcodings;
 
 public class CodeRange {
     public static boolean isInCodeRange(int[]p, int code) {
-        int low = 0;
-        int n = p[0];
-        int high = n;
-
-        while (low < high) {
-            int x = (low + high) >> 1;
-            if (code > p[(x << 1) + 2]) {
-                low = x + 1;
-            } else {
-                high = x;
-            }
-        }
-        return low < n && code >= p[(low << 1) + 1];
+        return isInCodeRange(p, 0, code);
     }
 
     public static boolean isInCodeRange(int[]p, int offset, int code) {
