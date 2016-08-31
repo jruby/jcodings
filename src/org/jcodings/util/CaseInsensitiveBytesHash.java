@@ -54,11 +54,7 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
         }
 
         public boolean equals(byte[]bytes, int p, int end) {
-            if (this.end - this.p != end - p) return false;
-            if (this.bytes == bytes) return true;
-            int q = this.p;
-            while (q < this.end) if (ToLowerCaseTable[this.bytes[q++] & 0xff] != ToLowerCaseTable[bytes[p++] & 0xff]) return false;
-            return true;
+            return caseInsensitiveEquals(this.bytes, this.p, this.end, bytes, p, end);
         }
     }
 
