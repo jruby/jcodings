@@ -19,7 +19,7 @@ import java.util.Arrays;
 public class TestEConv {
     @Test
     public void testUTF8toUTF16() throws Exception {
-        EConv econv = TranscoderDB.open("UTF-8".getBytes(), "UTF-16".getBytes(), 0);
+        EConv econv = TranscoderDB.open("UTF-8", "UTF-16", 0);
 
         byte[] src = "foo".getBytes("UTF-8");
         byte[] dest = new byte["foo".getBytes("UTF-16").length];

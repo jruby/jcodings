@@ -268,6 +268,10 @@ public class TranscoderDB implements EConvFlags {
         return numDecorators;
     }
 
+    public static EConv open(String source, String destination, int ecflags) {
+        return open(source.getBytes(), destination.getBytes(), ecflags);
+    }
+
     /* rb_econv_open */
     public static EConv open(byte[] source, byte[] destination, int ecflags) {
         byte[][] decorators = new byte[MAX_ECFLAGS_DECORATORS][];
