@@ -20,6 +20,7 @@
 package org.jcodings.unicode;
 
 import org.jcodings.IntHolder;
+import org.jcodings.util.Macros;
 
 public abstract class FixedWidthUnicodeEncoding extends UnicodeEncoding {
     protected final int shift;
@@ -35,8 +36,18 @@ public abstract class FixedWidthUnicodeEncoding extends UnicodeEncoding {
     }
 
     @Override
-    public final int length(byte[]bytes, int p, int end) { 
-        return minLength;
+    public int length(byte[] bytes, int p, int e) {
+        if (e < p) {
+            return Macros.CONSTRUCT_MBCLEN_INVALID();
+        } else if (e-p < 4) {
+            return Macros.CONSTRUCT_MBCLEN_NEEDMORE(4-e-p);
+        } else {
+            int c = mbcToCode(bytes, p, e);
+            if (!Macros.UNICODE_VALID_CODEPOINT_P(c)) {
+                return Macros.CONSTRUCT_MBCLEN_INVALID();
+            }
+            return Macros.CONSTRUCT_MBCLEN_CHARFOUND(4);
+        }
     }
 
     @Override
