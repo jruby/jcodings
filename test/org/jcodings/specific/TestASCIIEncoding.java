@@ -19,20 +19,13 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.exception.EncodingException;
-import org.jcodings.specific.ASCIIEncoding;
+import org.jcodings.exception.EncodingError;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class TestASCIIEncoding {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-    
     @Test
     public void testValidCodeToMbcLength() {
         assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbcLength(0xff));
@@ -47,10 +40,7 @@ public class TestASCIIEncoding {
 
     @Test
     public void testInvalidCodeToMbc() {
-        expectedException.expect(EncodingException.class);
-        expectedException.expectMessage("out of range char");
-        
         byte[] buffer = new byte[1];
-        assertEquals(1, ASCIIEncoding.INSTANCE.codeToMbc(0x100, buffer, 0));
+        assertEquals(EncodingError.ERR_TOO_BIG_WIDE_CHAR_VALUE.getCode(), ASCIIEncoding.INSTANCE.codeToMbc(0x100, buffer, 0));
     }
 }

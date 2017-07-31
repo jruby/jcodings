@@ -25,7 +25,6 @@ import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
-import org.jcodings.exception.EncodingException;
 import org.jcodings.exception.ErrorCodes;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;

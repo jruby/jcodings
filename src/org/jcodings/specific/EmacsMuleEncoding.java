@@ -23,8 +23,7 @@ import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.MultiByteEncoding;
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.exception.EncodingException;
-import org.jcodings.exception.ErrorMessages;
+import org.jcodings.exception.ErrorCodes;
 
 public final class EmacsMuleEncoding extends MultiByteEncoding {
 
@@ -60,7 +59,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
         } else if ((code & 0xff00) >= 0x8000) {
             return 2;
         }
-        throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+        return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
     }
 
     @Override
@@ -72,7 +71,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
         if ((code & 0xff00) != 0 )              bytes[p_++] = (byte)((code >>> 8) & 0xff);
         bytes[p_++] = (byte)(code & 0xff);
 
-        if (length(bytes, p, p_) != (p_ - p)) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+        if (length(bytes, p, p_) != (p_ - p)) return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         return p_ - p;
     }
 

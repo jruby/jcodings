@@ -19,20 +19,13 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.exception.EncodingException;
-import org.jcodings.specific.ASCIIEncoding;
+import org.jcodings.exception.EncodingError;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
-import org.jcodings.specific.USASCIIEncoding;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class TestUSASCIIEncoding {
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     /**
      * codeToMbcLength always returns 1, even when codepoint is invalid,
@@ -52,11 +45,8 @@ public class TestUSASCIIEncoding {
 
     @Test
     public void testInvalidCodeToMbc() {
-        expectedException.expect(EncodingException.class);
-        expectedException.expectMessage("out of range char");
-        
         byte[] buffer = new byte[1];
-        assertEquals(1, USASCIIEncoding.INSTANCE.codeToMbc(0x80, buffer, 0));
+        assertEquals(EncodingError.ERR_TOO_BIG_WIDE_CHAR_VALUE.getCode(), USASCIIEncoding.INSTANCE.codeToMbc(0x80, buffer, 0));
     }
     
     

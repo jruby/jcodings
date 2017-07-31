@@ -25,7 +25,7 @@ import org.jcodings.EucEncoding;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
-import org.jcodings.exception.EncodingException;
+import org.jcodings.exception.ErrorCodes;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
 import org.jcodings.util.CaseInsensitiveBytesHash;
@@ -49,12 +49,12 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
             if ((code &   0xff00) != 0) return 2;
         } else {
             if (code > 0x00ffffff) {
-                throw new EncodingException(ErrorMessages.ERR_TOO_BIG_WIDE_CHAR_VALUE);
+                return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
             }
             else if ((code & 0xff808080) == 0x00808080) return 3;
             else if ((code & 0xffff8080) == 0x00008080) return 2;
         }
-        throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+        return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
     }
 
     @Override
@@ -64,7 +64,7 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
         if ((code &   0xff00) != 0) bytes[p_++] = (byte)((code >>  8) & 0xff);
         bytes[p_++] = (byte)(code & 0xff);
 
-        if (length(bytes, p, p_) != p_ - p) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+        if (length(bytes, p, p_) != p_ - p) return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         return p_ - p;
     }
 

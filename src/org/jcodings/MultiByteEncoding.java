@@ -20,8 +20,7 @@
 package org.jcodings;
 
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.exception.EncodingException;
-import org.jcodings.exception.ErrorMessages;
+import org.jcodings.exception.ErrorCodes;
 
 public abstract class MultiByteEncoding extends AbstractEncoding {
 
@@ -164,7 +163,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         }
         bytes[p_++] = (byte)(code & 0xff);
 
-        if (length(bytes, p, p_) != (p_ - p)) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+        if (length(bytes, p, p_) != (p_ - p)) return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         return p_ - p;
     }
 
@@ -175,7 +174,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         if ((code & 0xff00) != 0 || p_ != p)    bytes[p_++] = (byte)((code >>> 8) & 0xff);
         bytes[p_++] = (byte)(code & 0xff);
 
-        if (length(bytes, p, p_) != (p_ - p)) throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+        if (length(bytes, p, p_) != (p_ - p)) return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         return p_ - p;
     }
 

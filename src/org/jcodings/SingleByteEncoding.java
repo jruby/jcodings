@@ -19,8 +19,7 @@
  */
 package org.jcodings;
 
-import org.jcodings.exception.EncodingException;
-import org.jcodings.exception.ErrorMessages;
+import org.jcodings.exception.ErrorCodes;
 
 public abstract class SingleByteEncoding extends AbstractEncoding {
 
@@ -73,7 +72,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     public int codeToMbcLength(int code) {
         if (Config.VANILLA) {
             if (code <= codeSize) return 1;
-            throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+            return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         } else {
             return 1;
         }
@@ -83,7 +82,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
      */
     @Override
     public final int codeToMbc(int code, byte[] bytes, int p) {
-        if (code > codeSize) throw new EncodingException("out of range char");
+        if (code > codeSize) return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
         
         bytes[p] = (byte)(code & 0xff); // c implementation also uses mask here
         return 1;

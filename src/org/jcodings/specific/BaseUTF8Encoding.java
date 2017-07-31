@@ -22,9 +22,7 @@ package org.jcodings.specific;
 import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
-import org.jcodings.exception.EncodingException;
 import org.jcodings.exception.ErrorCodes;
-import org.jcodings.exception.ErrorMessages;
 import org.jcodings.unicode.UnicodeEncoding;
 
 abstract class BaseUTF8Encoding extends UnicodeEncoding {
@@ -75,7 +73,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             return 2;
         } else if ((code & 0xffff0000) == 0) {
             return 3;
-        } else if (code < VALID_CODE_LIMIT) {
+        } else if (code <= VALID_CODE_LIMIT) {
             return 4;
         } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
             return 1;
@@ -150,7 +148,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
                 bytes[p_] = (byte)0xff;
                 return 1;
             } else {
-                throw new EncodingException(ErrorMessages.ERR_TOO_BIG_WIDE_CHAR_VALUE);
+                return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
             }
             bytes[p_++] = trail0(code);
             return p_ - p;
