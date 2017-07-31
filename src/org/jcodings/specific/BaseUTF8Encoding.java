@@ -23,6 +23,7 @@ import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.exception.EncodingException;
+import org.jcodings.exception.ErrorCodes;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.unicode.UnicodeEncoding;
 
@@ -63,7 +64,8 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
 
     private static final int INVALID_CODE_FE = 0xfffffffe;
     private static final int INVALID_CODE_FF = 0xffffffff;
-    // private static final int VALID_CODE_LIMIT = 0x7fffffff;
+    private static final int VALID_CODE_LIMIT = 0x0010ffff;
+
     @Override
     public int codeToMbcLength(int code) {
         if ((code & 0xffffff80) == 0) {
@@ -72,18 +74,14 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             return 2;
         } else if ((code & 0xffff0000) == 0) {
             return 3;
-        } else if ((code & 0xffe00000) == 0) {
+        } else if (code < VALID_CODE_LIMIT) {
             return 4;
-        } else if ((code & 0xfc000000) == 0) {
-            return 5;
-        } else if ((code & 0x80000000) == 0) {
-            return 6;
         } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
             return 1;
         } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FF) {
             return 1;
         } else {
-            throw new EncodingException(ErrorMessages.ERR_INVALID_CODE_POINT_VALUE);
+            return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
         }
     }
 
