@@ -67,7 +67,8 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     private static final int VALID_CODE_LIMIT = 0x0010ffff;
 
     @Override
-    public int codeToMbcLength(int code) {
+    public int codeToMbcLength(int intCode) {
+        long code = intCode & 0xFFFFFFFFL;
         if ((code & 0xffffff80) == 0) {
             return 1;
         } else if ((code & 0xfffff800) == 0) {
