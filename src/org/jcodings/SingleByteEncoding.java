@@ -23,17 +23,12 @@ import org.jcodings.exception.ErrorCodes;
 
 public abstract class SingleByteEncoding extends AbstractEncoding {
 
+    public static final int MAX_BYTE = 0xff;
     protected final byte[] LowerCaseTable;
-    protected int codeSize = 0xff;
 
     protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable) {
         super(name, 1, 1, CTypeTable);
         this.LowerCaseTable = LowerCaseTable;
-    }
-
-    protected SingleByteEncoding(String name, short[] CTypeTable, byte[] LowerCaseTable, int codeSize) {
-        this(name, CTypeTable, LowerCaseTable);
-        this.codeSize = codeSize;
     }
 
     /** onigenc_single_byte_mbc_enc_len
@@ -71,7 +66,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     @Override
     public int codeToMbcLength(int code) {
         if (Config.VANILLA) {
-            if (code <= codeSize) return 1;
+            if (code <= MAX_BYTE) return 1;
             return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         } else {
             return 1;
@@ -82,7 +77,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
      */
     @Override
     public final int codeToMbc(int code, byte[] bytes, int p) {
-        if (code > codeSize) return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
+        if (code > MAX_BYTE) return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
         
         bytes[p] = (byte)(code & 0xff); // c implementation also uses mask here
         return 1;

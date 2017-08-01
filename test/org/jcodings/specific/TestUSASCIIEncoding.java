@@ -46,7 +46,7 @@ public class TestUSASCIIEncoding {
     @Test
     public void testInvalidCodeToMbc() {
         byte[] buffer = new byte[1];
-        assertEquals(EncodingError.ERR_TOO_BIG_WIDE_CHAR_VALUE.getCode(), USASCIIEncoding.INSTANCE.codeToMbc(0x80, buffer, 0));
+        assertEquals(EncodingError.ERR_TOO_BIG_WIDE_CHAR_VALUE.getCode(), USASCIIEncoding.INSTANCE.codeToMbc(0xff + 1, buffer, 0));
     }
     
     
