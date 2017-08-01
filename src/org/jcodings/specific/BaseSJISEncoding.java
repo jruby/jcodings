@@ -49,7 +49,7 @@ abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
     @Override
     public int codeToMbcLength(int code) {
         if (code < 256) {
-            return SjisEncLen[code] == 1 ? 1 : 0;
+            return SjisEncLen[code] == 1 ? 1 : ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
         } else if (code <= 0xffff) {
             int low = code & 0xff;
             if (!SJIS_ISMB_TRAIL(low)) {
