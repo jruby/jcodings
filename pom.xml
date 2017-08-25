@@ -114,9 +114,6 @@
     <resources>
         <resource>
             <directory>resources</directory>
-            <includes>
-                <include>**/*.bin</include>
-            </includes>
         </resource>
     </resources>
   </build>
