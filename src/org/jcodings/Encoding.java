@@ -42,6 +42,7 @@ public abstract class Encoding implements Cloneable {
     private int index;
     private Charset charset = null;
     private boolean isDummy = false;
+    private String stringName;
 
     protected Encoding(String name, int minLength, int maxLength) {
         setName(name);
@@ -58,11 +59,13 @@ public abstract class Encoding implements Cloneable {
     protected final void setName(String name) {
         this.name = name.getBytes();
         this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
+        this.stringName = name;
     }
 
     protected final void setName(byte[]name) {
         this.name = name;
         this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
+        this.stringName = new String(name);
     }
 
     protected final void setDummy() {
@@ -72,7 +75,7 @@ public abstract class Encoding implements Cloneable {
 
     @Override
     public final String toString() {
-        return new String(name);
+        return stringName;
     }
 
     @Override
@@ -111,23 +114,30 @@ public abstract class Encoding implements Cloneable {
 
     /**
      * If this encoding is capable of being represented by a Java Charset
-     * then provide it.
+     * then provide it. Otherwise this will raise a CharsetNotFound error via the JDK APIs.
+     *
+     * To reduce cases like jruby/jruby#4716, we always attempt to find a charset here, and default to using the
+     * encoding name which is never null. Either the encoding will exist in the JDK or it will fail hard, rather
+     * than propagating a null Charset. Encodings with names different than those found in the JDK can override
+     * this getCharsetName to provide that name or getCharset to return the right Charset.
      */
     public Charset getCharset() {
-        if (!isDummy() && charset == null && getCharsetName() != null) {
+        if (charset == null) {
             charset = Charset.forName(getCharsetName());
         }
 
         return charset;
     }
 
+    /**
+     * The name of the equivalent Java Charset for this encoding.
+     *
+     * Defaults to the name of the encoding. Subclasses can override this to provide a different name.
+     *
+     * @return the name of the equivalent Java Charset for this encoding
+     */
     public String getCharsetName() {
-        // Enebo: I thought about just defaulting this to getName(), but then
-        // for encodings which are unlikely to have charsets will constantly be
-        // Charset.forName(), which seems like it would dramatically slow down
-        // in that case over just getting a null back.  So we are only overriding
-        // based on very likely charsets.
-        return null;
+        return stringName;
     }
 
     Encoding replicate(byte[]name) {
