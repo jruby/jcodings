@@ -38,7 +38,7 @@ import org.jcodings.util.IntHash;
 
 
 public abstract class UnicodeEncoding extends MultiByteEncoding {
-    private static final int PROPERTY_NAME_MAX_SIZE = 20;
+    private static final int PROPERTY_NAME_MAX_SIZE = 41;
 
     protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans) {
         // ASCII type tables for all Unicode encodings
