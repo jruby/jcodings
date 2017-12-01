@@ -3,8 +3,8 @@ repo_path = ARGV.first # path to ruby repo
 
 enc_path = "#{repo_path}/enc"
 folds_src = open("#{enc_path}/unicode.c").read
-unicode_h = open("#{enc_path}/unicode/name2ctype.h").read
-unicode_src = open("#{enc_path}/unicode/name2ctype.src").read
+unicode_h = open("#{enc_path}/unicode/*/name2ctype.h").read
+unicode_src = open("#{enc_path}/unicode/*/name2ctype.src").read
 
 dst_dir = "../src/org/jcodings"
 dst_bin_dir = "../resources/tables"

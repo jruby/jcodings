@@ -1,17 +1,15 @@
 package org.jcodings.specific;
 
+import java.nio.charset.Charset;
+import java.util.Arrays;
+
 import org.jcodings.Ptr;
 import org.jcodings.transcode.EConv;
 import org.jcodings.transcode.EConvFlags;
 import org.jcodings.transcode.EConvResult;
 import org.jcodings.transcode.TranscoderDB;
-import org.jcodings.transcode.Transcoding;
 import org.junit.Assert;
 import org.junit.Test;
-import sun.nio.cs.ext.ISO2022_JP;
-
-import java.nio.charset.Charset;
-import java.util.Arrays;
 
 /**
  * Created by headius on 2/25/14.
