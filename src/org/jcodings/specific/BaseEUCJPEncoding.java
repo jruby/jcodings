@@ -44,16 +44,11 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
     @Override
     public int codeToMbcLength(int code) {
         if (isAscii(code)) return 1;
-        if (Config.VANILLA) {
-            if ((code & 0xff0000) != 0) return 3;
-            if ((code &   0xff00) != 0) return 2;
-        } else {
-            if (code > 0x00ffffff) {
-                return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
-            }
-            else if ((code & 0xff808080) == 0x00808080) return 3;
-            else if ((code & 0xffff8080) == 0x00008080) return 2;
+        if (code > 0x00ffffff) {
+            return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
         }
+        else if ((code & 0xff808080) == 0x00808080) return 3;
+        else if ((code & 0xffff8080) == 0x00008080) return 2;
         return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
     }
 

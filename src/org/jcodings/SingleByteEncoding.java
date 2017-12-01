@@ -65,12 +65,7 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
      */
     @Override
     public int codeToMbcLength(int code) {
-        if (Config.VANILLA) {
-            if (code <= MAX_BYTE) return 1;
-            return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
-        } else {
-            return 1;
-        }
+        return 1;
     }
 
     /** onigenc_single_byte_code_to_mbc

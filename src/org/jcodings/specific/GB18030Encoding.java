@@ -34,17 +34,9 @@ public final class GB18030Encoding extends MultiByteEncoding {
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        if (Config.VANILLA) {
-            if (GB18030_MAP[bytes[p] & 0xff] != CM) return 1;
-            int c = GB18030_MAP[bytes[p + 1] & 0xff];
-            if (c == C4) return 4;
-            if (c == C1) return 1; /* illegal sequence */
-            return 2;
-        } else {
-            int s = TransZero[bytes[p] & 0xff];
-            if (s < 0) return s == A ? 1 : CHAR_INVALID;
-            return lengthForTwoUptoFour(bytes, p, end, s);
-        }
+        int s = TransZero[bytes[p] & 0xff];
+        if (s < 0) return s == A ? 1 : CHAR_INVALID;
+        return lengthForTwoUptoFour(bytes, p, end, s);
     }
 
     private int lengthForTwoUptoFour(byte[]bytes, int p, int end, int s) {
@@ -474,7 +466,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
         CM, CM, CM, CM, CM, CM, CM, CM, CM, CM, CM, CM, CM, CM, CM, C1
     };
 
-    private static final int GB18030Trans[][] = Config.VANILLA ? null : new int[][]{
+    private static final int GB18030Trans[][] = new int[][]{
         { /* S0   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* 1 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,

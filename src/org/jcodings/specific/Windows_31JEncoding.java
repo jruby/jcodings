@@ -33,11 +33,7 @@ public final class Windows_31JEncoding extends BaseSJISEncoding {
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        if (Config.VANILLA) {
-            return length(bytes[p]);
-        } else {
-            return safeLengthForUptoTwo(bytes, p, end);
-        }
+        return safeLengthForUptoTwo(bytes, p, end);
     }
 
     public static final Windows_31JEncoding INSTANCE = new Windows_31JEncoding();

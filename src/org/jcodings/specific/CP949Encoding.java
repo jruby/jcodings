@@ -39,11 +39,7 @@ public final class CP949Encoding extends CanBeTrailTableEncoding {
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        if (Config.VANILLA){
-            return length(bytes[p]);
-        } else {
-            return safeLengthForUptoTwo(bytes, p, end);
-        }
+        return safeLengthForUptoTwo(bytes, p, end);
     }
 
     @Override
@@ -114,7 +110,7 @@ public final class CP949Encoding extends CanBeTrailTableEncoding {
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
     };
 
-    private static final int CP949Trans[][] = Config.VANILLA ? null : new int[][]{
+    private static final int CP949Trans[][] = new int[][]{
         { /* S0   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* 1 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,

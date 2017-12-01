@@ -36,11 +36,7 @@ public class EUCKREncoding extends EucEncoding {
 
     @Override
     public int length(byte[]bytes, int p, int end) {
-        if (Config.VANILLA){
-            return length(bytes[p]);
-        } else {
-            return safeLengthForUptoTwo(bytes, p, end);
-        }
+        return safeLengthForUptoTwo(bytes, p, end);
     }
 
     @Override
@@ -103,7 +99,7 @@ public class EUCKREncoding extends EucEncoding {
         2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1
     };
 
-    private static final int EUCKRTrans[][] = Config.VANILLA ? null : new int[][]{
+    private static final int EUCKRTrans[][] = new int[][]{
         { /* S0   0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f */
           /* 0 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,
           /* 1 */ A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A,

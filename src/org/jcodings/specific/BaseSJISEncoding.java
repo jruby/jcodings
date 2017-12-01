@@ -121,11 +121,7 @@ abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
                 return isCodeCTypeInternal(code, ctype);
             } else {
                 if (isWordGraphPrint(ctype)) {
-                    if (Config.VANILLA) {
-                        return codeToMbcLength(code) > 1;
-                    } else {
-                        return true;
-                    }
+                    return true;
                 }
             }
         } else {
