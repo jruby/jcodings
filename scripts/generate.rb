@@ -89,9 +89,7 @@ def generate_coderange_list
     end.flatten(1)
 
     open("#{SRC_DIR}/unicode/UnicodeProperties.java", "wb") do |f| f <<
-        open("UnicodePropertiesTemplate.java", "rb").read.
-            sub(/%\{stdcrs\}/, "#{INDENT * 4}null").
-            sub(/%\{extcrs\}/, out.map{|name, table| "#{INDENT * 4}" + "new CodeRangeEntry(\"#{name}\", \"CR_#{table}\")"}.join(",\n"))
+        open("UnicodePropertiesTemplate.java", "rb").read.sub(/%\{extcrs\}/, out.map{|name, table| "#{INDENT * 2}" + "new CodeRangeEntry(\"#{name}\", \"CR_#{table}\")"}.join(",\n"))
     end
 end
 
