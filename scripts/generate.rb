@@ -10,8 +10,8 @@ INDENT = " " * 4
 def generate_data
     generate_transoder_data
     generate_coderange_data
-    genrate_coderange_list
-    # genrate_fold_data
+    generate_coderange_list
+    generate_fold_data
 end
 
 def process_binary obj_name
@@ -27,7 +27,7 @@ def generate_transoder_data
         # next unless trans_file =~ /utf8/
         trans_file = trans_file[/(.*)\./, 1]
         src = open("#{trans_file}.c", "rb").read
-        process_binary "#{trans_file}.o"do |name, binary, address|
+        process_binary "#{trans_file}.o" do |name, binary, address|
             case name
             when /(.*)_byte_array/
                 name = $1
@@ -68,7 +68,7 @@ def generate_coderange_data
     end
 end
 
-def genrate_coderange_list
+def generate_coderange_list
     name2ctype_h = "#{REPO_PATH}/enc/unicode/#{UNICODE_VERSION}/name2ctype.h"
     cr_map = open("#{name2ctype_h}", "rb"){|f|f.read}.scan(/#define CR_(.*?) CR_(.*)/).inject({}){|h, (k, v)|h[v] = k.tr('_', '').downcase; h}
     unicode_src = `cpp #{name2ctype_h} -DUSE_UNICODE_PROPERTIES -DUSE_UNICODE_AGE_PROPERTIES | grep "^[^#;]"`
@@ -88,14 +88,14 @@ def genrate_coderange_list
         ([name] + aliases[name].to_a).map{|n|[n, range]}
     end.flatten(1)
 
-    open("#{SRC_DIR}/unicode/YUnicodeProperties.java", "wb") do |f| f <<
+    open("#{SRC_DIR}/unicode/UnicodeProperties.java", "wb") do |f| f <<
         open("UnicodePropertiesTemplate.java", "rb").read.
             sub(/%\{stdcrs\}/, "#{INDENT * 4}null").
             sub(/%\{extcrs\}/, out.map{|name, table| "#{INDENT * 4}" + "new CodeRangeEntry(\"#{name}\", \"CR_#{table}\")"}.join(",\n"))
     end
 end
 
-def genrate_fold_data
+def generate_fold_data
     process_binary "#{REPO_PATH}/enc/unicode.o" do |name, binary, address|
         case name
         when /CaseFold_11_Table/
