@@ -8,6 +8,7 @@ DST_BIN_DIR =  "../resources/tables"
 INDENT = " " * 4
 
 def generate_data
+    generate_encoding_list
     generate_transoder_data
     generate_coderange_data
     generate_coderange_list
@@ -20,6 +21,62 @@ def process_binary obj_name
     `nm --no-sort --defined-only #{obj_name}`.split("\n").map{|s|s.split(/\s+/)}.each do |address, _, name|
         yield name, binary, address.to_i(16) + offset
     end
+end
+
+def generate_encoding_list
+
+    enc_map = {
+      "ASCII-8BIT" =>   "ASCII",
+      "UTF-8" =>        "UTF8",
+      "US-ASCII" =>     "USASCII",
+      "Big5" =>         "BIG5",
+      "Big5-HKSCS" =>   "Big5HKSCS",
+      "Big5-UAO" =>     "Big5UAO",
+      "CP949" =>        "CP949",
+      "Emacs-Mule" =>   "EmacsMule",
+      "EUC-JP" =>       "EUCJP",
+      "EUC-KR" =>       "EUCKR",
+      "EUC-TW" =>       "EUCTW",
+      "GB2312" =>       "GB2312",
+      "GB18030" =>      "GB18030",
+      "GBK" =>          "GBK",
+      "ISO-8859-1" =>   "ISO8859_1",
+      "ISO-8859-2" =>   "ISO8859_2",
+      "ISO-8859-3" =>   "ISO8859_3",
+      "ISO-8859-4" =>   "ISO8859_4",
+      "ISO-8859-5" =>   "ISO8859_5",
+      "ISO-8859-6" =>   "ISO8859_6",
+      "ISO-8859-7" =>   "ISO8859_7",
+      "ISO-8859-8" =>   "ISO8859_8",
+      "ISO-8859-9" =>   "ISO8859_9",
+      "ISO-8859-10" =>  "ISO8859_10",
+      "ISO-8859-11" =>  "ISO8859_11",
+      "ISO-8859-13" =>  "ISO8859_13",
+      "ISO-8859-14" =>  "ISO8859_14",
+      "ISO-8859-15" =>  "ISO8859_15",
+      "ISO-8859-16" =>  "ISO8859_16",
+      "KOI8-R" =>       "KOI8R",
+      "KOI8-U" =>       "KOI8U",
+      "Shift_JIS" =>    "SJIS",
+      "UTF-16BE" =>     "UTF16BE",
+      "UTF-16LE" =>     "UTF16LE",
+      "UTF-32BE" =>     "UTF32BE",
+      "UTF-32LE" =>     "UTF32LE",
+      "Windows-31J" =>  "Windows_31J",           # TODO: Windows-31J is actually a variant of SJIS
+      "Windows-1250" => "Windows_1250",
+      "Windows-1251" => "Windows_1251",
+      "Windows-1252" => "Windows_1252",
+      "Windows-1253" => "Windows_1253",
+      "Windows-1254" => "Windows_1254",
+      "Windows-1257" => "Windows_1257"
+    }
+
+    defines, other = open("#{REPO_PATH}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).partition { |a, b| a =~ /DEFINE/ }
+
+    open("#{SRC_DIR}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
+        sub(/%\{defines\}/, defines.map { |cmd, name| "#{INDENT*2}EncodingDB.declare(#{name}, \"#{enc_map[name[/[^"]+/]] || (raise 'class not found for encoding ' + name)}\");" }.join("\n")).
+        sub(/%\{other\}/, other.map { |cmd, from, to| "#{INDENT*2}EncodingDB.#{cmd.downcase}(#{from}#{to.nil? ? "" : to});" }.join("\n")) }
+
 end
 
 def generate_transoder_data
@@ -94,15 +151,91 @@ def generate_coderange_list
 end
 
 def generate_fold_data
+    src = open("#{REPO_PATH}/enc/unicode/#{UNICODE_VERSION}/casefold.h"){|f|f.read}
+    offsets = src.scan(/#define (Case\S+).*?\[(\w+)\].*?\+(\d+)/).inject({}){|h, (k, *v)| h[k] = v.map(&:to_i);h}
+
+    extract = -> (from_f, to_f, binary, address, from, range, from_w, to_w) do
+        from_f << [0].pack("N"); to_f << [0].pack("N") if from_f != to_f # size placeholder
+
+        width = from_w + to_w
+        size = 0
+        start = address + from * width * 4
+        start.step(start + (range * width * 4 - 1), width * 4) do |adr|
+            from_f << [from_w].pack("N") if from_f == to_f
+            from_f << binary[adr, from_w * 4].unpack("l*").pack("N*")
+            length = binary[adr + from_w * 4, 4].unpack("l").first & 3 # guard against packed flags for now
+            size += length
+            to_f << [length].pack("N")
+            to_f << binary[adr + from_w * 4 + 4, length * 4].unpack("l*").pack("N*")
+        end
+
+        to_f.seek(0)
+        vrange = size - (size - range)
+        if from_f == to_f
+            from_f << [range + vrange].pack("N")
+        else
+            from_f.seek(0)
+            from_f << [range].pack("N")
+            to_f << [vrange].pack("N")
+        end
+    end
+
     process_binary "#{REPO_PATH}/enc/unicode.o" do |name, binary, address|
         case name
-        when /CaseFold_11_Table/
+        when /(CaseFold)_11_Table/
+            name = $1
+            range, from = offsets[name]
+            open("#{DST_BIN_DIR}/CaseFold_From.bin", "wb") do |from_f|
+                open("#{DST_BIN_DIR}/CaseFold_To.bin", "wb") do |to_f|
+                    extract.(from_f, to_f, binary, address, from, range, 1, 4)
+                end
+            end
+            range, from = offsets[name + '_Locale']
+            open("#{DST_BIN_DIR}/CaseFold_Locale_From.bin", "wb") do |from_f|
+                open("#{DST_BIN_DIR}/CaseFold_Locale_To.bin", "wb") do |to_f|
+                    extract.(from_f, to_f, binary, address, from, range, 1, 4)
+                end
+            end
 
-        when /CaseUnfold_(\d+)_Table/
-            case $1
+        when /(CaseUnfold_(\d+))_Table/
+            name = $1
+            case $2
             when '11'
+                range, from = offsets[name]
+                open("#{DST_BIN_DIR}/CaseUnfold_11_From.bin", "wb") do |from_f|
+                    open("#{DST_BIN_DIR}/CaseUnfold_11_To.bin", "wb") do |to_f|
+                        extract.(from_f, to_f, binary, address, from, range, 1, 4)
+                    end
+                end
+                range, from = offsets[name + '_Locale']
+                open("#{DST_BIN_DIR}/CaseUnfold_11_Locale_From.bin", "wb") do |from_f|
+                    open("#{DST_BIN_DIR}/CaseUnfold_11_Locale_To.bin", "wb") do |to_f|
+                        extract.(from_f, to_f, binary, address, from, range, 1, 4)
+                    end
+                end
             when '12'
+                range, from = offsets[name]
+                open("#{DST_BIN_DIR}/CaseUnfold_12.bin", "wb") do |f|
+                    extract.(f, f, binary, address, from, range, 2, 3)
+                end
+                range, from = offsets[name + '_Locale']
+                open("#{DST_BIN_DIR}/CaseUnfold_12_Locale.bin", "wb") do |f|
+                    extract.(f, f, binary, address, from, range, 2, 3)
+                end
             when '13'
+                range, from = offsets[name]
+                open("#{DST_BIN_DIR}/CaseUnfold_13.bin", "wb") do |f|
+                    extract.(f, f, binary, address, from, range, 3, 3)
+                end
+            end
+
+        when /CaseMappingSpecials/
+            open("#{DST_BIN_DIR}/CaseMappingSpecials.bin", "wb") do |f|
+                size = src[/CaseMappingSpecials\[\]\s+=\s+\{(.*?)\}\;/m, 1].split(',').size
+                f << [size].pack("N")
+                address.step(address + (size * 4 - 1), 4).each do |adr|
+                    f << binary[adr, 4].unpack("l").pack("N")
+                end
             end
         end
     end
