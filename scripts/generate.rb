@@ -9,6 +9,7 @@ INDENT = " " * 4
 
 def generate_data
     generate_encoding_list
+    generate_transcoder_list
     generate_transoder_data
     generate_coderange_data
     generate_coderange_list
@@ -76,6 +77,34 @@ def generate_encoding_list
     open("#{SRC_DIR}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
         sub(/%\{defines\}/, defines.map { |cmd, name| "#{INDENT*2}EncodingDB.declare(#{name}, \"#{enc_map[name[/[^"]+/]] || (raise 'class not found for encoding ' + name)}\");" }.join("\n")).
         sub(/%\{other\}/, other.map { |cmd, from, to| "#{INDENT*2}EncodingDB.#{cmd.downcase}(#{from}#{to.nil? ? "" : to});" }.join("\n")) }
+
+end
+
+def generate_transcoder_list
+    generic_list = []
+    transcoder_list = []
+
+    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.each do |trans_file|
+        name = trans_file[/(\w+)\.c/, 1].split('_').map{|e| e.capitalize}.join("")
+        trans_src = open(trans_file){|f|f.read}
+
+        trans_src.scan(/static\s+const\s+rb_transcoder.*?(\w+)\s+=\s+\{(.+?)\};/m) do |t_name, body|
+            n = t_name.split('_')
+            t_name = n[1].capitalize
+            t_name += '_' + n[2..-1].join('_') unless n[2..-1].empty?
+            body = body.gsub(/(\/\*.*?\*\/)/, "").split(',').map{|e|e.strip}
+            src, dst, tree_start, table_info, iul, max_in, max_out, conv, state_size, state_init, state_fini, *funcs = body
+            tree_start = trans_src[/#define\s+#{tree_start}\s+WORDINDEX2INFO\((\d+)\)/, 1].to_i << 2
+            state_size = "0" if state_size == "sizeof(struct from_utf8_mac_status)"
+
+            generic_list << [src, dst, tree_start, "\"#{name}\"", iul, max_in, max_out, "AsciiCompatibility.#{conv.split('_').last.upcase}", state_size]
+            transcoder_list << [src, dst, t_name, !funcs.all?{|f|f == "NULL"}]
+        end
+
+    end
+    open("#{SRC_DIR}/transcode/TranscoderList.java", "wb") << open("TranscoderListTemplate.java", "rb"){|f|f.read}.
+        sub(/%\{list\}/, transcoder_list.map{|src, dst, cls, specific| "#{INDENT*2}TranscoderDB.declare(#{src}, #{dst}, #{specific ? '"' + cls + '"' : 'null /*' + cls + '*/'});"}.join("\n")).
+        sub(/%\{generic\}/, generic_list.map{|g| "#{INDENT*2}new GenericTranscoderEntry(#{g.join(', ')})"}.join(",\n"))
 
 end
 
