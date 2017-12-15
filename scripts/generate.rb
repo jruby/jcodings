@@ -167,10 +167,11 @@ def generate_coderange_list
     end
 
     ranges = unicode_src[/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m, 1].scan(/CR_(\w+)/).flatten
-    out = ranges.map do |range|
+
+    out = ranges.take(14).map{|range|[range.tr('_', '').downcase, range]} +
+    ranges.drop(14).map do |range|
         name = range =~ /Age_(\d)_(\d)/ ? "age=#{$1}.#{$2}" : range.tr('_', '').downcase
         name = cr_map.delete(range) || name
-
         ([name] + aliases[name].to_a).map{|n|[n, range]}
     end.flatten(1)
 
