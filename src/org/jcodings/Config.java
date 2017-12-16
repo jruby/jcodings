@@ -37,4 +37,21 @@ public interface Config {
     final boolean USE_CRNL_AS_LINE_TERMINATOR = false;
 
     final boolean USE_UNICODE_PROPERTIES = true;
+
+    final int CASE_UPCASE =                         (1<<13); /* has/needs uppercase mapping */
+    final int CASE_DOWNCASE =                       (1<<14); /* has/needs lowercase mapping */
+    final int CASE_TITLECASE =                      (1<<15); /* has/needs (special) titlecase mapping */
+    final int CASE_SPECIAL_OFFSET =                 3;       /* offset in bits from ONIGENC_CASE to ONIGENC_CASE_SPECIAL */
+    final int CASE_UP_SPECIAL =                     (1<<16); /* has special upcase mapping */
+    final int CASE_DOWN_SPECIAL =                   (1<<17); /* has special downcase mapping */
+    final int CASE_MODIFIED =                       (1<<18); /* data has been modified */
+    final int CASE_FOLD =                           (1<<19); /* has/needs case folding */
+
+    final int CASE_FOLD_TURKISH_AZERI =             (1<<20); /* needs mapping specific to Turkic languages; better not change original value! */
+
+    final int CASE_FOLD_LITHUANIAN =                (1<<21); /* needs Lithuanian-specific mapping */
+    final int CASE_ASCII_ONLY =                     (1<<22); /* only modify ASCII range */
+    final int CASE_IS_TITLECASE =                   (1<<23); /* character itself is already titlecase */
+
+    final int INTERNAL_CASE_FOLD_MULTI_CHAR =       (1<<30); /* better not change original value! */
 }
