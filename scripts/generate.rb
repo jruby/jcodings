@@ -1,6 +1,6 @@
 # coding: utf-8
 
-REPO_PATH = ARGV.first || '/usr/src/ruby-2.4.2' # path to ruby repo
+REPO_PATH = ARGV.first || '/usr/src/ruby-2.4.3' # path to ruby repo
 SECTION_NAME = "rdata"
 UNICODE_VERSION = "9.0.0"
 SRC_DIR = "../src/org/jcodings"
@@ -96,9 +96,10 @@ def generate_transcoder_list
             src, dst, tree_start, table_info, iul, max_in, max_out, conv, state_size, state_init, state_fini, *funcs = body
             tree_start = trans_src[/#define\s+#{tree_start}\s+WORDINDEX2INFO\((\d+)\)/, 1].to_i << 2
             state_size = "0" if state_size == "sizeof(struct from_utf8_mac_status)"
+            generic = funcs.all?{|f|f == "NULL"}
 
-            generic_list << [src, dst, tree_start, "\"#{name}\"", iul, max_in, max_out, "AsciiCompatibility.#{conv.split('_').last.upcase}", state_size]
-            transcoder_list << [src, dst, t_name, !funcs.all?{|f|f == "NULL"}]
+            generic_list << [src, dst, tree_start, "\"#{name}\"", iul, max_in, max_out, "AsciiCompatibility.#{conv.split('_').last.upcase}", state_size] if generic
+            transcoder_list << [src, dst, t_name, !generic]
         end
 
     end
