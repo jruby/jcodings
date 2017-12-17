@@ -173,6 +173,7 @@ def generate_coderange_list
     ranges.drop(14).map do |range|
         name = range =~ /Age_(\d)_(\d)/ ? "age=#{$1}.#{$2}" : range.tr('_', '').downcase
         name = cr_map.delete(range) || name
+        name = "#{$1}=#{$2}" if name =~ /(graphemeclusterbreak)(.*)/i
         ([name] + aliases[name].to_a).map{|n|[n, range]}
     end.flatten(1)
 
