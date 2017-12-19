@@ -170,9 +170,9 @@ public abstract class Encoding implements Cloneable {
      *
      * @return
      *  0               Never
-     *  > 0             Valid character, length returned
+     *  &gt; 0             Valid character, length returned
      *  -1              Illegal/malformed character
-     *  < -1 (-1 - n)   Number of missing bytes for character in p...end range
+     *  &lt; -1 (-1 - n)   Number of missing bytes for character in p...end range
      *
      * Oniguruma equivalent: <code>mbc_enc_len</code>
      * modified for 1.9 purposes,
