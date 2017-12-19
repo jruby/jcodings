@@ -20,11 +20,6 @@
 package org.jcodings;
 
 public interface Config {
-    final int ENC_CASE_FOLD_TURKISH_AZERI = (1<<20);
-    final int INTERNAL_ENC_CASE_FOLD_MULTI_CHAR = (1<<30);
-    final int ENC_CASE_FOLD_MIN = INTERNAL_ENC_CASE_FOLD_MULTI_CHAR;
-    final int ENC_CASE_FOLD_DEFAULT = ENC_CASE_FOLD_MIN;
-
     /* work size */
     final int ENC_CODE_TO_MBC_MAXLEN            = 7;
     final int ENC_MBC_CASE_FOLD_MAXLEN          = 18;
@@ -37,6 +32,9 @@ public interface Config {
     final boolean USE_CRNL_AS_LINE_TERMINATOR = false;
 
     final boolean USE_UNICODE_PROPERTIES = true;
+
+    final int CodePointMaskWidth = 				   3;
+    final int CodePointMask =					   (1 << CodePointMaskWidth) - 1;
 
     final int CASE_UPCASE =                         (1<<13); /* has/needs uppercase mapping */
     final int CASE_DOWNCASE =                       (1<<14); /* has/needs lowercase mapping */
@@ -53,5 +51,8 @@ public interface Config {
     final int CASE_ASCII_ONLY =                     (1<<22); /* only modify ASCII range */
     final int CASE_IS_TITLECASE =                   (1<<23); /* character itself is already titlecase */
 
-    final int INTERNAL_CASE_FOLD_MULTI_CHAR =       (1<<30); /* better not change original value! */
+    final int INTERNAL_ENC_CASE_FOLD_MULTI_CHAR =   (1<<30); /* better not change original value! */
+    final int ENC_CASE_FOLD_MIN = INTERNAL_ENC_CASE_FOLD_MULTI_CHAR;
+    final int ENC_CASE_FOLD_DEFAULT = ENC_CASE_FOLD_MIN;
+
 }

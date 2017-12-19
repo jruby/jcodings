@@ -71,7 +71,7 @@ public final class UTF32BEEncoding extends FixedWidthUnicodeEncoding {
             fold[foldP++] = 0;
 
             if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
-                if ((flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
+                if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
                     if (bytes[p + 3] == (byte)0x49) {
                         fold[foldP++] = (byte)0x01;
                         fold[foldP] = (byte)0x31;

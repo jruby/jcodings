@@ -110,7 +110,7 @@ public final class UTF16LEEncoding extends UnicodeEncoding {
         if (isAscii(bytes[p] & 0xff) && bytes[p + 1] == 0) {
 
             if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
-                if ((flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
+                if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
                     if (bytes[p] == (byte)0x49) {
                         fold[foldP++] = (byte)0x01;
                         fold[foldP] = (byte)0x31;

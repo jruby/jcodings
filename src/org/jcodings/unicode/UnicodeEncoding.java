@@ -112,7 +112,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         pp.value += len;
 
         if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
-            if ((flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
+            if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
                 if (code == 0x0049) {
                     return codeToMbc(0x0131, fold, foldP);
                 } else if (code == 0x0130) {
@@ -170,7 +170,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
         }
 
-        if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI && (flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
+        if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI && (flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
             code[0] = 0x0131;
             fun.apply(0x0049, code, 1, arg);
             code[0] = 0x0049;
@@ -217,7 +217,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 }
             }
 
-            if (!Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI || (flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) == 0) {
+            if (!Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI || (flag & Config.CASE_FOLD_TURKISH_AZERI) == 0) {
                 for (int i=0; i<CaseFold12.CaseUnfold_12_Locale.length; i+=2) {
                     int[]from = CaseFold12.CaseUnfold_12_Locale[i];
                     int[]to = CaseFold12.CaseUnfold_12_Locale[i + 1];
@@ -258,7 +258,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         int len = length(bytes, p, end);
 
         if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
-            if ((flag & Config.ENC_CASE_FOLD_TURKISH_AZERI) != 0) {
+            if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
                 if (code == 0x0049) {
                     return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{0x0131})};
                 } else if(code == 0x0130) {
