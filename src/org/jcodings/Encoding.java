@@ -316,9 +316,7 @@ public abstract class Encoding implements Cloneable {
      *
      * Oniguruma equivalent: <code>case_map</code>
      */
-    public int caseMap(IntHolder flagP, byte[]bytes, IntHolder pp, int end, byte[]to, int toP, int toEnd) {
-        throw new RuntimeException("not implemented");
-    }
+    public abstract int caseMap(IntHolder flagP, byte[]bytes, IntHolder pp, int end, byte[]to, int toP, int toEnd);
 
     /* onigenc_get_right_adjust_char_head / ONIGENC_LEFT_ADJUST_CHAR_HEAD */
     public final int rightAdjustCharHead(byte[]bytes, int p, int s, int end) {
