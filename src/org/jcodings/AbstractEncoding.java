@@ -115,7 +115,7 @@ abstract class AbstractEncoding extends Encoding {
             // specialize for singlebyte ?
             int length = length(bytes, pp.value, end);
             if (length < 0) return length;
-            int code = mbcToCode(bytes, pp.value, end) & 0xff;
+            int code = mbcToCode(bytes, pp.value, end);
             pp.value += length;
 
             if (code >= 'a' && code <= 'z' && ((flags & Config.CASE_UPCASE) != 0)) {
