@@ -125,7 +125,7 @@ abstract class AbstractEncoding extends Encoding {
                 flags |= Config.CASE_MODIFIED;
                 code += 'a' - 'A';
             }
-            to[toP++] = (byte)code;
+            toP += codeToMbc(code, to, toP);
             if ((flags & Config.CASE_TITLECASE) != 0) {
                 flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
             }
