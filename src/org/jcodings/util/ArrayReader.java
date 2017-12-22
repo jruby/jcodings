@@ -27,7 +27,7 @@ import org.jcodings.exception.InternalException;
 
 public class ArrayReader {
 
-    static DataInputStream openStream(String name) {
+    public static DataInputStream openStream(String name) {
         String entry = "/tables/" + name + ".bin";
         InputStream is = ArrayReader.class.getResourceAsStream(entry);
         if (is == null) throw new InternalException("entry: " + entry + " not found");

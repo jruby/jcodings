@@ -33,8 +33,12 @@ public interface Config {
 
     final boolean USE_UNICODE_PROPERTIES = true;
 
-    final int CodePointMaskWidth = 				   3;
-    final int CodePointMask =					   (1 << CodePointMaskWidth) - 1;
+    final int CodePointMaskWidth =                  3;
+    final int CodePointMask =                       (1 << CodePointMaskWidth) - 1;
+
+    final int SpecialIndexShift =                   3;
+    final int SpecialIndexWidth =                   10;
+    final int SpecialIndexMask =                    ((1 << SpecialIndexWidth) - 1) << SpecialIndexShift;
 
     final int CASE_UPCASE =                         (1<<13); /* has/needs uppercase mapping */
     final int CASE_DOWNCASE =                       (1<<14); /* has/needs lowercase mapping */
