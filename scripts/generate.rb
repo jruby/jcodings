@@ -8,11 +8,11 @@ DST_BIN_DIR =  "../resources/tables"
 INDENT = " " * 4
 
 def generate_data
-    generate_encoding_list
-    generate_transcoder_list
-    generate_transoder_data
-    generate_coderange_data
-    generate_coderange_list
+    # generate_encoding_list
+    # generate_transcoder_list
+    # generate_transoder_data
+    # generate_coderange_data
+    # generate_coderange_list
     generate_fold_data
 end
 
@@ -186,30 +186,23 @@ def generate_fold_data
     src = open("#{REPO_PATH}/enc/unicode/#{UNICODE_VERSION}/casefold.h"){|f|f.read}
     offsets = src.scan(/#define (Case\S+).*?\[(\w+)\].*?\+(\d+)/).inject({}){|h, (k, *v)| h[k] = v.map(&:to_i);h}
 
-    extract = -> (from_f, to_f, binary, address, from, range, from_w, to_w) do
-        from_f << [0].pack("N"); to_f << [0].pack("N") if from_f != to_f # size placeholder
+    extract = -> (f, binary, address, from, range, from_w, to_w) do
+        f << [0].pack("N")
 
         width = from_w + to_w
         size = 0
         start = address + from * width * 4
         start.step(start + (range * width * 4 - 1), width * 4) do |adr|
-            from_f << [from_w].pack("N") if from_f == to_f
-            from_f << binary[adr, from_w * 4].unpack("l*").pack("N*")
-            length = binary[adr + from_w * 4, 4].unpack("l").first & 3 # guard against packed flags for now
+            f << binary[adr, from_w * 4].unpack("l*").pack("N*")
+            packed = binary[adr + from_w * 4, 4].unpack("l").first
+            length = packed & 7
             size += length
-            to_f << [length].pack("N")
-            to_f << binary[adr + from_w * 4 + 4, length * 4].unpack("l*").pack("N*")
+            f << [packed].pack("N")
+            f << binary[adr + from_w * 4 + 4, length * 4].unpack("l*").pack("N*")
         end
-
-        to_f.seek(0)
+        f.seek(0)
         vrange = size - (size - range)
-        if from_f == to_f
-            from_f << [range + vrange].pack("N")
-        else
-            from_f.seek(0)
-            from_f << [range].pack("N")
-            to_f << [vrange].pack("N")
-        end
+        f << [(range + vrange) / 2].pack("N")
     end
 
     process_binary "#{REPO_PATH}/enc/unicode.o" do |name, binary, address|
@@ -217,47 +210,36 @@ def generate_fold_data
         when /(CaseFold)_11_Table/
             name = $1
             range, from = offsets[name]
-            open("#{DST_BIN_DIR}/CaseFold_From.bin", "wb") do |from_f|
-                open("#{DST_BIN_DIR}/CaseFold_To.bin", "wb") do |to_f|
-                    extract.(from_f, to_f, binary, address, from, range, 1, 4)
-                end
-            end
-            range, from = offsets[name + '_Locale']
-            open("#{DST_BIN_DIR}/CaseFold_Locale_From.bin", "wb") do |from_f|
-                open("#{DST_BIN_DIR}/CaseFold_Locale_To.bin", "wb") do |to_f|
-                    extract.(from_f, to_f, binary, address, from, range, 1, 4)
-                end
-            end
+            range += offsets[name + '_Locale'].first
 
+            open("#{DST_BIN_DIR}/CaseFold.bin", "wb") do |f|
+                extract.(f, binary, address, from, range, 1, 4)
+            end
         when /(CaseUnfold_(\d+))_Table/
             name = $1
             case $2
             when '11'
                 range, from = offsets[name]
-                open("#{DST_BIN_DIR}/CaseUnfold_11_From.bin", "wb") do |from_f|
-                    open("#{DST_BIN_DIR}/CaseUnfold_11_To.bin", "wb") do |to_f|
-                        extract.(from_f, to_f, binary, address, from, range, 1, 4)
-                    end
+                open("#{DST_BIN_DIR}/CaseUnfold_11.bin", "wb") do |f|
+                    extract.(f, binary, address, from, range, 1, 4)
                 end
                 range, from = offsets[name + '_Locale']
-                open("#{DST_BIN_DIR}/CaseUnfold_11_Locale_From.bin", "wb") do |from_f|
-                    open("#{DST_BIN_DIR}/CaseUnfold_11_Locale_To.bin", "wb") do |to_f|
-                        extract.(from_f, to_f, binary, address, from, range, 1, 4)
-                    end
+                open("#{DST_BIN_DIR}/CaseUnfold_11_Locale.bin", "wb") do |f|
+                    extract.(f, binary, address, from, range, 1, 4)
                 end
             when '12'
                 range, from = offsets[name]
                 open("#{DST_BIN_DIR}/CaseUnfold_12.bin", "wb") do |f|
-                    extract.(f, f, binary, address, from, range, 2, 3)
+                    extract.(f, binary, address, from, range, 2, 3)
                 end
                 range, from = offsets[name + '_Locale']
                 open("#{DST_BIN_DIR}/CaseUnfold_12_Locale.bin", "wb") do |f|
-                    extract.(f, f, binary, address, from, range, 2, 3)
+                    extract.(f, binary, address, from, range, 2, 3)
                 end
             when '13'
                 range, from = offsets[name]
                 open("#{DST_BIN_DIR}/CaseUnfold_13.bin", "wb") do |f|
-                    extract.(f, f, binary, address, from, range, 3, 3)
+                    extract.(f, binary, address, from, range, 3, 3)
                 end
             end
 
