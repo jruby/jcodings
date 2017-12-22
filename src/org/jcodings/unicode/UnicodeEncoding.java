@@ -21,6 +21,7 @@ package org.jcodings.unicode;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.jcodings.ApplyAllCaseFoldFunction;
 import org.jcodings.CaseFoldCodeItem;
@@ -630,5 +631,31 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         }
 
         static final IntArrayHash<CodeList> Hash = initializeUnfold3Hash();
+    }
+
+    private static class CaseMappingSpecials {
+        static ArrayList<int[]> read() {
+            try {
+                DataInputStream dis = ArrayReader.openStream("CaseMappingSpecials");
+                int size = dis.readInt();
+                ArrayList<int[]> values = new ArrayList<int[]>();
+                for (int i = 0; i < size; i++) {
+                    int packed = dis.readInt();
+                    int length = packed >>> Config.SpecialsLengthOffset;
+                    int[]codes = new int[length];
+                    codes[0] = packed & ((1 << Config.SpecialsLengthOffset) - 1);
+                    for (int j = 1; j < length; j++) {
+                        i++;
+                        codes[j] = dis.readInt();
+                    }
+                    values.add(codes);
+                }
+                return values;
+            } catch (IOException ioe) {
+                throw new RuntimeException(ioe);
+            }
+        }
+
+        private static ArrayList<int[]> Values = read();
     }
 }

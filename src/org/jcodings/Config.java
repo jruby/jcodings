@@ -40,6 +40,8 @@ public interface Config {
     final int SpecialIndexWidth =                   10;
     final int SpecialIndexMask =                    ((1 << SpecialIndexWidth) - 1) << SpecialIndexShift;
 
+    final int SpecialsLengthOffset =                25;
+
     final int CASE_UPCASE =                         (1<<13); /* has/needs uppercase mapping */
     final int CASE_DOWNCASE =                       (1<<14); /* has/needs lowercase mapping */
     final int CASE_TITLECASE =                      (1<<15); /* has/needs (special) titlecase mapping */
