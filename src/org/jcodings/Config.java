@@ -56,6 +56,7 @@ public interface Config {
     final int CASE_FOLD_LITHUANIAN =                (1<<21); /* needs Lithuanian-specific mapping */
     final int CASE_ASCII_ONLY =                     (1<<22); /* only modify ASCII range */
     final int CASE_IS_TITLECASE =                   (1<<23); /* character itself is already titlecase */
+    final int CASE_SPECIALS =                       (CASE_TITLECASE | CASE_IS_TITLECASE | CASE_UP_SPECIAL | CASE_DOWN_SPECIAL);
 
     final int INTERNAL_ENC_CASE_FOLD_MULTI_CHAR =   (1<<30); /* better not change original value! */
     final int ENC_CASE_FOLD_MIN = INTERNAL_ENC_CASE_FOLD_MULTI_CHAR;

@@ -419,6 +419,102 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         }
     }
 
+    static final int CASE_MAPPING_SLACK = 12;
+    static final int I_WITH_DOT_ABOVE = 0x0130;
+    static final int DOTLESS_i = 0x0131;
+    static final int DOT_ABOVE = 0x0307;
+
+    @Override
+    public final int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int flags = flagP.value;
+        int toStart = toP;
+        toEnd -= CASE_MAPPING_SLACK;
+        flags |= (flags & (Config.CASE_UPCASE | Config.CASE_DOWNCASE)) << Config.CASE_SPECIAL_OFFSET;
+
+
+        while (pp.value < end && toP <= toEnd) {
+            int length = length(bytes, pp.value, end);
+            if (length < 0) return length;
+            int code = mbcToCode(bytes, pp.value, end);
+            pp.value += length;
+
+            if (code <= 'z') {
+                if (code >= 'a' && code <= 'z') {
+                    if ((flags & Config.CASE_UPCASE) != 0) {
+                        flags |= Config.CASE_MODIFIED;
+                        if ((flags & Config.CASE_FOLD_TURKISH_AZERI) != 0 && code == 'i') code = I_WITH_DOT_ABOVE; else code += 'A' - 'a';
+                    }
+                } else if (code >= 'A' && code <= 'Z') {
+                    if ((flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                        flags |= Config.CASE_MODIFIED;
+                        if ((flags & Config.CASE_FOLD_TURKISH_AZERI) != 0 && code == 'I') code = DOTLESS_i; else code += 'a' - 'A';
+                    }
+                }
+            } else if ((flags & Config.CASE_ASCII_ONLY) == 0 && code >= 0x00B5) {
+                CodeList folded;
+                if (code == I_WITH_DOT_ABOVE) {
+                    if ((flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                        flags |= Config.CASE_MODIFIED;
+                        code = 'i';
+                        if ((flags & Config.CASE_FOLD_TURKISH_AZERI) == 0) {
+                            toP += codeToMbc(code, to, toP);
+                            code = DOT_ABOVE;
+                        }
+                    }
+                } else if (code == DOTLESS_i) {
+                    if ((flags & Config.CASE_UPCASE) != 0) {
+                        flags |= Config.CASE_MODIFIED;
+                        code = 'I';
+                    }
+                } else if ((folded = CaseFold.Hash.get(code)) != null) {
+                    if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) {
+
+                    } else if ((flags & folded.flags) != 0) {
+                        int[]codes;
+                        boolean specialCopy = false;
+                        flags |= Config.CASE_MODIFIED;
+                        if ((flags & folded.flags & Config.CASE_SPECIALS) != 0) {
+                            int specialStart = (folded.flags & Config.SpecialIndexMask) >>> Config.SpecialIndexShift;
+                            if ((folded.flags & Config.CASE_IS_TITLECASE) != 0) {
+                                if ((flags & (Config.CASE_UPCASE | Config.CASE_DOWNCASE)) == (Config.CASE_UPCASE | Config.CASE_DOWNCASE))
+                                    specialCopy = true;
+                                else
+                                    specialStart += CaseMappingSpecials.Values.get(specialStart).length;
+                            }
+                            if (!specialCopy && (folded.flags & Config.CASE_TITLECASE) != 0) {
+                                if ((flags & Config.CASE_TITLECASE) != 0)
+                                    specialCopy = true;
+                                else
+                                    specialStart += CaseMappingSpecials.Values.get(specialStart).length;
+                            }
+                            if (!specialCopy && (folded.flags & Config.CASE_DOWN_SPECIAL) != 0) {
+                                if ((flags & Config.CASE_DOWN_SPECIAL) == 0)
+                                    specialStart += CaseMappingSpecials.Values.get(specialStart).length;
+                            }
+                            codes = CaseMappingSpecials.Values.get(specialStart);
+                        } else {
+                            codes = folded.codes;
+                        }
+                        code = codes[0];
+
+                        for (int i = 1; i < codes.length; i++) {
+                            toP += codeToMbc(code, to, toP);
+                            code = codes[i];
+                        }
+                    }
+                } else if ((folded = CaseFold11.Hash.get(code)) != null && (flags & folded.flags) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    code = folded.codes[(flags & folded.flags & Config.CASE_TITLECASE) != 0 ? 1 : 0];
+                }
+            }
+            toP += codeToMbc(code, to, toP);
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE | Config.CASE_UP_SPECIAL | Config.CASE_DOWN_SPECIAL);}
+
+        } // while
+        flagP.value = flags;
+        return toP - toStart;
+    }
     static final short UNICODE_ISO_8859_1_CTypeTable[] = {
           0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008, 0x4008,
           0x4008, 0x428c, 0x4289, 0x4288, 0x4288, 0x4288, 0x4008, 0x4008,
