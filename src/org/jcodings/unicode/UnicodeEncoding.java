@@ -477,17 +477,17 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                                 if ((flags & (Config.CASE_UPCASE | Config.CASE_DOWNCASE)) == (Config.CASE_UPCASE | Config.CASE_DOWNCASE))
                                     specialCopy = true;
                                 else
-                                    specialStart += CaseMappingSpecials.Values.get(specialStart).length;
+                                    specialStart++;
                             }
                             if (!specialCopy && (folded.flags & Config.CASE_TITLECASE) != 0) {
                                 if ((flags & Config.CASE_TITLECASE) != 0)
                                     specialCopy = true;
                                 else
-                                    specialStart += CaseMappingSpecials.Values.get(specialStart).length;
+                                    specialStart++;
                             }
                             if (!specialCopy && (folded.flags & Config.CASE_DOWN_SPECIAL) != 0) {
                                 if ((flags & Config.CASE_DOWN_SPECIAL) == 0)
-                                    specialStart += CaseMappingSpecials.Values.get(specialStart).length;
+                                    specialStart++;
                             }
                             codes = CaseMappingSpecials.Values.get(specialStart);
                         } else {
