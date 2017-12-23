@@ -48,7 +48,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
 
             if (b == 0x53 && end > p + 1 &&
                (bytes[p+1] == (byte)0x53 || bytes[p+1] == (byte)0x73)) { /* ss */
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{0xdf});
+                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{SHARP_s});
 
                 return new CaseFoldCodeItem[]{item0, item1};
             } else {
@@ -59,7 +59,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
 
             if (b == 0x73 && end > p + 1 &&
                (bytes[p+1] == (byte)0x73 || bytes[p+1] == (byte)0x53)) { /* ss */
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{0xdf});
+                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{SHARP_s});
                 return new CaseFoldCodeItem[]{item0, item1};
             } else {
                 return new CaseFoldCodeItem[]{item0};
@@ -67,8 +67,8 @@ public final class ISO8859_1Encoding extends ISOEncoding {
 
         } else if (0xc0 <= b && b <= 0xcf) {
             return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b + 0x20})};
-        } else if (0xd0 <= b && b <= 0xdf) {
-            if (b == 0xdf) {
+        } else if (0xd0 <= b && b <= SHARP_s) {
+            if (b == SHARP_s) {
                 CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 2, new int[]{'s', 's'});
                 CaseFoldCodeItem item1 = new CaseFoldCodeItem(1, 2, new int[]{'S', 'S'});
                 CaseFoldCodeItem item2 = new CaseFoldCodeItem(1, 2, new int[]{'s', 'S'});
