@@ -85,16 +85,14 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
     @Override
     public int propertyNameToCType(byte[]name, int p, int end) {
         byte[]buf = new byte[PROPERTY_NAME_MAX_SIZE];
-
-        int p_ = p;
         int len = 0;
 
-        while(p_ < end) {
+        for(int p_ = p; p_ < end; p_+= length(name, p_, end)) {
             int code = mbcToCode(name, p_, end);
+            if (code == ' ' || code == '-' || code == '_') continue;
             if (code >= 0x80) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME);
             buf[len++] = (byte)code;
             if (len >= PROPERTY_NAME_MAX_SIZE) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
-            p_ += length(name, p_, end);
         }
 
         Integer ctype = CTypeName.CTypeNameHash.get(buf, 0, len);
