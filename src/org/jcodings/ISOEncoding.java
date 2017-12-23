@@ -20,6 +20,7 @@
 package org.jcodings;
 
 public abstract class ISOEncoding extends CaseFoldMapEncoding {
+    public static int SHARP_s = 0xdf;
 
     protected ISOEncoding(String name, short[]CTypeTable, byte[]LowerCaseTable, int[][]CaseFoldMap) {
         this(name, CTypeTable, LowerCaseTable, CaseFoldMap, true);
