@@ -42,6 +42,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
     private static final int MAX_WORD_LENGTH = Config.USE_UNICODE_PROPERTIES ? 44 : 6;
     private static final int PROPERTY_NAME_MAX_SIZE = MAX_WORD_LENGTH + 1;
+    static final int I_WITH_DOT_ABOVE = 0x0130;
+    static final int DOTLESS_i = 0x0131;
+    static final int DOT_ABOVE = 0x0307;
 
     protected UnicodeEncoding(String name, int minLength, int maxLength, int[]EncLen, int[][]Trans) {
         // ASCII type tables for all Unicode encodings
@@ -112,10 +115,10 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
         if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
             if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
-                if (code == 0x0049) {
-                    return codeToMbc(0x0131, fold, foldP);
-                } else if (code == 0x0130) {
-                    return codeToMbc(0x0069, fold, foldP);
+                if (code == 'I') {
+                    return codeToMbc(DOTLESS_i, fold, foldP);
+                } else if (code == I_WITH_DOT_ABOVE) {
+                    return codeToMbc('i', fold, foldP);
                 }
             }
         }
@@ -170,14 +173,14 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         }
 
         if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI && (flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
-            code[0] = 0x0131;
-            fun.apply(0x0049, code, 1, arg);
-            code[0] = 0x0049;
-            fun.apply(0x0131, code, 1, arg);
-            code[0] = 0x0130;
-            fun.apply(0x0069, code, 1, arg);
-            code[0] = 0x0069;
-            fun.apply(0x0130, code, 1, arg);
+            code[0] = DOTLESS_i;
+            fun.apply('I', code, 1, arg);
+            code[0] = 'I';
+            fun.apply(DOTLESS_i, code, 1, arg);
+            code[0] = I_WITH_DOT_ABOVE;
+            fun.apply('i', code, 1, arg);
+            code[0] = 'i';
+            fun.apply(I_WITH_DOT_ABOVE, code, 1, arg);
         } else {
             for (int i=0; i<CaseUnfold11.Locale_From.length; i++) {
                 int from = CaseUnfold11.Locale_From[i];
@@ -258,14 +261,14 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
         if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
             if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
-                if (code == 0x0049) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{0x0131})};
-                } else if(code == 0x0130) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{0x0069})};
-                } else if(code == 0x0131) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{0x0049})};
-                } else if(code == 0x0069) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{0x0130})};
+                if (code == 'I') {
+                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{DOTLESS_i})};
+                } else if(code == I_WITH_DOT_ABOVE) {
+                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{'i'})};
+                } else if(code == DOTLESS_i) {
+                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{'I'})};
+                } else if(code == 'i') {
+                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{I_WITH_DOT_ABOVE})};
                 }
             }
         } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI
@@ -418,9 +421,6 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
     }
 
     static final int CASE_MAPPING_SLACK = 12;
-    static final int I_WITH_DOT_ABOVE = 0x0130;
-    static final int DOTLESS_i = 0x0131;
-    static final int DOT_ABOVE = 0x0307;
 
     @Override
     public final int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
