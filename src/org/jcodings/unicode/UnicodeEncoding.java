@@ -579,9 +579,9 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
     private static class CodeList {
         CodeList(DataInputStream dis) throws IOException {
             int packed = dis.readInt();
-            this.flags = packed & ~Config.CodePointMask;
+            flags = packed & ~Config.CodePointMask;
             int length = packed & Config.CodePointMask;
-            this.codes = new int[length];
+            codes = new int[length];
             for (int j = 0; j < length; j++) {
                 codes[j] = dis.readInt();
             }
@@ -744,12 +744,13 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     }
                     values.add(codes);
                 }
+                dis.close();
                 return values;
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
             }
         }
 
-        private static ArrayList<int[]> Values = read();
+        static final ArrayList<int[]> Values = read();
     }
 }

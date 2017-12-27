@@ -39,7 +39,7 @@ public class TestUnicode {
         IntHolder flagP = new IntHolder();
         flagP.value = flags;
         int len = enc.caseMap(flagP, from, fromP, from.length, to, 0, to.length);
-        return new String(to, 0, len);
+        return new String(to, 0, len, "utf-8");
     }
 
     @Test
