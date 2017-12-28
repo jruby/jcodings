@@ -3,6 +3,7 @@ package org.jcodings.specific;
 import org.jcodings.Config;
 import org.jcodings.Encoding;
 import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 import org.junit.Test;
 
 import static junit.framework.Assert.*;
@@ -28,6 +29,11 @@ public class TestUnicode {
         byte[]prop = "\000u\000p\000p\000e\000r".getBytes("iso-8859-1");
         int ctype = enc.propertyNameToCType(prop, 0, prop.length);
         assertTrue(enc.isCodeCType(code, ctype));
+
+        Encoding utf8 = UTF8Encoding.INSTANCE;
+        byte[]ascii = "ascii".getBytes();
+        int a_ctype = utf8.propertyNameToCType(ascii, 0, ascii.length);
+        assertEquals(a_ctype, CharacterType.ASCII);
     }
 
     String caseMap(String fromS, int flags) throws Exception {
