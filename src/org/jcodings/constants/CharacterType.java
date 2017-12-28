@@ -36,12 +36,6 @@ public interface CharacterType {
     final int ALNUM     = 13;      /* alpha || digit */
     final int ASCII     = 14;
 
-    final int SPECIAL_MASK = 256;
-    final int S = SPECIAL_MASK | SPACE;
-    final int D = SPECIAL_MASK | DIGIT;
-    final int W = SPECIAL_MASK | WORD;
-
-
     final int MAX_STD_CTYPE = 14;
 
     final int BIT_NEWLINE  = (1<< NEWLINE);
