@@ -73,6 +73,7 @@ def generate_encoding_list
     }
 
     defines, other = open("#{REPO_PATH}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).partition { |a, b| a =~ /DEFINE/ }
+    other << ["ALIAS", "\"MS932\", \"Windows-31J\""]
 
     open("#{SRC_DIR}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
         sub(/%\{defines\}/, defines.map { |cmd, name| "#{INDENT*2}EncodingDB.declare(#{name}, \"#{enc_map[name[/[^"]+/]] || (raise 'class not found for encoding ' + name)}\");" }.join("\n")).

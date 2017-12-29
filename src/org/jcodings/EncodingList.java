@@ -192,5 +192,6 @@ final class EncodingList {
         EncodingDB.replicate("stateless-ISO-2022-JP-KDDI", "stateless-ISO-2022-JP");
         EncodingDB.replicate("UTF8-SoftBank", "UTF-8");
         EncodingDB.replicate("SJIS-SoftBank", "Windows-31J");
+        EncodingDB.alias("MS932", "Windows-31J");
     }
 }
