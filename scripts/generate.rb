@@ -1,8 +1,8 @@
 # coding: utf-8
 
-REPO_PATH = ARGV.first || '/usr/src/ruby-2.4.3' # path to ruby repo
+REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.0' # path to ruby repo
 SECTION_NAME = "rdata"
-UNICODE_VERSION = "9.0.0"
+UNICODE_VERSION = "10.0.0"
 SRC_DIR = "../src/org/jcodings"
 DST_BIN_DIR =  "../resources/tables"
 INDENT = " " * 4
@@ -169,10 +169,10 @@ def generate_coderange_list
 
     ranges = unicode_src[/CodeRanges\[\]\s+=\s+\{(.*?)\}\;/m, 1].scan(/CR_(\w+)/).flatten
 
-    standard_char_type_range = 15
+    standard_char_type_range = 16
     out = ranges.take(standard_char_type_range).map{|range|[range.tr('_', '').downcase, range]} +
     ranges.drop(standard_char_type_range).map do |range|
-        name = range =~ /Age_(\d)_(\d)/ ? "age=#{$1}.#{$2}" : range.tr('_', '').downcase
+        name = range =~ /Age_(\d+)_(\d+)/ ? "age=#{$1}.#{$2}" : range.tr('_', '').downcase
         name = cr_map.delete(range) || name
         name = "#{$1}=#{$2}" if name =~ /(graphemeclusterbreak)(.*)/i
         ([name] + aliases[name].to_a).map{|n|[n, range]}
