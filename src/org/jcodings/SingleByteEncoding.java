@@ -73,8 +73,8 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     @Override
     public final int codeToMbc(int code, byte[] bytes, int p) {
         if (code > MAX_BYTE) return ErrorCodes.ERR_TOO_BIG_WIDE_CHAR_VALUE;
-        
-        bytes[p] = (byte)(code & 0xff); // c implementation also uses mask here
+
+        bytes[p] = (byte)code;
         return 1;
     }
 
