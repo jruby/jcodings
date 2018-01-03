@@ -29,7 +29,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     static final boolean USE_INVALID_CODE_SCHEME = true;
 
     protected BaseUTF8Encoding(int[]EncLen, int[][]Trans) {
-        super("UTF-8", 1, 6, EncLen, Trans);
+        super("UTF-8", 1, 4, EncLen, Trans);
         isUTF8 = true;
     }
 
