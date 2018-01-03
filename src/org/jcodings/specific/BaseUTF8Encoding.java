@@ -65,15 +65,14 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     private static final int VALID_CODE_LIMIT = 0x0010ffff;
 
     @Override
-    public int codeToMbcLength(int intCode) {
-        long code = intCode & 0xFFFFFFFFL;
+    public int codeToMbcLength(int code) {
         if ((code & 0xffffff80) == 0) {
             return 1;
         } else if ((code & 0xfffff800) == 0) {
             return 2;
         } else if ((code & 0xffff0000) == 0) {
             return 3;
-        } else if (code <= VALID_CODE_LIMIT) {
+        } else if ((code & 0xFFFFFFFFL) <= VALID_CODE_LIMIT) {
             return 4;
         } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
             return 1;
@@ -107,11 +106,11 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
     }
 
     static byte trailS(int code, int shift) {
-        return (byte)((((code) >>> (shift)) & 0x3f) | 0x80);
+        return (byte)(((code >>> shift) & 0x3f) | 0x80);
     }
 
     static byte trail0(int code) {
-        return (byte)(((code) & 0x3f) | 0x80);
+        return (byte)((code & 0x3f) | 0x80);
     }
 
     @Override
@@ -126,19 +125,8 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             } else if ((code & 0xffff0000) == 0) {
                 bytes[p_++] = (byte)(((code >>> 12) & 0x0f) | 0xe0);
                 bytes[p_++] = trailS(code, 6);
-            } else if ((code & 0xffe00000) == 0) {
+            } else if ((code & 0xFFFFFFFFL) <= VALID_CODE_LIMIT) {
                 bytes[p_++] = (byte)(((code >>> 18) & 0x07) | 0xf0);
-                bytes[p_++] = trailS(code, 12);
-                bytes[p_++] = trailS(code, 6);
-            } else if ((code & 0xfc000000) == 0) {
-                bytes[p_++] = (byte)(((code >>> 24) & 0x03) | 0xf8);
-                bytes[p_++] = trailS(code, 18);
-                bytes[p_++] = trailS(code, 12);
-                bytes[p_++] = trailS(code, 6);
-            } else if ((code & 0x80000000) == 0) {
-                bytes[p_++] = (byte)(((code >>> 30) & 0x01) | 0xfc);
-                bytes[p_++] = trailS(code, 24);
-                bytes[p_++] = trailS(code, 18);
                 bytes[p_++] = trailS(code, 12);
                 bytes[p_++] = trailS(code, 6);
             } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
@@ -152,7 +140,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             }
             bytes[p_++] = trail0(code);
             return p_ - p;
-          }
+        }
     }
 
     // utf8_mbc_case_fold
