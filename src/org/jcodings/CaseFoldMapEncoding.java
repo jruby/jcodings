@@ -70,39 +70,39 @@ public abstract class CaseFoldMapEncoding extends SingleByteEncoding {
         int b = bytes[p] & 0xff;
 
         if (0x41 <= b && b <= 0x5a) {
-            CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 1, new int[]{b + 0x20});
+            CaseFoldCodeItem item0 = CaseFoldCodeItem.create(1, b + 0x20);
 
             if (b == 0x53 && essTsettFlag && end > p + 1 &&
                (bytes[p+1] == (byte)0x53 || bytes[p+1] == (byte)0x73)) { /* SS */
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{0xdf});
+                CaseFoldCodeItem item1 = CaseFoldCodeItem.create(2, 0xdf);
                 return new CaseFoldCodeItem[]{item0, item1};
             } else {
                 return new CaseFoldCodeItem[]{item0};
             }
         } else if (0x61 <= b && b <= 0x7a) {
-            CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 1, new int[]{b - 0x20});
+            CaseFoldCodeItem item0 = CaseFoldCodeItem.create(1, b - 0x20);
 
             if (b == 0x73 && essTsettFlag && end >p + 1 &&
                (bytes[p+1] == (byte)0x73 || bytes[p+1] == (byte)0x53)) { /* ss */
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{0xdf});
+                CaseFoldCodeItem item1 = CaseFoldCodeItem.create(2, 0xdf);
 
                 return new CaseFoldCodeItem[]{item0, item1};
             } else {
                 return new CaseFoldCodeItem[]{item0};
             }
         } else if (b == 0xdf && essTsettFlag) {
-            CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 2, new int[]{'s', 's'});
-            CaseFoldCodeItem item1 = new CaseFoldCodeItem(1, 2, new int[]{'S', 'S'});
-            CaseFoldCodeItem item2 = new CaseFoldCodeItem(1, 2, new int[]{'s', 'S'});
-            CaseFoldCodeItem item3 = new CaseFoldCodeItem(1, 2, new int[]{'S', 's'});
+            CaseFoldCodeItem item0 = CaseFoldCodeItem.create(1, 's', 's');
+            CaseFoldCodeItem item1 = CaseFoldCodeItem.create(1, 'S', 'S');
+            CaseFoldCodeItem item2 = CaseFoldCodeItem.create(1, 's', 'S');
+            CaseFoldCodeItem item3 = CaseFoldCodeItem.create(1, 'S', 's');
 
             return new CaseFoldCodeItem[]{item0, item1, item2, item3};
         } else {
             for (int i=0; i<mapSize; i++) {
                 if (b == map[i][0]) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{map[i][1]})};
+                    return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, map[i][1])};
                 } else if (b == map[i][1]) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{map[i][0]})};
+                    return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, map[i][0])};
                 }
             }
         }

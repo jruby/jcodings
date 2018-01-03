@@ -44,45 +44,45 @@ public final class ISO8859_1Encoding extends ISOEncoding {
         int b = bytes[p] & 0xff;
 
         if (0x41 <= b && b <= 0x5a) {
-            CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 1, new int[]{b + 0x20});
+            CaseFoldCodeItem item0 = CaseFoldCodeItem.create(1, b + 0x20);
 
             if (b == 0x53 && end > p + 1 &&
                (bytes[p+1] == (byte)0x53 || bytes[p+1] == (byte)0x73)) { /* ss */
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{SHARP_s});
+                CaseFoldCodeItem item1 = CaseFoldCodeItem.create(2, SHARP_s);
 
                 return new CaseFoldCodeItem[]{item0, item1};
             } else {
                 return new CaseFoldCodeItem[]{item0};
             }
         } else if (0x61 <= b && b <= 0x7a) {
-            CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 1, new int[]{b - 0x20});
+            CaseFoldCodeItem item0 = CaseFoldCodeItem.create(1, b - 0x20);
 
             if (b == 0x73 && end > p + 1 &&
                (bytes[p+1] == (byte)0x73 || bytes[p+1] == (byte)0x53)) { /* ss */
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(2, 1, new int[]{SHARP_s});
+                CaseFoldCodeItem item1 = CaseFoldCodeItem.create(2, SHARP_s);
                 return new CaseFoldCodeItem[]{item0, item1};
             } else {
                 return new CaseFoldCodeItem[]{item0};
             }
 
         } else if (0xc0 <= b && b <= 0xcf) {
-            return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b + 0x20})};
+            return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b + 0x20)};
         } else if (0xd0 <= b && b <= SHARP_s) {
             if (b == SHARP_s) {
-                CaseFoldCodeItem item0 = new CaseFoldCodeItem(1, 2, new int[]{'s', 's'});
-                CaseFoldCodeItem item1 = new CaseFoldCodeItem(1, 2, new int[]{'S', 'S'});
-                CaseFoldCodeItem item2 = new CaseFoldCodeItem(1, 2, new int[]{'s', 'S'});
-                CaseFoldCodeItem item3 = new CaseFoldCodeItem(1, 2, new int[]{'S', 's'});
+                CaseFoldCodeItem item0 = CaseFoldCodeItem.create(1, 's', 's');
+                CaseFoldCodeItem item1 = CaseFoldCodeItem.create(1, 'S', 'S');
+                CaseFoldCodeItem item2 = CaseFoldCodeItem.create(1, 's', 'S');
+                CaseFoldCodeItem item3 = CaseFoldCodeItem.create(1, 'S', 's');
 
                 return new CaseFoldCodeItem[]{item0, item1, item2, item3};
             } else if (b != 0xd7) {
-                return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b + 0x20})};
+                return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b + 0x20)};
             }
         } else if (0xe0 <= b && b <= 0xef) {
-            return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b - 0x20})};
+            return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b - 0x20)};
         } else if (0xf0 <= b && b <= 0xfe) {
             if (b != 0xf7) {
-                return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b - 0x20})};
+                return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b - 0x20)};
             }
         }
         return EMPTY_FOLD_CODES;

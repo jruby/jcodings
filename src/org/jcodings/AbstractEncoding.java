@@ -90,9 +90,9 @@ abstract class AbstractEncoding extends Encoding {
         int b = bytes[p] & 0xff;
 
         if (0x41 <= b && b <= 0x5a) {
-            return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b + 0x20})};
+            return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b + 0x20)};
         } else if (0x61 <= b && b <= 0x7a) {
-            return new CaseFoldCodeItem[]{new CaseFoldCodeItem(1, 1, new int[]{b - 0x20})};
+            return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b - 0x20)};
         } else {
             return EMPTY_FOLD_CODES;
         }

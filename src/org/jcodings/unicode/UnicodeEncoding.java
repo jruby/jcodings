@@ -262,13 +262,13 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
             if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
                 if (code == 'I') {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{DOTLESS_i})};
+                    return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(len, DOTLESS_i)};
                 } else if(code == I_WITH_DOT_ABOVE) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{'i'})};
+                    return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(len, 'i')};
                 } else if(code == DOTLESS_i) {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{'I'})};
+                    return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(len, 'I')};
                 } else if(code == 'i') {
-                    return new CaseFoldCodeItem[]{new CaseFoldCodeItem(len, 1, new int[]{I_WITH_DOT_ABOVE})};
+                    return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(len, I_WITH_DOT_ABOVE)};
                 }
             }
         } // USE_UNICODE_CASE_FOLD_TURKISH_AZERI
@@ -283,7 +283,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             if (to.codes.length == 1) {
                 int origCode = code;
 
-                items[0] = new CaseFoldCodeItem(len, 1, new int[]{to.codes[0]});
+                items[0] = CaseFoldCodeItem.create(len, to.codes[0]);
                 n++;
 
                 code = to.codes[0];
@@ -292,7 +292,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 if (to != null) {
                     for (int i=0; i<to.codes.length; i++) {
                         if (to.codes[i] != origCode) {
-                            items[n] = new CaseFoldCodeItem(len, 1, new int[]{to.codes[i]});
+                            items[n] = CaseFoldCodeItem.create(len, to.codes[i]);
                             n++;
                         }
                     }
@@ -317,7 +317,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 if (fn == 2) {
                     for (int i=0; i<ncs[0]; i++) {
                         for (int j=0; j<ncs[1]; j++) {
-                            items[n] = new CaseFoldCodeItem(len, 2, new int[]{cs[0][i], cs[1][j]});
+                            items[n] = CaseFoldCodeItem.create(len, cs[0][i], cs[1][j]);
                             n++;
                         }
                     }
@@ -326,7 +326,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     if (z2 != null) {
                         for (int i=0; i<z2.codes.length; i++) {
                             if (z2.codes[i] == code) continue;
-                            items[n] = new CaseFoldCodeItem(len, 1, new int[]{z2.codes[i]});
+                            items[n] = CaseFoldCodeItem.create(len, z2.codes[i]);
                             n++;
                         }
                     }
@@ -334,7 +334,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     for (int i=0; i<ncs[0]; i++) {
                         for (int j=0; j<ncs[1]; j++) {
                             for (int k=0; k<ncs[2]; k++) {
-                                items[n] = new CaseFoldCodeItem(len, 3, new int[]{cs[0][i], cs[1][j], cs[2][k]});
+                                items[n] = CaseFoldCodeItem.create(len, cs[0][i], cs[1][j], cs[2][k]);
                                 n++;
                             }
                         }
@@ -343,7 +343,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     if (z2 != null) {
                         for (int i=0; i<z2.codes.length; i++) {
                             if (z2.codes[i] == code) continue;
-                            items[n] = new CaseFoldCodeItem(len, 1, new int[]{z2.codes[i]});
+                            items[n] = CaseFoldCodeItem.create(len, z2.codes[i]);
                             n++;
                         }
                     }
@@ -356,7 +356,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             if (to != null) {
                 items = new CaseFoldCodeItem[Config.ENC_GET_CASE_FOLD_CODES_MAX_NUM];
                 for (int i=0; i<to.codes.length; i++) {
-                    items[n] = new CaseFoldCodeItem(len, 1, new int[]{to.codes[i]});
+                    items[n] = CaseFoldCodeItem.create(len, to.codes[i]);
                     n++;
                 }
             }
@@ -382,7 +382,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 CodeList z2 = CaseUnfold12.Hash.get(codes0, codes1);
                 if (z2 != null) {
                     for (int i=0; i<z2.codes.length; i++) {
-                        items[n] = new CaseFoldCodeItem(len, 1, new int[]{z2.codes[i]});
+                        items[n] = CaseFoldCodeItem.create(len, z2.codes[i]);
                         n++;
                     }
                 }
@@ -402,7 +402,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     z2 = CaseUnfold13.Hash.get(codes0, codes1, codes2);
                     if (z2 != null) {
                         for (int i=0; i<z2.codes.length; i++) {
-                            items[n] = new CaseFoldCodeItem(len, 1, new int[]{z2.codes[i]});
+                            items[n] = CaseFoldCodeItem.create(len, z2.codes[i]);
                             n++;
                         }
                     }

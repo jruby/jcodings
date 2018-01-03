@@ -19,16 +19,24 @@
  */
 package org.jcodings;
 
-public class CaseFoldCodeItem {
-    static final int ENC_MAX_COMP_CASE_FOLD_CODE_LEN = 3;
-
+public final class CaseFoldCodeItem {
     public final int byteLen;
-    public final int codeLen;
     public final int code[];
 
-    public CaseFoldCodeItem(int byteLen, int codeLen, int[]code) {
+    private CaseFoldCodeItem(int byteLen, int[]code) {
         this.byteLen = byteLen;
-        this.codeLen = codeLen;
         this.code = code;
+    }
+
+    public static CaseFoldCodeItem create(int byteLen, int code1) {
+        return new CaseFoldCodeItem(byteLen, new int[] {code1});
+    }
+
+    public static CaseFoldCodeItem create(int byteLen, int code1, int code2) {
+        return new CaseFoldCodeItem(byteLen, new int[] {code1, code2});
+    }
+
+    public static CaseFoldCodeItem create(int byteLen, int code1, int code2, int code3) {
+        return new CaseFoldCodeItem(byteLen, new int[] {code1, code2, code3});
     }
 }
