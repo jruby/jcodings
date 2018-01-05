@@ -154,7 +154,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
                 if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
                     if (bytes[p] == (byte)0x49) {
-                        fold[foldP++] = (byte)0xc4l;
+                        fold[foldP++] = (byte)0xc4;
                         fold[foldP] = (byte)0xb1;
                         pp.value++;
                         return 2;
