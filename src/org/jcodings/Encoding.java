@@ -189,6 +189,7 @@ public abstract class Encoding implements Cloneable {
     }
 
     /* ONIGENC_MBC_MAXLEN_DIST */
+    @Deprecated
     public final int maxLengthDistance() {
         return maxLength();
     }
