@@ -59,4 +59,15 @@ public class TestUnicode {
         assertTrue(caseMap("aäböcü", Config.CASE_UPCASE | Config.CASE_ASCII_ONLY).equals("AäBöCü"));
         assertTrue(caseMap("AÄBÖCÜ", Config.CASE_DOWNCASE | Config.CASE_ASCII_ONLY).equals("aÄbÖcÜ"));
     }
+
+    @Test
+    public void testCodeToMbcLength() throws Exception {
+        assertEquals(enc.codeToMbcLength(0x01), 1);
+        assertEquals(enc.codeToMbcLength(0x7f), 1);
+        assertEquals(enc.codeToMbcLength(0x101), 2);
+        assertEquals(enc.codeToMbcLength(0x1020), 3);
+        assertEquals(enc.codeToMbcLength(0x1F608), 4);
+        assertEquals(enc.codeToMbcLength(0xfffffffe), 1); // USE_INVALID_CODE_SCHEME
+        assertEquals(enc.codeToMbcLength(0xffffffff), 1); // USE_INVALID_CODE_SCHEME
+    }
 }
