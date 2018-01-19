@@ -548,6 +548,7 @@ public abstract class Encoding implements Cloneable {
                ctype == CharacterType.PRINT;
     }
 
+    @Deprecated
     public final int mbcodeStartPosition() {
         return minLength() > 1 ? 0 : 0x80;
     }
