@@ -732,7 +732,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             try {
                 DataInputStream dis = ArrayReader.openStream("CaseMappingSpecials");
                 int size = dis.readInt();
-                ArrayList<int[]> values = new ArrayList<int[]>();
+                ArrayList<int[]> values = new ArrayList<int[]>(size);
                 for (int i = 0; i < size; i++) {
                     int packed = dis.readInt();
                     int length = packed >>> Config.SpecialsLengthOffset;
