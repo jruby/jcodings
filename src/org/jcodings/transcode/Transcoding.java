@@ -37,23 +37,23 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     public final Transcoder transcoder;
-    int flags;
+    private int flags;
 
-    int resumePosition;
-    int nextTable;
-    int nextInfo;
-    byte nextByte;
-    int outputIndex;
+    private int resumePosition;
+    private int nextTable;
+    private int nextInfo;
+    private byte nextByte;
+    private int outputIndex;
 
     int recognizedLength, readAgainLength;
 
     final byte[] readBuf;
 
-    int writeBuffOff, writeBuffLen;
-    final byte[] writeBuf;
+    private int writeBuffOff, writeBuffLen;
+    private final byte[] writeBuf;
     final byte[] state;
 
-    EConvResult suspendResult;
+    private EConvResult suspendResult;
 
     void close() {
         transcoder.stateFinish(state);
@@ -105,11 +105,11 @@ public class Transcoding implements TranscodingInstruction {
         return transcodeRestartable0(in, inStart, out, outStart, inStop, outStop, opt);
     }
 
-    int inCharStart;
-    byte[] inBytes;
-    int inP;
+    private int inCharStart;
+    private byte[] inBytes;
+    private int inP;
 
-    Ptr inPos;
+    private Ptr inPos;
 
     private static int STR1_LENGTH(byte[] bytes, int byteaddr) {
         return bytes[byteaddr] + 4;
