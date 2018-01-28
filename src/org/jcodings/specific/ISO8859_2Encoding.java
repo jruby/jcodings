@@ -49,14 +49,14 @@ public final class ISO8859_2Encoding extends ISOEncoding {
                 }
             } else if ((ISO8859_2CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
                 flags |= Config.CASE_MODIFIED;
-                code += LowerCaseTable[code];
+                code = LowerCaseTable[code];
             } else if ((ISO8859_2CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
                 if (code >= 0xB1 && code <= 0xBF) {
                     code -= 0x10;
                 } else {
                     code -= 0x20;
                 }
-                flags |= Config.CASE_MODIFIED;
             }
             to[toP++] = (byte)code;
             if ((flags & Config.CASE_TITLECASE) != 0) {
