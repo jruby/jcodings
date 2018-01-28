@@ -121,7 +121,7 @@ abstract class AbstractEncoding extends Encoding {
             if (code >= 'a' && code <= 'z' && ((flags & Config.CASE_UPCASE) != 0)) {
                 flags |= Config.CASE_MODIFIED;
                 code += 'A' - 'a';
-            } else if (code >= 'A' && code <= 'Z' && ((flags & Config.CASE_DOWNCASE | Config.CASE_FOLD) != 0)) {
+            } else if (code >= 'A' && code <= 'Z' && ((flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0)) {
                 flags |= Config.CASE_MODIFIED;
                 code += 'a' - 'A';
             }
