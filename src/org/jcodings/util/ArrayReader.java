@@ -19,6 +19,7 @@
  */
 package org.jcodings.util;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,7 +32,7 @@ public class ArrayReader {
         String entry = "/tables/" + name + ".bin";
         InputStream is = ArrayReader.class.getResourceAsStream(entry);
         if (is == null) throw new InternalException("entry: " + entry + " not found");
-        return new DataInputStream(is);
+        return new DataInputStream(new BufferedInputStream(is));
     }
 
     public static byte[] readByteArray(String name) {
