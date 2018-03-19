@@ -196,7 +196,7 @@ final class EncodingList {
         EncodingDB.alias("MS932", "Windows-31J");
     }
 
-    public static Encoding getInstange(String name) {
+    public static Encoding getInstance(String name) {
         switch (name) {
             case "ASCII": return ASCIIEncoding.INSTANCE;
             case "UTF8": return UTF8Encoding.INSTANCE;

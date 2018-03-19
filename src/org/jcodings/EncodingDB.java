@@ -74,9 +74,9 @@ public class EncodingDB {
         public Encoding getEncoding() {
             if (encoding == null) {
                 if (name == null) {
-                    encoding = EncodingList.getInstange(encodingClass);
+                    encoding = EncodingList.getInstance(encodingClass);
                 } else {
-                    encoding = EncodingList.getInstange(encodingClass).replicate(name);
+                    encoding = EncodingList.getInstance(encodingClass).replicate(name);
                     if (isDummy) encoding.setDummy();
                 }
             }

@@ -27,7 +27,7 @@ final class EncodingList {
 %{other}
     }
 
-    public static Encoding getInstange(String name) {
+    public static Encoding getInstance(String name) {
         switch (name) {
 %{switch}
             default: return Encoding.load(name);
