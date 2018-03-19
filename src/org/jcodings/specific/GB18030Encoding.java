@@ -19,7 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.MultiByteEncoding;
 import org.jcodings.ascii.AsciiTables;

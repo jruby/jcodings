@@ -19,8 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Config;
-
 public final class Windows_31JEncoding extends BaseSJISEncoding {
     protected Windows_31JEncoding() {
         super("Windows-31J", SJISEncoding.SjisTrans);

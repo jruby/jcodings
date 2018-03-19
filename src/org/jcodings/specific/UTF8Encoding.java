@@ -19,8 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Config;
-
 public final class UTF8Encoding extends BaseUTF8Encoding {
 
     protected UTF8Encoding() {

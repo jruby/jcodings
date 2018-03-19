@@ -19,8 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Config;
-
 public final class SJISEncoding extends BaseSJISEncoding {
 
     protected SJISEncoding() {

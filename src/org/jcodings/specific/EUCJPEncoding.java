@@ -19,8 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Config;
-
 public final class EUCJPEncoding extends BaseEUCJPEncoding {
 
     private static final String EUC_JP = "EUC-JP";

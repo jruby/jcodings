@@ -21,7 +21,6 @@ package org.jcodings.specific;
 
 import org.jcodings.CanBeTrailTableEncoding;
 import org.jcodings.CodeRange;
-import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;

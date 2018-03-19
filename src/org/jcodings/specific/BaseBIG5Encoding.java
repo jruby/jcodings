@@ -20,7 +20,6 @@
 package org.jcodings.specific;
 
 import org.jcodings.CanBeTrailTableEncoding;
-import org.jcodings.Config;
 import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 

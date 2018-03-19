@@ -19,11 +19,6 @@
  */
 package org.jcodings.specific;
 
-import org.jcodings.Config;
-import org.jcodings.EucEncoding;
-import org.jcodings.IntHolder;
-import org.jcodings.ascii.AsciiTables;
-
 public final class GB2312Encoding extends EUCKREncoding {
 
     protected GB2312Encoding() {
