@@ -23,7 +23,6 @@ import static org.jcodings.transcode.EConv.NULL_STRING;
 import static org.jcodings.util.CaseInsensitiveBytesHash.caseInsensitiveEquals;
 
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.jcodings.ObjPtr;
 import org.jcodings.exception.ErrorMessages;
@@ -56,7 +55,7 @@ public class TranscoderDB implements EConvFlags {
         public Transcoder getTranscoder() {
             if (transcoder == null) {
                 if (transcoderClass != null) {
-                    transcoder = Transcoder.load(transcoderClass);
+                    transcoder = TranscoderList.getInstance(transcoderClass);
                 } else {
                     GenericTranscoderEntry[] list = TranscoderList.GENERIC_LIST;
                     for (int i = 0; i < list.length; i++) {
