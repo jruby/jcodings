@@ -107,7 +107,8 @@ def generate_transcoder_list
     end
     open("#{SRC_DIR}/transcode/TranscoderList.java", "wb") << open("TranscoderListTemplate.java", "rb"){|f|f.read}.
         sub(/%\{list\}/, transcoder_list.map{|src, dst, cls, specific| "#{INDENT*2}TranscoderDB.declare(#{src}, #{dst}, #{specific ? '"' + cls + '"' : 'null /*' + cls + '*/'});"}.join("\n")).
-        sub(/%\{generic\}/, generic_list.map{|g| "#{INDENT*2}new GenericTranscoderEntry(#{g.join(', ')})"}.join(",\n"))
+        sub(/%\{generic\}/, generic_list.map{|g| "#{INDENT*2}new GenericTranscoderEntry(#{g.join(', ')})"}.join(",\n")).
+        sub(/%\{switch\}/, transcoder_list.map{|src, dst, cls, specific| "#{INDENT*3}case \"#{cls}\": return #{cls}_Transcoder.INSTANCE;" if specific}.compact.join("\n"))
 
 end
 

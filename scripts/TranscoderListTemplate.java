@@ -20,6 +20,7 @@
 package org.jcodings.transcode;
 
 import org.jcodings.transcode.Transcoder.GenericTranscoderEntry;
+import org.jcodings.transcode.specific.*;
 
 final class TranscoderList {
     static void load() {
@@ -29,4 +30,11 @@ final class TranscoderList {
     static final GenericTranscoderEntry[] GENERIC_LIST = new GenericTranscoderEntry[] {
 %{generic}
     };
+
+    public static Transcoder getInstance(String name) {
+        switch (name) {
+%{switch}
+            default: return Transcoder.load(name);
+        }
+    }
 }

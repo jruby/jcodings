@@ -20,6 +20,7 @@
 package org.jcodings.transcode;
 
 import org.jcodings.transcode.Transcoder.GenericTranscoderEntry;
+import org.jcodings.transcode.specific.*;
 
 final class TranscoderList {
     static void load() {
@@ -388,4 +389,39 @@ final class TranscoderList {
         new GenericTranscoderEntry("UTF-8", "CP855", 30732, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "UTF8-MAC", 52420, "Utf8Mac", 1, 4, 9, AsciiCompatibility.CONVERTER, 0)
     };
+
+    public static Transcoder getInstance(String name) {
+        switch (name) {
+            case "Iso2022jp_kddi_decoder": return Iso2022jp_kddi_decoder_Transcoder.INSTANCE;
+            case "Iso2022jp_kddi_encoder": return Iso2022jp_kddi_encoder_Transcoder.INSTANCE;
+            case "Escape_xml_attr_quote": return Escape_xml_attr_quote_Transcoder.INSTANCE;
+            case "From_GB18030": return From_GB18030_Transcoder.INSTANCE;
+            case "To_GB18030": return To_GB18030_Transcoder.INSTANCE;
+            case "Iso2022jp_decoder": return Iso2022jp_decoder_Transcoder.INSTANCE;
+            case "Iso2022jp_encoder": return Iso2022jp_encoder_Transcoder.INSTANCE;
+            case "Stateless_iso2022jp_to_eucjp": return Stateless_iso2022jp_to_eucjp_Transcoder.INSTANCE;
+            case "Eucjp_to_stateless_iso2022jp": return Eucjp_to_stateless_iso2022jp_Transcoder.INSTANCE;
+            case "Cp50220_decoder": return Cp50220_decoder_Transcoder.INSTANCE;
+            case "Cp50221_decoder": return Cp50221_decoder_Transcoder.INSTANCE;
+            case "Cp50221_encoder": return Cp50221_encoder_Transcoder.INSTANCE;
+            case "Cp50220_encoder": return Cp50220_encoder_Transcoder.INSTANCE;
+            case "Eucjp2sjis": return Eucjp2sjis_Transcoder.INSTANCE;
+            case "Sjis2eucjp": return Sjis2eucjp_Transcoder.INSTANCE;
+            case "Universal_newline": return Universal_newline_Transcoder.INSTANCE;
+            case "From_UTF8_MAC": return From_UTF8_MAC_Transcoder.INSTANCE;
+            case "From_UTF_16BE": return From_UTF_16BE_Transcoder.INSTANCE;
+            case "To_UTF_16BE": return To_UTF_16BE_Transcoder.INSTANCE;
+            case "From_UTF_16LE": return From_UTF_16LE_Transcoder.INSTANCE;
+            case "To_UTF_16LE": return To_UTF_16LE_Transcoder.INSTANCE;
+            case "From_UTF_32BE": return From_UTF_32BE_Transcoder.INSTANCE;
+            case "To_UTF_32BE": return To_UTF_32BE_Transcoder.INSTANCE;
+            case "From_UTF_32LE": return From_UTF_32LE_Transcoder.INSTANCE;
+            case "To_UTF_32LE": return To_UTF_32LE_Transcoder.INSTANCE;
+            case "From_UTF_16": return From_UTF_16_Transcoder.INSTANCE;
+            case "From_UTF_32": return From_UTF_32_Transcoder.INSTANCE;
+            case "To_UTF_16": return To_UTF_16_Transcoder.INSTANCE;
+            case "To_UTF_32": return To_UTF_32_Transcoder.INSTANCE;
+            default: return Transcoder.load(name);
+        }
+    }
 }
