@@ -77,7 +77,8 @@ def generate_encoding_list
 
     open("#{SRC_DIR}/EncodingList.java", "wb") { |f| f << open("EncodingListTemplate.java", "rb").read.
         sub(/%\{defines\}/, defines.map { |cmd, name| "#{INDENT*2}EncodingDB.declare(#{name}, \"#{enc_map[name[/[^"]+/]] || (raise 'class not found for encoding ' + name)}\");" }.join("\n")).
-        sub(/%\{other\}/, other.map { |cmd, from, to| "#{INDENT*2}EncodingDB.#{cmd.downcase}(#{from}#{to.nil? ? "" : to});" }.join("\n")) }
+        sub(/%\{other\}/, other.map { |cmd, from, to| "#{INDENT*2}EncodingDB.#{cmd.downcase}(#{from}#{to.nil? ? "" : to});" }.join("\n")).
+        sub(/%\{switch\}/, defines.map { |cmd, name| "#{INDENT*3}case \"#{enc_map[name[/[^"]+/]]}\": return #{enc_map[name[/[^"]+/]]}Encoding.INSTANCE;"}.join("\n"))}
 
 end
 

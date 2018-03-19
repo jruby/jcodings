@@ -18,11 +18,19 @@
  * SOFTWARE.
  */
 package org.jcodings;
+import org.jcodings.specific.*;
 
 final class EncodingList {
     static final void load() {
 %{defines}
         EncodingDB.ascii = EncodingDB.encodings.get("ASCII-8BIT".getBytes());
 %{other}
+    }
+
+    public static Encoding getInstange(String name) {
+        switch (name) {
+%{switch}
+            default: return Encoding.load(name);
+        }
     }
 }

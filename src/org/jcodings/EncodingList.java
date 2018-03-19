@@ -18,6 +18,7 @@
  * SOFTWARE.
  */
 package org.jcodings;
+import org.jcodings.specific.*;
 
 final class EncodingList {
     static final void load() {
@@ -193,5 +194,54 @@ final class EncodingList {
         EncodingDB.replicate("UTF8-SoftBank", "UTF-8");
         EncodingDB.replicate("SJIS-SoftBank", "Windows-31J");
         EncodingDB.alias("MS932", "Windows-31J");
+    }
+
+    public static Encoding getInstange(String name) {
+        switch (name) {
+            case "ASCII": return ASCIIEncoding.INSTANCE;
+            case "UTF8": return UTF8Encoding.INSTANCE;
+            case "USASCII": return USASCIIEncoding.INSTANCE;
+            case "BIG5": return BIG5Encoding.INSTANCE;
+            case "Big5HKSCS": return Big5HKSCSEncoding.INSTANCE;
+            case "Big5UAO": return Big5UAOEncoding.INSTANCE;
+            case "CP949": return CP949Encoding.INSTANCE;
+            case "EmacsMule": return EmacsMuleEncoding.INSTANCE;
+            case "EUCJP": return EUCJPEncoding.INSTANCE;
+            case "EUCKR": return EUCKREncoding.INSTANCE;
+            case "EUCTW": return EUCTWEncoding.INSTANCE;
+            case "GB2312": return GB2312Encoding.INSTANCE;
+            case "GB18030": return GB18030Encoding.INSTANCE;
+            case "GBK": return GBKEncoding.INSTANCE;
+            case "ISO8859_1": return ISO8859_1Encoding.INSTANCE;
+            case "ISO8859_2": return ISO8859_2Encoding.INSTANCE;
+            case "ISO8859_3": return ISO8859_3Encoding.INSTANCE;
+            case "ISO8859_4": return ISO8859_4Encoding.INSTANCE;
+            case "ISO8859_5": return ISO8859_5Encoding.INSTANCE;
+            case "ISO8859_6": return ISO8859_6Encoding.INSTANCE;
+            case "ISO8859_7": return ISO8859_7Encoding.INSTANCE;
+            case "ISO8859_8": return ISO8859_8Encoding.INSTANCE;
+            case "ISO8859_9": return ISO8859_9Encoding.INSTANCE;
+            case "ISO8859_10": return ISO8859_10Encoding.INSTANCE;
+            case "ISO8859_11": return ISO8859_11Encoding.INSTANCE;
+            case "ISO8859_13": return ISO8859_13Encoding.INSTANCE;
+            case "ISO8859_14": return ISO8859_14Encoding.INSTANCE;
+            case "ISO8859_15": return ISO8859_15Encoding.INSTANCE;
+            case "ISO8859_16": return ISO8859_16Encoding.INSTANCE;
+            case "KOI8R": return KOI8REncoding.INSTANCE;
+            case "KOI8U": return KOI8UEncoding.INSTANCE;
+            case "SJIS": return SJISEncoding.INSTANCE;
+            case "UTF16BE": return UTF16BEEncoding.INSTANCE;
+            case "UTF16LE": return UTF16LEEncoding.INSTANCE;
+            case "UTF32BE": return UTF32BEEncoding.INSTANCE;
+            case "UTF32LE": return UTF32LEEncoding.INSTANCE;
+            case "Windows_31J": return Windows_31JEncoding.INSTANCE;
+            case "Windows_1250": return Windows_1250Encoding.INSTANCE;
+            case "Windows_1251": return Windows_1251Encoding.INSTANCE;
+            case "Windows_1252": return Windows_1252Encoding.INSTANCE;
+            case "Windows_1253": return Windows_1253Encoding.INSTANCE;
+            case "Windows_1254": return Windows_1254Encoding.INSTANCE;
+            case "Windows_1257": return Windows_1257Encoding.INSTANCE;
+            default: return Encoding.load(name);
+        }
     }
 }
