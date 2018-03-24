@@ -138,7 +138,7 @@ public abstract class Transcoder implements TranscodingInstruction {
     }
 
     public static Transcoder load(String name) {
-        String encClassName = "org.jcodings.transcode.specific." + name + "_Transcoder";
+        String encClassName = name;
 
         Class<?> encClass;
         try {
