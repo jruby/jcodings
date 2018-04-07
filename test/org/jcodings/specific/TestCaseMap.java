@@ -40,6 +40,12 @@ public class TestCaseMap {
                 assertTrue(caseMap(enc, transcodeFrom, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Config.CASE_UPCASE).equals("ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
                 assertTrue(caseMap(enc, transcodeFrom, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Config.CASE_DOWNCASE).equals("abcdefghijklmnopqrstuvwxyz"));
                 assertTrue(caseMap(enc, transcodeFrom, "abcdefghijklmnopqrstuvwxyz", Config.CASE_DOWNCASE).equals("abcdefghijklmnopqrstuvwxyz"));
+
+                assertTrue(caseMap(enc, transcodeFrom, "abc", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("ABC"));
+                assertTrue(caseMap(enc, transcodeFrom, "Abc", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("aBC"));
+                assertTrue(caseMap(enc, transcodeFrom, "aBC", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("Abc"));
+
+                assertTrue(caseMap(enc, transcodeFrom, "abc", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("Abc"));
             }
         }
     }
@@ -55,6 +61,12 @@ public class TestCaseMap {
         assertTrue(caseMap(enc, "aäböcü", Config.CASE_UPCASE).equals("AÄBÖCÜ"));
         assertTrue(caseMap(enc, "aäböcü", Config.CASE_UPCASE | Config.CASE_ASCII_ONLY).equals("AäBöCü"));
         assertTrue(caseMap(enc, "AÄBÖCÜ", Config.CASE_DOWNCASE | Config.CASE_ASCII_ONLY).equals("aÄbÖcÜ"));
+
+        assertTrue(caseMap(enc, "äöü", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("ÄÖÜ"));
+        assertTrue(caseMap(enc, "Äöü", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("äÖÜ"));
+        assertTrue(caseMap(enc, "äÖÜ", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("Äöü"));
+
+        assertTrue(caseMap(enc, "äöü", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("Äöü"));
     }
 
     @Test
