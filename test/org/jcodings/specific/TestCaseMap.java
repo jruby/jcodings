@@ -67,6 +67,9 @@ public class TestCaseMap {
         assertTrue(caseMap(enc, "äÖÜ", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("Äöü"));
 
         assertTrue(caseMap(enc, "äöü", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("Äöü"));
+
+        assertTrue(caseMap(enc, "İ", Config.CASE_DOWNCASE).equals("i̇")); // i\u0307
+        assertTrue(caseMap(enc, "İ", Config.CASE_DOWNCASE | Config.CASE_FOLD_TURKISH_AZERI).equals("i"));
     }
 
     @Test
