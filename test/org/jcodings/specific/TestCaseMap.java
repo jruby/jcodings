@@ -41,6 +41,7 @@ public class TestCaseMap {
                 assertTrue(caseMap(enc, transcodeFrom, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", Config.CASE_DOWNCASE).equals("abcdefghijklmnopqrstuvwxyz"));
                 assertTrue(caseMap(enc, transcodeFrom, "abcdefghijklmnopqrstuvwxyz", Config.CASE_DOWNCASE).equals("abcdefghijklmnopqrstuvwxyz"));
 
+                assertTrue(caseMap(enc, transcodeFrom, "xFoO", Config.CASE_UPCASE).equals("XFOO"));
                 assertTrue(caseMap(enc, transcodeFrom, "abc", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("ABC"));
                 assertTrue(caseMap(enc, transcodeFrom, "Abc", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("aBC"));
                 assertTrue(caseMap(enc, transcodeFrom, "aBC", Config.CASE_UPCASE | Config.CASE_DOWNCASE).equals("Abc"));
