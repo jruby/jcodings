@@ -468,34 +468,41 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) {
 
                     } else if ((flags & folded.flags) != 0) {
-                        int[]codes;
+                        final int[]codes;
+                        final int start;
+                        final int finish;
                         boolean specialCopy = false;
                         flags |= Config.CASE_MODIFIED;
                         if ((flags & folded.flags & Config.CASE_SPECIALS) != 0) {
+                            codes = CaseMappingSpecials.Values;
                             int specialStart = (folded.flags & Config.SpecialIndexMask) >>> Config.SpecialIndexShift;
                             if ((folded.flags & Config.CASE_IS_TITLECASE) != 0) {
                                 if ((flags & (Config.CASE_UPCASE | Config.CASE_DOWNCASE)) == (Config.CASE_UPCASE | Config.CASE_DOWNCASE))
                                     specialCopy = true;
                                 else
-                                    specialStart++;
+                                    specialStart += extractLength(codes[specialStart]);
                             }
                             if (!specialCopy && (folded.flags & Config.CASE_TITLECASE) != 0) {
                                 if ((flags & Config.CASE_TITLECASE) != 0)
                                     specialCopy = true;
                                 else
-                                    specialStart++;
+                                    specialStart += extractLength(codes[specialStart]);
                             }
                             if (!specialCopy && (folded.flags & Config.CASE_DOWN_SPECIAL) != 0) {
                                 if ((flags & Config.CASE_DOWN_SPECIAL) == 0)
-                                    specialStart++;
+                                    specialStart += extractLength(codes[specialStart]);
                             }
-                            codes = CaseMappingSpecials.Values.get(specialStart);
+                            start = specialStart;
+                            finish = start + extractLength(codes[specialStart]);
+                            code =  extractCode(codes[specialStart]);
                         } else {
                             codes = folded.codes;
+                            start = 0;
+                            finish = folded.codes.length;
+                            code = codes[0];
                         }
-                        code = codes[0];
 
-                        for (int i = 1; i < codes.length; i++) {
+                        for (int i = start + 1; i < finish; i++) {
                             toP += codeToMbc(code, to, toP);
                             code = codes[i];
                         }
@@ -727,30 +734,15 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         static final IntArrayHash<CodeList> Hash = initializeUnfold3Hash();
     }
 
-    private static class CaseMappingSpecials {
-        static ArrayList<int[]> read() {
-            try {
-                DataInputStream dis = ArrayReader.openStream("CaseMappingSpecials");
-                int size = dis.readInt();
-                ArrayList<int[]> values = new ArrayList<int[]>(size);
-                for (int i = 0; i < size; i++) {
-                    int packed = dis.readInt();
-                    int length = packed >>> Config.SpecialsLengthOffset;
-                    int[]codes = new int[length];
-                    codes[0] = packed & ((1 << Config.SpecialsLengthOffset) - 1);
-                    for (int j = 1; j < length; j++) {
-                        i++;
-                        codes[j] = dis.readInt();
-                    }
-                    values.add(codes);
-                }
-                dis.close();
-                return values;
-            } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
-            }
-        }
+    private static int extractLength(int packed) {
+        return packed >>> Config.SpecialsLengthOffset;
+    }
 
-        static final ArrayList<int[]> Values = read();
+    private static int extractCode(int packed) {
+        return packed & ((1 << Config.SpecialsLengthOffset) - 1);
+    }
+
+    private static class CaseMappingSpecials {
+        static final int[] Values = ArrayReader.readIntArray("CaseMappingSpecials");
     }
 }

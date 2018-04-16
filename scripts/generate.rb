@@ -249,9 +249,9 @@ def generate_fold_data
 
         when /CaseMappingSpecials/
             open("#{DST_BIN_DIR}/CaseMappingSpecials.bin", "wb") do |f|
-                size =  src[/CaseMappingSpecials\[\]\s+=\s+\{(.*?)\}\;/m, 1].scan(/0x\d+/).size
+                size =  src[/CaseMappingSpecials\[\]\s+=\s+\{(.*?)\}\;/m, 1].scan(/0x[0-9A-F]{4}/).size
                 f << [size].pack("N")
-                address.step(address + (size * 4), 4).each do |adr|
+                address.step(address + (size * 4 - 1), 4).each do |adr|
                     f << binary[adr, 4].unpack("l").pack("N")
                 end
             end
