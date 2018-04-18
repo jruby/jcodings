@@ -134,6 +134,29 @@ abstract class AbstractEncoding extends Encoding {
         return toP - toStart;
     }
 
+    int singleByteAsciiOnlyCaseMap(IntHolder flagP, byte[]bytes, IntHolder pp, int end, byte[]to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+
+            if (code >= 'a' && code <= 'z' && ((flags & Config.CASE_UPCASE) != 0)) {
+                flags |= Config.CASE_MODIFIED;
+                code += 'A' - 'a';
+            } else if (code >= 'A' && code <= 'Z' && ((flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0)) {
+                flags |= Config.CASE_MODIFIED;
+                code += 'a' - 'A';
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
+    }
+
     @Override
     public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
         return asciiOnlyCaseMap(flagP, bytes, pp, end, to, toP, toEnd);

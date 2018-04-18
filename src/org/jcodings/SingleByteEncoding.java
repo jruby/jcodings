@@ -54,6 +54,11 @@ public abstract class SingleByteEncoding extends AbstractEncoding {
     }
     // onigenc_is_mbc_newline_0x0a here
 
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        return singleByteAsciiOnlyCaseMap(flagP, bytes, pp, end, to, toP, toEnd);
+    }
+
     /** onigenc_single_byte_mbc_to_code
      */
     @Override
