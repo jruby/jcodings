@@ -62,7 +62,7 @@ public final class ISO8859_3Encoding extends ISOEncoding {
             } else if ((ISO8859_3CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
                 flags |= Config.CASE_MODIFIED;
                 if (code == 'i') {
-                    code = (flags & Config.CASE_FOLD_TURKISH_AZERI) != 0 ? DOTLESS_i : 'I';
+                    code = (flags & Config.CASE_FOLD_TURKISH_AZERI) != 0 ? I_WITH_DOT_ABOVE : 'I';
                 } else if (code == DOTLESS_i) {
                     code = 'I';
                 } else if (code >= 0xB0 && code <= 0xBF) {
