@@ -180,9 +180,10 @@ def generate_coderange_list
         name = "#{$1}=#{$2}" if name =~ /(graphemeclusterbreak)(.*)/i
         ([name] + aliases[name].to_a).map{|n|[n, range]}
     end.flatten(1)
+    max_length = out.max_by{|name, table|name.length}.first.length.to_s
 
     open("#{SRC_DIR}/unicode/UnicodeProperties.java", "wb") do |f| f <<
-        open("UnicodePropertiesTemplate.java", "rb").read.sub(/%\{extcrs\}/, out.map{|name, table| "#{INDENT * 2}" + "new CodeRangeEntry(\"#{name}\", \"CR_#{table}\")"}.join(",\n"))
+        open("UnicodePropertiesTemplate.java", "rb").read.sub(/%\{max_length\}/, max_length).sub(/%\{extcrs\}/, out.map{|name, table| "#{INDENT * 2}" + "new CodeRangeEntry(\"#{name}\", \"CR_#{table}\")"}.join(",\n"))
     end
 end
 

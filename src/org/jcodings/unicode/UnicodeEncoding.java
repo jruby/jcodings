@@ -38,11 +38,8 @@ import org.jcodings.util.CaseInsensitiveBytesHash;
 import org.jcodings.util.IntArrayHash;
 import org.jcodings.util.IntHash;
 
-
 public abstract class UnicodeEncoding extends MultiByteEncoding {
-
-    private static final int MAX_WORD_LENGTH = Config.USE_UNICODE_PROPERTIES ? 44 : 6;
-    private static final int PROPERTY_NAME_MAX_SIZE = MAX_WORD_LENGTH + 1;
+    private static final int PROPERTY_NAME_MAX_SIZE = UnicodeProperties.MAX_WORD_LENGTH + 1;
     static final int I_WITH_DOT_ABOVE = 0x0130;
     static final int DOTLESS_i = 0x0131;
     static final int DOT_ABOVE = 0x0307;

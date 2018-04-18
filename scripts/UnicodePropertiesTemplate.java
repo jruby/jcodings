@@ -25,4 +25,6 @@ public class UnicodeProperties {
     static final CodeRangeEntry[]CodeRangeTable = new CodeRangeEntry[] {
 %{extcrs}
     };
+
+    static final int MAX_WORD_LENGTH = %{max_length};
 }

@@ -819,4 +819,6 @@ public class UnicodeProperties {
         new CodeRangeEntry("insupplementaryprivateuseareab", "CR_In_Supplementary_Private_Use_Area_B"),
         new CodeRangeEntry("innoblock", "CR_In_No_Block")
     };
+
+    static final int MAX_WORD_LENGTH = 44;
 }
