@@ -30,8 +30,8 @@ public final class ISO8859_3Encoding extends ISOEncoding {
         super("ISO-8859-3", ISO8859_3CtypeTable, ISO8859_3ToLowerCaseTable, ISO8859_3CaseFoldMap);
     }
 
-    static final int DOTLESS_i = 0xFD;
-    static final int I_WITH_DOT_ABOVE = 0xDD;
+    static final int DOTLESS_i = 0xB9;
+    static final int I_WITH_DOT_ABOVE = 0xA9;
 
     @Override
     public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
