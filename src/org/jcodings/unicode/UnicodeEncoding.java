@@ -21,7 +21,6 @@ package org.jcodings.unicode;
 
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import org.jcodings.ApplyAllCaseFoldFunction;
 import org.jcodings.CaseFoldCodeItem;
@@ -96,7 +95,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             if (len >= PROPERTY_NAME_MAX_SIZE) throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
         }
 
-        Integer ctype = CTypeName.CTypeNameHash.get(buf, 0, len);
+        Integer ctype = CTypeName.Values.get(buf, 0, len);
         if (ctype == null) throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
         return ctype;
     }
@@ -121,7 +120,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
         }
 
-        CodeList to = CaseFold.Hash.get(code);
+        CodeList to = CaseFold.Values.get(code);
         if (to != null) {
             if (to.codes.length == 1) {
                 return codeToMbc(to.codes[0], fold, foldP);
@@ -273,7 +272,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
         int n = 0;
         int fn = 0;
-        CodeList to = CaseFold.Hash.get(code);
+        CodeList to = CaseFold.Values.get(code);
         CaseFoldCodeItem[]items = null;
         if (to != null) {
             items = new CaseFoldCodeItem[Config.ENC_GET_CASE_FOLD_CODES_MAX_NUM];
@@ -285,7 +284,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 n++;
 
                 code = to.codes[0];
-                to = CaseUnfold11.Hash.get(code);
+                to = CaseUnfold11.Values.get(code);
 
                 if (to != null) {
                     for (int i=0; i<to.codes.length; i++) {
@@ -301,7 +300,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
                 for (fn=0; fn<to.codes.length; fn++) {
                     cs[fn][0] = to.codes[fn];
-                    CodeList z3 = CaseUnfold11.Hash.get(cs[fn][0]);
+                    CodeList z3 = CaseUnfold11.Values.get(cs[fn][0]);
                     if (z3 != null) {
                         for (int i=0; i<z3.codes.length; i++) {
                             cs[fn][i+1] = z3.codes[i];
@@ -320,7 +319,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                         }
                     }
 
-                    CodeList z2 = CaseUnfold12.Hash.get(to.codes);
+                    CodeList z2 = CaseUnfold12.Values.get(to.codes);
                     if (z2 != null) {
                         for (int i=0; i<z2.codes.length; i++) {
                             if (z2.codes[i] == code) continue;
@@ -337,7 +336,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                             }
                         }
                     }
-                    CodeList z2 = CaseUnfold13.Hash.get(to.codes);
+                    CodeList z2 = CaseUnfold13.Values.get(to.codes);
                     if (z2 != null) {
                         for (int i=0; i<z2.codes.length; i++) {
                             if (z2.codes[i] == code) continue;
@@ -350,7 +349,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 flag = 0; /* DISABLE_CASE_FOLD_MULTI_CHAR(flag); */
             }
         } else {
-            to = CaseUnfold11.Hash.get(code);
+            to = CaseUnfold11.Values.get(code);
             if (to != null) {
                 items = new CaseFoldCodeItem[Config.ENC_GET_CASE_FOLD_CODES_MAX_NUM];
                 for (int i=0; i<to.codes.length; i++) {
@@ -368,7 +367,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 final int codes0 = code;
                 final int codes1;
                 code = mbcToCode(bytes, p, end);
-                to = CaseFold.Hash.get(code);
+                to = CaseFold.Values.get(code);
                 if (to != null && to.codes.length == 1) {
                     codes1 = to.codes[0];
                 } else {
@@ -377,7 +376,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
 
                 int clen = length(bytes, p, end);
                 len += clen;
-                CodeList z2 = CaseUnfold12.Hash.get(codes0, codes1);
+                CodeList z2 = CaseUnfold12.Values.get(codes0, codes1);
                 if (z2 != null) {
                     for (int i=0; i<z2.codes.length; i++) {
                         items[n] = CaseFoldCodeItem.create(len, z2.codes[i]);
@@ -389,7 +388,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                 if (p < end) {
                     final int codes2;
                     code = mbcToCode(bytes, p, end);
-                    to = CaseFold.Hash.get(code);
+                    to = CaseFold.Values.get(code);
                     if (to != null && to.codes.length == 1) {
                         codes2 = to.codes[0];
                     } else {
@@ -397,7 +396,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                     }
                     clen = length(bytes, p, end);
                     len += clen;
-                    z2 = CaseUnfold13.Hash.get(codes0, codes1, codes2);
+                    z2 = CaseUnfold13.Values.get(codes0, codes1, codes2);
                     if (z2 != null) {
                         for (int i=0; i<z2.codes.length; i++) {
                             items[n] = CaseFoldCodeItem.create(len, z2.codes[i]);
@@ -462,7 +461,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                         flags |= Config.CASE_MODIFIED;
                         code = 'I';
                     }
-                } else if ((folded = CaseFold.Hash.get(code)) != null) {
+                } else if ((folded = CaseFold.Values.get(code)) != null) {
                     if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) {
 
                     } else if ((flags & folded.flags) != 0) {
@@ -505,7 +504,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                             code = codes[i];
                         }
                     }
-                } else if ((folded = CaseUnfold11.Hash.get(code)) != null && (flags & folded.flags) != 0) {
+                } else if ((folded = CaseUnfold11.Values.get(code)) != null && (flags & folded.flags) != 0) {
                     flags |= Config.CASE_MODIFIED;
                     code = folded.codes[(flags & folded.flags & Config.CASE_TITLECASE) != 0 ? 1 : 0];
                 }
@@ -571,7 +570,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
     }
 
     static class CTypeName {
-        private static final CaseInsensitiveBytesHash<Integer> CTypeNameHash = initializeCTypeNameTable();
+        private static final CaseInsensitiveBytesHash<Integer> Values = initializeCTypeNameTable();
 
         private static CaseInsensitiveBytesHash<Integer> initializeCTypeNameTable() {
             CaseInsensitiveBytesHash<Integer> table = new CaseInsensitiveBytesHash<Integer>();
@@ -612,7 +611,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
         }
 
-        static final IntHash<CodeList>Hash = read("CaseFold");
+        static final IntHash<CodeList>Values = read("CaseFold");
     }
 
     private static class CaseUnfold11 {
@@ -658,7 +657,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
             return hash;
         }
-        static final IntHash<CodeList> Hash = initializeUnfold1Hash();
+        static final IntHash<CodeList> Values = initializeUnfold1Hash();
     }
 
     private static Object[] readFoldN(int fromSize, String table) {
@@ -708,7 +707,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             return unfold2;
         }
 
-        static final IntArrayHash<CodeList> Hash = initializeUnfold2Hash();
+        static final IntArrayHash<CodeList> Values = initializeUnfold2Hash();
     }
 
     private static class CaseUnfold13 {
@@ -730,7 +729,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             return unfold3;
         }
 
-        static final IntArrayHash<CodeList> Hash = initializeUnfold3Hash();
+        static final IntArrayHash<CodeList> Values = initializeUnfold3Hash();
     }
 
     private static int extractLength(int packed) {
