@@ -19,12 +19,56 @@
  */
 package org.jcodings.specific;
 
+import org.jcodings.Config;
 import org.jcodings.ISOEncoding;
+import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 
 public final class ISO8859_4Encoding extends ISOEncoding {
 
     protected ISO8859_4Encoding() {
         super("ISO-8859-4", ISO8859_4CtypeTable, ISO8859_4ToLowerCaseTable, ISO8859_4CaseFoldMap);
+    }
+
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+            if (code == SHARP_s) {
+                if ((flags & Config.CASE_UPCASE) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    to[toP++] = 'S';
+                    code = (flags & Config.CASE_TITLECASE) != 0 ? 's' : 'S';
+                } else if ((flags & Config.CASE_FOLD) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    to[toP++] = 's';
+                    code = 's';
+                }
+            } else if ((ISO8859_4CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                code = LowerCaseTable[code];
+            } else if (code == 0xA2) {
+            } else if ((ISO8859_4CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if (code >= 0xA0 && code <= 0xBF) {
+                    if (code == 0xBF)
+                        code -= 0x02;
+                      else
+                        code -= 0x10;
+                } else {
+                    code -= 0x20;
+                }
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
     }
 
     static final short ISO8859_4CtypeTable[] = {
