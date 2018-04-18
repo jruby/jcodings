@@ -19,14 +19,44 @@
  */
 package org.jcodings.specific;
 
+import org.jcodings.Config;
 import org.jcodings.ISOEncoding;
 import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 
 public final class ISO8859_5Encoding extends ISOEncoding {
 
     protected ISO8859_5Encoding() {
         super("ISO-8859-5", ISO8859_5CtypeTable, ISO8859_5ToLowerCaseTable, ISO8859_5CaseFoldMap, false);
     }
+
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+            if ((ISO8859_5CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                code = LowerCaseTable[code];
+            } else if ((ISO8859_5CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if (0xF1 <= code && code <= 0xFF) {
+                    code -= 0x50;
+                } else {
+                    code -= 0x20;
+                }
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
+    }
+
 
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
