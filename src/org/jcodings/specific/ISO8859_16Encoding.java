@@ -19,12 +19,61 @@
  */
 package org.jcodings.specific;
 
+import org.jcodings.Config;
 import org.jcodings.ISOEncoding;
+import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 
 public final class ISO8859_16Encoding extends ISOEncoding {
 
     protected ISO8859_16Encoding() {
         super("ISO-8859-16", ISO8859_16CtypeTable, ISO8859_16ToLowerCaseTable, ISO8859_16CaseFoldMap);
+    }
+
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+            if (code == SHARP_s) {
+                if ((flags & Config.CASE_UPCASE) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    to[toP++] = 'S';
+                    code = (flags & Config.CASE_TITLECASE) != 0 ? 's' : 'S';
+                } else if ((flags & Config.CASE_FOLD) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    to[toP++] = 's';
+                    code = 's';
+                }
+            } else if ((ISO8859_16CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                code = LowerCaseTable[code];
+            } else if ((ISO8859_16CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if (code == 0xA2 || code == 0xBD)
+                    code--;
+                else if (code == 0xB3 || code == 0xBA || code == 0xBF)
+                    code -= 0x10;
+                else if (code == 0xA8 || code == 0xAE)
+                    code -= 0x02;
+                else if (code == 0xB9)
+                    code -= 0x07;
+                else if (code == 0xB8)
+                    code -= 0x04;
+                else if (code == 0xFF)
+                    code -= 0x41;
+                else
+                    code -= 0x20;
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
     }
 
     static final short ISO8859_16CtypeTable[] = {
