@@ -31,6 +31,7 @@ import org.jcodings.IntHolder;
 import org.jcodings.MultiByteEncoding;
 import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.CharacterPropertyException;
+import org.jcodings.exception.EncodingError;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.util.ArrayReader;
 import org.jcodings.util.CaseInsensitiveBytesHash;
@@ -93,13 +94,13 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
         for(int p_ = p; p_ < end; p_+= length(name, p_, end)) {
             int code = mbcToCode(name, p_, end);
             if (code == ' ' || code == '-' || code == '_') continue;
-            if (code >= 0x80) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME);
+            if (code >= 0x80) throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
             buf[len++] = (byte)code;
-            if (len >= PROPERTY_NAME_MAX_SIZE) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
+            if (len >= PROPERTY_NAME_MAX_SIZE) throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
         }
 
         Integer ctype = CTypeName.CTypeNameHash.get(buf, 0, len);
-        if (ctype == null) throw new CharacterPropertyException(ErrorMessages.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
+        if (ctype == null) throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, name, p, end);
         return ctype;
     }
 

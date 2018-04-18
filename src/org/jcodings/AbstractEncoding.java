@@ -147,6 +147,6 @@ abstract class AbstractEncoding extends Encoding {
     public int propertyNameToCType(byte[]bytes, int p, int end) {
         Integer ctype = PosixBracket.PBSTableUpper.get(bytes, p, end);
         if (ctype != null) return ctype;
-        throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, new String(bytes, p, end - p));
+        throw new CharacterPropertyException(EncodingError.ERR_INVALID_CHAR_PROPERTY_NAME, bytes, p, end - p);
     }
 }
