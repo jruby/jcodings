@@ -514,7 +514,8 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
             toP += codeToMbc(code, to, toP);
             if ((flags & Config.CASE_TITLECASE) != 0) {
-                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE | Config.CASE_UP_SPECIAL | Config.CASE_DOWN_SPECIAL);}
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE | Config.CASE_UP_SPECIAL | Config.CASE_DOWN_SPECIAL);
+            }
 
         } // while
         flagP.value = flags;
