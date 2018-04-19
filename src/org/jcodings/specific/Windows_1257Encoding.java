@@ -20,12 +20,63 @@
 package org.jcodings.specific;
 
 import org.jcodings.CaseFoldMapEncoding;
+import org.jcodings.Config;
+import org.jcodings.ISOEncoding;
 import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 
 final public class Windows_1257Encoding extends CaseFoldMapEncoding {
 
     protected Windows_1257Encoding() {
         super("Windows-1257", CP1257_CtypeTable, CP1257_ToLowerCaseTable, CP1257_CaseFoldMap, true);
+    }
+
+    static final int DOTLESS_i = 0xB9;
+    static final int I_WITH_DOT_ABOVE = 0xA9;
+
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+            if (code == ISOEncoding.SHARP_s) {
+                if ((flags & Config.CASE_UPCASE) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    to[toP++] = 'S';
+                    code = (flags & Config.CASE_TITLECASE) != 0 ? 's' : 'S';
+                } else if ((flags & Config.CASE_FOLD) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    to[toP++] = 's';
+                    code = 's';
+                }
+            } else if (code == 0xB5) {
+            } else if ((CP1257_CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if (code == 'I') {
+                    code = (flags & Config.CASE_FOLD_TURKISH_AZERI) != 0 ? DOTLESS_i : 'i';
+                } else {
+                    code = LowerCaseTable[code];
+                }
+            } else if ((CP1257_CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if (code == 'i') {
+                    code = (flags & Config.CASE_FOLD_TURKISH_AZERI) != 0 ? I_WITH_DOT_ABOVE : 'I';
+                } else if (code == DOTLESS_i) {
+                    code = 'I';
+                } else if (code >= 0xB0 && code <= 0xBF)
+                    code -= 0x10;
+                else
+                    code -= 0x20;
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
     }
 
     @Override
