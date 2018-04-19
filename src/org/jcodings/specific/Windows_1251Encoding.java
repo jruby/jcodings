@@ -20,13 +20,52 @@
 package org.jcodings.specific;
 
 import org.jcodings.CaseFoldMapEncoding;
+import org.jcodings.Config;
+import org.jcodings.ISOEncoding;
 import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 
 final public class Windows_1251Encoding extends CaseFoldMapEncoding {
 
     protected Windows_1251Encoding() {
         super("Windows-1251", CP1251_CtypeTable, CP1251_ToLowerCaseTable, CP1251_CaseFoldMap, false);
     }
+
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+            if ((CP1251_CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                code = LowerCaseTable[code];
+            } else if (code == 0xB5) {
+            } else if ((CP1251_CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if ((0x61 <= code && code <= 0x7A) || (0xE0 <= code && code <= 0xFF))
+                    code -= 0x20;
+                else if (code == 0xA2 || code == 0xB3 || code == 0xBE)
+                    code -= 0x01;
+                else if (code == 0x83)
+                    code = 0x81;
+                else if (code == 0xBC)
+                    code = 0xA3;
+                else if (code == 0xB4)
+                    code = 0xA5;
+                else
+                    code -= 0x10;
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
+    }
+
 
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
