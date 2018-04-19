@@ -20,12 +20,65 @@
 package org.jcodings.specific;
 
 import org.jcodings.CaseFoldMapEncoding;
+import org.jcodings.Config;
 import org.jcodings.IntHolder;
+import org.jcodings.constants.CharacterType;
 
 final public class Windows_1253Encoding extends CaseFoldMapEncoding {
 
     protected Windows_1253Encoding() {
         super("Windows-1253", CP1253_CtypeTable, CP1253_ToLowerCaseTable, CP1253_CaseFoldMap, true);
+    }
+
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+            if (code == 0xF2) {
+                if ((flags & Config.CASE_UPCASE) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    code = 0xD3;
+                } else if ((flags & Config.CASE_FOLD) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    code = 0xF3;
+                }
+            } else if (code == 0xB5) {
+                if ((flags & Config.CASE_UPCASE) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    code = 0xCC;
+                } else if ((flags & Config.CASE_FOLD) != 0) {
+                    flags |= Config.CASE_MODIFIED;
+                    code = 0xEC;
+                }
+            } else if (code == 0xC0 || code == 0xE0 || code == 0xB6) {
+            } else if ((CP1253_CtypeTable[code] & CharacterType.BIT_UPPER) != 0 && (flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                code = LowerCaseTable[code];
+            } else if (code == 0xC0 || code == 0xE0) {
+            } else if ((CP1253_CtypeTable[code] & CharacterType.BIT_LOWER) != 0 && (flags & Config.CASE_UPCASE) != 0) {
+                flags |= Config.CASE_MODIFIED;
+                if (code == 0xDC)
+                    code = 0xA2;
+                else if (code >= 0xDD && code <= 0xDF)
+                    code -= 0x25;
+                else if (code == 0xFC)
+                    code = 0xBC;
+                else if (code == 0xFD || code == 0xFE)
+                    code -= 0x3F;
+                else
+                    code -= 0x20;
+            }
+
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
     }
 
     @Override
