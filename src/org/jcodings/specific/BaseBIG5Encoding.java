@@ -24,18 +24,17 @@ import org.jcodings.IntHolder;
 import org.jcodings.ascii.AsciiTables;
 
 public abstract class BaseBIG5Encoding extends CanBeTrailTableEncoding {
-
-    private final int transIndex;
+    private final int[]TransBase;
 
     protected BaseBIG5Encoding(String name, int[]EncLen, int transIndex) {
         super(name, 1, 2, EncLen, BIG5Trans, AsciiTables.AsciiCtypeTable, BIG5_CAN_BE_TRAIL_TABLE);
-        this.transIndex = transIndex;
+        TransBase = Trans[transIndex];
     }
 
     @Override
     public int length(byte[]bytes, int p, int end) {
         int b = bytes[p++] & 0xff;
-        int s = Trans[transIndex][b];
+        int s = TransBase[b];
         if (s < 0) return s == A ? 1 : CHAR_INVALID;
         if (p == end) return missing(EncLen[b] - 1);
         s = Trans[s][bytes[p] & 0xff];
