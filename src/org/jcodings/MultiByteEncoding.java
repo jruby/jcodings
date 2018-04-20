@@ -122,6 +122,11 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         return n;
     }
 
+    @Override
+    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
+        return asciiOnlyCaseMap(flagP, bytes, pp, end, to, toP, toEnd);
+    }
+
     protected final int mbnMbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         int p = pp.value;
         int lowerP = 0;

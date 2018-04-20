@@ -157,12 +157,6 @@ abstract class AbstractEncoding extends Encoding {
         return toP - toStart;
     }
 
-    @Override
-    public int caseMap(IntHolder flagP, byte[] bytes, IntHolder pp, int end, byte[] to, int toP, int toEnd) {
-        return asciiOnlyCaseMap(flagP, bytes, pp, end, to, toP, toEnd);
-    }
-
-
     /** onigenc_minimum_property_name_to_ctype
      *  notably overridden by unicode encodings
      */
