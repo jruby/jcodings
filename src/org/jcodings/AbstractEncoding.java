@@ -50,7 +50,7 @@ abstract class AbstractEncoding extends Encoding {
      */
     @Override
     public boolean isNewLine(byte[]bytes, int p, int end) {
-        return p < end ? bytes[p] == (byte)0x0a : false;
+        return p < end ? bytes[p] == Encoding.NEW_LINE : false;
     }
 
     protected final int asciiMbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
