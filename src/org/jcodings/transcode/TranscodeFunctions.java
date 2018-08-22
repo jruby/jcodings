@@ -420,11 +420,11 @@ public class TranscodeFunctions {
     {
         long s0 = s[sStart] & 0xFF;
         long s1 = s[sStart+1] & 0xFF;
-        long s2 = s[sStart+2] & 0xFF;
-        long s3 = s[sStart+3] & 0xFF;
         long diff = info >> 8;
         long u;    /* Unicode Scalar Value */
         if ((diff & 0x20000) != 0) { /* GB18030 4 bytes */
+            long s2 = s[sStart+2] & 0xFF;
+            long s3 = s[sStart+3] & 0xFF;
             u = (((s0 * 10 + s1) * 126 + s2) * 10 + s3 - diff - 0x170000) & 0xFFFFFFFFL;
         }
         else { /* GB18030 2 bytes */
@@ -498,7 +498,7 @@ public class TranscodeFunctions {
 
     public static final int EMACS_MULE_LEADING_CODE_JISX0208_1978 = 0220;
     public static final int EMACS_MULE_LEADING_CODE_JISX0208_1983 = 0222;
-    
+
     public static final byte[] tbl0208 = {
                     (byte)0x21, (byte)0x23, (byte)0x21, (byte)0x56, (byte)0x21, (byte)0x57, (byte)0x21, (byte)0x22, (byte)0x21, (byte)0x26, (byte)0x25, (byte)0x72, (byte)0x25, (byte)0x21, (byte)0x25, (byte)0x23,
                     (byte)0x25, (byte)0x25, (byte)0x25, (byte)0x27, (byte)0x25, (byte)0x29, (byte)0x25, (byte)0x63, (byte)0x25, (byte)0x65, (byte)0x25, (byte)0x67, (byte)0x25, (byte)0x43, (byte)0x21, (byte)0x3C,
