@@ -1,2 +1,3 @@
 Implementation-Title: JCodings (Byte based encoding support library for java)
 Implementation-Version: 1.0.7
+Multi-Release: true
