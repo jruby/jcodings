@@ -45,10 +45,8 @@ build:
     artifactId: maven-source-plugin
     version: 2.2.1
     executions:
-    - goals: [jar]
-      id: attach-sources
-      inherited: true
-      priority: 0
+    - id: attach-sources
+      goals: [jar]
   - groupId: org.apache.maven.plugins
     artifactId: maven-javadoc-plugin
     version: 2.9
@@ -56,32 +54,25 @@ build:
       additionalparam: '-Xdoclint:none'
       quiet: true
     executions:
-    - goals: [jar]
-      id: attach-javadocs
-      inherited: true
-      priority: 0
+    - id: attach-javadocs
+      goals: [jar]
   - groupId: org.apache.maven.plugins
     artifactId: maven-compiler-plugin
     version: 3.8.0
     configuration:
       encoding: UTF-8
     executions:
-    - configuration:
+    - id: default-compile
+      configuration:
         source: 1.7
         target: 1.7
         excludes: [module-info.java]
-      id: default-compile
-      inherited: true
-      priority: 0
-    - configuration:
+    - id: compile9
+      goals: [compile]
+      configuration:
         release: 9
         multiReleaseOutput: true
         includes: [module-info.java]
-      goals: [compile]
-      id: compile9
-      inherited: true
-      phase: compile
-      priority: 0
   - groupId: org.apache.maven.plugins
     artifactId: maven-jar-plugin
     version: 2.4
