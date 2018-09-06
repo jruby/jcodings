@@ -1,6 +1,9 @@
 modelVersion: 4.0.0
-parent: {artifactId: oss-parent, groupId: org.sonatype.oss, relativePath: ../pom.xml,
-  version: 7}
+parent:
+  artifactId: oss-parent
+  groupId: org.sonatype.oss
+  relativePath: ../pom.xml
+  version: 7
 groupId: org.jruby.jcodings
 artifactId: jcodings
 version: 1.0.32-SNAPSHOT
@@ -8,17 +11,34 @@ packaging: jar
 name: JCodings
 description: Byte based encoding support library for java
 licenses:
-- {distribution: repo, name: MIT License, url: 'http://www.opensource.org/licenses/mit-license.php'}
+- distribution: repo
+  name: MIT License
+  url: 'http://www.opensource.org/licenses/mit-license.php'
 developers:
-- {name: Marcin Mielzynski, id: lopex, email: lopx@gazeta.pl}
-scm: {connection: 'scm:git:git://github.com/jruby/jcodings.git', developerConnection: 'scm:git:git@github.com:jruby/jcodings.git',
-  tag: HEAD, url: 'https://github.com/jruby/jcodings'}
-issueManagement: {system: Github, url: 'https://github.com/jruby/jcodings/issues'}
+- name: Marcin Mielzynski
+  id: lopex
+  email: lopx@gazeta.pl
+- name: Charles Oliver Nutter
+  id: headius
+  email: headius@headius.com
+scm:
+  connection: 'scm:git:git://github.com/jruby/jcodings.git'
+  developerConnection: 'scm:git:git@github.com:jruby/jcodings.git'
+  tag: HEAD
+  url: 'https://github.com/jruby/jcodings'
+issueManagement:
+  system: Github
+  url: 'https://github.com/jruby/jcodings/issues'
 dependencies:
-- {groupId: junit, artifactId: junit, version: 4.10, scope: test}
+- groupId: junit
+  artifactId: junit
+  version: 4.10
+  scope: test
 build:
   extensions:
-  - {artifactId: wagon-webdav-jackrabbit, groupId: org.apache.maven.wagon, version: 2.1}
+  - artifactId: wagon-webdav-jackrabbit
+    groupId: org.apache.maven.wagon
+    version: 2.1
   finalName: jcodings
   plugins:
   - groupId: org.apache.maven.plugins
@@ -32,7 +52,9 @@ build:
   - groupId: org.apache.maven.plugins
     artifactId: maven-javadoc-plugin
     version: 2.9
-    configuration: {additionalparam: '-Xdoclint:none', quiet: true}
+    configuration:
+      additionalparam: '-Xdoclint:none'
+      quiet: true
     executions:
     - goals: [jar]
       id: attach-javadocs
@@ -41,7 +63,8 @@ build:
   - groupId: org.apache.maven.plugins
     artifactId: maven-compiler-plugin
     version: 3.8.0
-    configuration: {encoding: UTF-8}
+    configuration:
+      encoding: UTF-8
     executions:
     - configuration:
         source: 1.7
@@ -62,14 +85,19 @@ build:
     artifactId: maven-jar-plugin
     version: 2.4
     configuration:
-      archive: {manifestFile: MANIFEST.MF}
-  - {groupId: org.apache.maven.plugins, artifactId: maven-resources-plugin, version: 2.6}
+      archive:
+        manifestFile: MANIFEST.MF
+  - groupId: org.apache.maven.plugins
+    artifactId: maven-resources-plugin
+    version: 2.6
   - groupId: org.apache.maven.plugins
     artifactId: maven-surefire-plugin
     version: 2.20.1
-    configuration: {argLine: -Dfile.encoding=UTF-8}
+    configuration:
+      argLine: -Dfile.encoding=UTF-8
   resources:
-  - {directory: resources, filtering: false}
+  - directory: resources
+    filtering: false
   scriptSourceDirectory: scripts
   sourceDirectory: src
   testSourceDirectory: test
