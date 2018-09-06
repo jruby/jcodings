@@ -75,7 +75,6 @@ build:
       priority: 0
     - configuration:
         release: 9
-        multiReleaseOutput: true
         includes: [module-info.java]
       goals: [compile]
       id: compile9
