@@ -6,7 +6,7 @@ parent:
   version: 7
 groupId: org.jruby.jcodings
 artifactId: jcodings
-version: 1.0.32-SNAPSHOT
+version: 1.0.33-SNAPSHOT
 packaging: jar
 name: JCodings
 description: Byte based encoding support library for java
