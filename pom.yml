@@ -71,7 +71,6 @@ build:
       goals: [compile]
       configuration:
         release: 9
-        multiReleaseOutput: true
         includes: [module-info.java]
   - groupId: org.apache.maven.plugins
     artifactId: maven-jar-plugin
