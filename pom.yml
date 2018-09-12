@@ -1,10 +1,5 @@
 modelVersion: 4.0.0
 
-parent:
-  artifactId: oss-parent
-  groupId: org.sonatype.oss
-  version: 7
-
 groupId: org.jruby.jcodings
 artifactId: jcodings
 version: 1.0.33-SNAPSHOT
@@ -54,23 +49,6 @@ build:
 
   plugins:
   - groupId: org.apache.maven.plugins
-    artifactId: maven-source-plugin
-    version: 2.2.1
-    executions:
-    - id: attach-sources
-      goals: [jar]
-
-  - groupId: org.apache.maven.plugins
-    artifactId: maven-javadoc-plugin
-    version: 2.9
-    configuration:
-      additionalparam: '-Xdoclint:none'
-      quiet: true
-    executions:
-    - id: attach-javadocs
-      goals: [jar]
-
-  - groupId: org.apache.maven.plugins
     artifactId: maven-compiler-plugin
     version: 3.8.0
     configuration:
@@ -82,6 +60,7 @@ build:
         target: 1.7
 
         excludes: [module-info.java]
+
   - groupId: org.apache.maven.plugins
     artifactId: maven-jar-plugin
     version: 2.4
@@ -104,22 +83,13 @@ build:
     filtering: false
 
 profiles:
-- id: module-info
+- id: release-on-9
 
   activation:
     jdk: 9
 
   build:
     plugins:
-    - groupId: org.codehaus.mojo
-      artifactId: build-helper-maven-plugin
-      version: 3.0.0
-      executions:
-      - phase: generate-sources
-        goals: [add-source]
-        configuration:
-          sources: [src9]
-
     - groupId: org.apache.maven.plugins
       artifactId: maven-compiler-plugin
       executions:
@@ -128,3 +98,29 @@ profiles:
         configuration:
           release: 9
           includes: [module-info.java]
+
+    - groupId: org.sonatype.plugins
+      artifactId: nexus-staging-maven-plugin
+      version: 1.6.8
+      extensions: true
+      configuration:
+        serverId: ossrh
+        nexusUrl: https://oss.sonatype.org/
+        autoReleaseAfterClose: true
+
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-source-plugin
+      version: 2.2.1
+      executions:
+      - id: attach-sources
+        goals: [jar]
+
+    - groupId: org.apache.maven.plugins
+      artifactId: maven-javadoc-plugin
+      version: 2.9
+      configuration:
+        additionalparam: '-Xdoclint:none'
+        quiet: true
+      executions:
+      - id: attach-javadocs
+        goals: [jar]
