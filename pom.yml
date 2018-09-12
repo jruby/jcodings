@@ -1,18 +1,22 @@
 modelVersion: 4.0.0
+
 parent:
   artifactId: oss-parent
   groupId: org.sonatype.oss
   version: 7
+
 groupId: org.jruby.jcodings
 artifactId: jcodings
 version: 1.0.33-SNAPSHOT
 packaging: jar
 name: JCodings
 description: Byte based encoding support library for java
+
 licenses:
 - distribution: repo
   name: MIT License
   url: 'http://www.opensource.org/licenses/mit-license.php'
+
 developers:
 - name: Marcin Mielzynski
   id: lopex
@@ -20,25 +24,34 @@ developers:
 - name: Charles Oliver Nutter
   id: headius
   email: headius@headius.com
+
 scm:
   connection: 'scm:git:git://github.com/jruby/jcodings.git'
   developerConnection: 'scm:git:git@github.com:jruby/jcodings.git'
   tag: HEAD
   url: 'https://github.com/jruby/jcodings'
+
 issueManagement:
   system: Github
   url: 'https://github.com/jruby/jcodings/issues'
+
 dependencies:
 - groupId: junit
   artifactId: junit
   version: 4.10
   scope: test
+
 build:
+  scriptSourceDirectory: scripts
+  sourceDirectory: src
+  testSourceDirectory: test
+  finalName: jcodings
+
   extensions:
   - artifactId: wagon-webdav-jackrabbit
     groupId: org.apache.maven.wagon
     version: 2.1
-  finalName: jcodings
+
   plugins:
   - groupId: org.apache.maven.plugins
     artifactId: maven-source-plugin
@@ -46,6 +59,7 @@ build:
     executions:
     - id: attach-sources
       goals: [jar]
+
   - groupId: org.apache.maven.plugins
     artifactId: maven-javadoc-plugin
     version: 2.9
@@ -55,6 +69,7 @@ build:
     executions:
     - id: attach-javadocs
       goals: [jar]
+
   - groupId: org.apache.maven.plugins
     artifactId: maven-compiler-plugin
     version: 3.8.0
@@ -65,6 +80,7 @@ build:
       configuration:
         source: 1.7
         target: 1.7
+
         excludes: [module-info.java]
   - groupId: org.apache.maven.plugins
     artifactId: maven-jar-plugin
@@ -72,24 +88,27 @@ build:
     configuration:
       archive:
         manifestFile: MANIFEST.MF
+
   - groupId: org.apache.maven.plugins
     artifactId: maven-resources-plugin
     version: 2.6
+
   - groupId: org.apache.maven.plugins
     artifactId: maven-surefire-plugin
     version: 2.20.1
     configuration:
       argLine: -Dfile.encoding=UTF-8
+
   resources:
   - directory: resources
     filtering: false
-  scriptSourceDirectory: scripts
-  sourceDirectory: src
-  testSourceDirectory: test
+
 profiles:
 - id: module-info
+
   activation:
     jdk: 9
+
   build:
     plugins:
     - groupId: org.codehaus.mojo
@@ -100,6 +119,7 @@ profiles:
         goals: [add-source]
         configuration:
           sources: [src9]
+
     - groupId: org.apache.maven.plugins
       artifactId: maven-compiler-plugin
       executions:
