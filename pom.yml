@@ -2,7 +2,6 @@ modelVersion: 4.0.0
 parent:
   artifactId: oss-parent
   groupId: org.sonatype.oss
-  relativePath: ../pom.xml
   version: 7
 groupId: org.jruby.jcodings
 artifactId: jcodings
