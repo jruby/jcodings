@@ -19,7 +19,7 @@
  */
 package org.jcodings;
 
-public class CodeRange {
+public final class CodeRange {
     public static boolean isInCodeRange(int[]p, int code) {
         return isInCodeRange(p, 0, code);
     }

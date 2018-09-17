@@ -23,7 +23,7 @@ import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
 import org.jcodings.util.CaseInsensitiveBytesHash;
 
-public class EncodingDB {
+public final class EncodingDB {
     public static final class Entry {
         private static int count;
 
