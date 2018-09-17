@@ -1,6 +1,6 @@
 # coding: utf-8
 
-REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.0' # path to ruby repo
+REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.1' # path to ruby repo
 SECTION_NAME = "rdata"
 UNICODE_VERSION = "10.0.0"
 SRC_DIR = "../src/org/jcodings"
