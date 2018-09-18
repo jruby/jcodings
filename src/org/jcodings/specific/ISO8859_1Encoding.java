@@ -85,7 +85,7 @@ public final class ISO8859_1Encoding extends ISOEncoding {
                 return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b - 0x20)};
             }
         }
-        return EMPTY_FOLD_CODES;
+        return CaseFoldCodeItem.EMPTY_FOLD_CODES;
     }
 
     @Override

@@ -407,7 +407,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             }
         }
 
-        if (items == null || n == 0) return EMPTY_FOLD_CODES;
+        if (items == null || n == 0) return CaseFoldCodeItem.EMPTY_FOLD_CODES;
         if (n < items.length) {
             CaseFoldCodeItem [] tmp = new CaseFoldCodeItem[n];
             System.arraycopy(items, 0, tmp, 0, n);

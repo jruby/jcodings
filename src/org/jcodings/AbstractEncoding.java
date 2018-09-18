@@ -85,6 +85,7 @@ abstract class AbstractEncoding extends Encoding {
         asciiApplyAllCaseFold(flag, fun, arg);
     }
 
+    @Deprecated
     protected static final CaseFoldCodeItem[] EMPTY_FOLD_CODES = new CaseFoldCodeItem[]{};
     protected final CaseFoldCodeItem[]asciiCaseFoldCodesByString(int flag, byte[]bytes, int p, int end) {
         int b = bytes[p] & 0xff;
@@ -94,7 +95,7 @@ abstract class AbstractEncoding extends Encoding {
         } else if (0x61 <= b && b <= 0x7a) {
             return new CaseFoldCodeItem[]{CaseFoldCodeItem.create(1, b - 0x20)};
         } else {
-            return EMPTY_FOLD_CODES;
+            return CaseFoldCodeItem.EMPTY_FOLD_CODES;
         }
     }
 

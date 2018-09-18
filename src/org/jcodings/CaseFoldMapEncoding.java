@@ -106,7 +106,7 @@ public abstract class CaseFoldMapEncoding extends SingleByteEncoding {
                 }
             }
         }
-        return EMPTY_FOLD_CODES;
+        return CaseFoldCodeItem.EMPTY_FOLD_CODES;
     }
 
     @Override

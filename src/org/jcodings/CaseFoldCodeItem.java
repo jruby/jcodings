@@ -20,6 +20,8 @@
 package org.jcodings;
 
 public final class CaseFoldCodeItem {
+    public static final CaseFoldCodeItem[] EMPTY_FOLD_CODES = new CaseFoldCodeItem[]{};
+
     public final int byteLen;
     public final int code[];
 
