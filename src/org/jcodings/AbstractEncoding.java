@@ -85,8 +85,6 @@ abstract class AbstractEncoding extends Encoding {
         asciiApplyAllCaseFold(flag, fun, arg);
     }
 
-    @Deprecated
-    protected static final CaseFoldCodeItem[] EMPTY_FOLD_CODES = new CaseFoldCodeItem[]{};
     protected final CaseFoldCodeItem[]asciiCaseFoldCodesByString(int flag, byte[]bytes, int p, int end) {
         int b = bytes[p] & 0xff;
 
