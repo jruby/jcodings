@@ -1,5 +1,4 @@
 #!/usr/bin/env ruby
-
 # coding: utf-8
 
 REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.1' # path to ruby repo
@@ -88,7 +87,7 @@ def generate_transcoder_list
     generic_list = []
     transcoder_list = []
 
-    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.each do |trans_file|
+    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.sort.each do |trans_file|
         name = trans_file[/(\w+)\.c/, 1].split('_').map{|e| e.capitalize}.join("")
         trans_src = open(trans_file){|f|f.read}
 
@@ -115,7 +114,7 @@ def generate_transcoder_list
 end
 
 def generate_transoder_data
-    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.each do |trans_file|
+    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.sort.each do |trans_file|
         # next unless trans_file =~ /utf8/
         trans_file = trans_file[/(.*)\./, 1]
         src = open("#{trans_file}.c", "rb").read
