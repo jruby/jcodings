@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 # coding: utf-8
 
 REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.1' # path to ruby repo
