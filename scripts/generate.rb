@@ -2,7 +2,7 @@
 # coding: utf-8
 
 REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.1' # path to ruby repo
-SECTION_NAME = "rdata"
+SECTION_NAME = RUBY_PLATFORM =~ /linux/ ? "rodata" : "rdata"
 UNICODE_VERSION = "10.0.0"
 SRC_DIR = "../src/org/jcodings"
 DST_BIN_DIR =  "../resources/tables"
