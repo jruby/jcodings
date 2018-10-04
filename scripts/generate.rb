@@ -118,19 +118,20 @@ def generate_transoder_data
         # next unless trans_file =~ /utf8/
         trans_file = trans_file[/(.*)\./, 1]
         src = open("#{trans_file}.c", "rb").read
+        make_name = -> (name) {name.capitalize.split('_').map{|e|e.capitalize}.join('')}
         process_binary "#{trans_file}.o" do |name, binary, address|
             case name
             when /(.*)_byte_array/
                 name = $1
                 size = src[/(\w+?_byte_array)\[(\d+?)\]/m, 2].to_i
-                open("#{DST_BIN_DIR}/" + "Transcoder_#{name.capitalize.tr('_', '')}_ByteArray.bin", "wb") do |f|
+                open("#{DST_BIN_DIR}/" + "Transcoder_#{make_name.(name)}_ByteArray.bin", "wb") do |f|
                     f << [size].pack("N")
                     f << binary[address, size]
                 end
             when /(.*)_word_array/
                 name = $1
                 size = src[/(\w+?_word_array)\[(\d+?)\]/m, 2].to_i
-                open("#{DST_BIN_DIR}/" + "Transcoder_#{name.capitalize.tr('_', '')}_WordArray.bin", "wb") do |f|
+                open("#{DST_BIN_DIR}/" + "Transcoder_#{make_name.(name)}_WordArray.bin", "wb") do |f|
                     f << [size].pack("N")
                     address.step(address + (size * 4 - 1), 4).each do |adr|
                         f << binary[adr, 4].unpack("l").pack("N")
