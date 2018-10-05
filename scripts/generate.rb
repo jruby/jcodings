@@ -118,7 +118,7 @@ def generate_transoder_data
         # next unless trans_file =~ /utf8/
         trans_file = trans_file[/(.*)\./, 1]
         src = open("#{trans_file}.c", "rb").read
-        make_name = -> (name) {name.capitalize.split('_').map{|e|e.capitalize}.join('')}
+        make_name = -> (name) {name.split('_').map{|e|e.capitalize}.join('')}
         process_binary "#{trans_file}.o" do |name, binary, address|
             case name
             when /(.*)_byte_array/
