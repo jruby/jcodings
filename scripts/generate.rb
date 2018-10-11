@@ -2,7 +2,12 @@
 # coding: utf-8
 
 REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.1' # path to ruby repo
-SECTION_NAME = RUBY_PLATFORM =~ /linux/ ? "rodata" : "rdata"
+SECTION_NAME, G_PREFIX = case RUBY_PLATFORM
+when /linux/i; ["rodata", ""]
+when /darwin/i; ["const_data", "g"]
+else ;["rdata", ""]
+end
+
 UNICODE_VERSION = "10.0.0"
 SRC_DIR = "../src/org/jcodings"
 DST_BIN_DIR =  "../resources/tables"
@@ -19,8 +24,8 @@ end
 
 def process_binary obj_name
     binary = open(obj_name, "rb"){|f|f.read}
-    offset = `objdump -h -j .#{SECTION_NAME} #{obj_name}`[/\.#{SECTION_NAME}.*?(\w+)\s+\S+$/, 1].to_i(16)
-    `nm --no-sort --defined-only #{obj_name}`.split("\n").map{|s|s.split(/\s+/)}.each do |address, _, name|
+    offset = `#{G_PREFIX}objdump -h -j .#{SECTION_NAME} #{obj_name}`[/\.#{SECTION_NAME}.*?(\w+)\s+\S+$/, 1].to_i(16)
+    `#{G_PREFIX}nm --no-sort --defined-only #{obj_name}`.split("\n").map{|s|s.split(/\s+/)}.each do |address, _, name|
         yield name, binary, address.to_i(16) + offset
     end
 end
