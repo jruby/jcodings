@@ -19,10 +19,17 @@
  */
 package org.jcodings.specific;
 
-public final class UTF8Encoding extends BaseUTF8Encoding {
+import org.jcodings.Encoding;
+
+public class UTF8Encoding extends BaseUTF8Encoding {
 
     protected UTF8Encoding() {
         super(UTF8EncLen, UTF8Trans);
+    }
+
+    @Override
+    public Encoding getUnsafe() {
+        return INSTANCE_UNSAFE;
     }
 
     @Override
@@ -201,4 +208,12 @@ public final class UTF8Encoding extends BaseUTF8Encoding {
     };
 
     public static final UTF8Encoding INSTANCE = new UTF8Encoding();
+
+    public static final UTF8Encoding INSTANCE_UNSAFE = new UTF8Encoding() {
+        @Override
+        public int length(byte[] bytes, int p, int end) {
+            // TODO return fast version of length
+            return 0; //
+        }
+    };
 }

@@ -56,6 +56,10 @@ public abstract class Encoding implements Cloneable {
         this.isAsciiCompatible = minLength == 1;
     }
 
+    public Encoding getUnsafe() {
+        return this;
+    }
+
     protected final void setName(String name) {
         this.name = name.getBytes();
         this.hashCode = BytesHash.hashCode(this.name, 0, this.name.length);
