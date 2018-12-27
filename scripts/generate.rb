@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # coding: utf-8
 
-REPO_PATH = ARGV.first || '/usr/src/ruby-2.5.1' # path to ruby repo
+REPO_PATH = ARGV.first || '/usr/src/ruby' # path to ruby repo
 SECTION_NAME, G_PREFIX = case RUBY_PLATFORM
 when /linux/i; ["rodata", ""]
 when /darwin/i; ["const_data", "g"]
