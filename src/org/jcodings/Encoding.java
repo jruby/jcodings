@@ -564,7 +564,11 @@ public abstract class Encoding implements Cloneable {
     public static final byte NEW_LINE = (byte)0x0a;
 
     public static Encoding load(String name) {
-        String encClassName = name;
+        return load(name, "org.jcodings.specific");
+    }
+
+    public static Encoding load(String name, String pkg) {
+        String encClassName = pkg + "." + name + "Encoding";
         Class<?> encClass;
         try {
             encClass = Class.forName(encClassName);

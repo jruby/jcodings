@@ -45,4 +45,9 @@ public class TestUnicode {
         assertEquals(enc.codeToMbcLength(0xfffffffe), 1); // USE_INVALID_CODE_SCHEME
         assertEquals(enc.codeToMbcLength(0xffffffff), 1); // USE_INVALID_CODE_SCHEME
     }
+
+    @Test
+    public void testEncodingLoad() throws Exception {
+        assertEquals(UTF8Encoding.INSTANCE, Encoding.load("UTF8"));
+    }
 }
