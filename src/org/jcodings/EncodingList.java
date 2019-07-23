@@ -194,6 +194,7 @@ final class EncodingList {
         EncodingDB.replicate("UTF8-SoftBank", "UTF-8");
         EncodingDB.replicate("SJIS-SoftBank", "Windows-31J");
         EncodingDB.alias("MS932", "Windows-31J");
+        EncodingDB.alias("UTF8", "UTF-8");
     }
 
     public static Encoding getInstance(String name) {
