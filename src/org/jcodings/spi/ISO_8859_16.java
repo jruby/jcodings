@@ -20,6 +20,7 @@
 
 package org.jcodings.spi;
 
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -174,7 +175,7 @@ public class ISO_8859_16 extends Charset {
 
                 if (replace != null) {
                     if (out.remaining() < replace.length) {
-                        in.position(in.position() - 1);
+                        ((Buffer) in).position(in.position() - 1);
                         return CoderResult.OVERFLOW;
                     } else {
                         out.put(replace);
