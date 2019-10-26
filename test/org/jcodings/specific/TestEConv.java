@@ -62,7 +62,9 @@ public class TestEConv {
 
         Assert.assertArrayEquals("foo\rbar".getBytes(), dest);
     }
-
+/**
+ * This is my change
+ */
     @Test
     public void testXMLWithCharref() throws Exception {
         EConv econv = TranscoderDB.open("utf-8".getBytes(), "euc-jp".getBytes(), EConvFlags.XML_ATTR_CONTENT_DECORATOR | EConvFlags.XML_ATTR_QUOTE_DECORATOR | EConvFlags.UNDEF_HEX_CHARREF);
@@ -103,7 +105,9 @@ public class TestEConv {
 
         Assert.assertEquals(EConvResult.Finished, result);
     }
-
+/**
+ * This is my change
+ */
     private static final Charset UTF8;
     private static final Charset ISO2022_JP;
 
