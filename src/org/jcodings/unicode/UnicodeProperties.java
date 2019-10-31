@@ -536,6 +536,7 @@ public class UnicodeProperties {
         new CodeRangeEntry("age=10.0", "CR_Age_10_0"),
         new CodeRangeEntry("age=11.0", "CR_Age_11_0"),
         new CodeRangeEntry("age=12.0", "CR_Age_12_0"),
+        new CodeRangeEntry("age=12.1", "CR_Age_12_1"),
         new CodeRangeEntry("graphemeclusterbreak=prepend", "CR_Grapheme_Cluster_Break_Prepend"),
         new CodeRangeEntry("graphemeclusterbreak=cr", "CR_Grapheme_Cluster_Break_CR"),
         new CodeRangeEntry("graphemeclusterbreak=lf", "CR_NEWLINE"),
