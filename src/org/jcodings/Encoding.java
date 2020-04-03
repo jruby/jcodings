@@ -43,6 +43,7 @@ public abstract class Encoding implements Cloneable {
     private Charset charset = null;
     private boolean isDummy = false;
     private String stringName;
+    private int titlecaseCType;
 
     protected Encoding(String name, int minLength, int maxLength) {
         setName(name);
@@ -452,6 +453,13 @@ public abstract class Encoding implements Cloneable {
 
     public final boolean isUpper(int code) {
         return isCodeCType(code, CharacterType.UPPER);
+    }
+
+    public final boolean isTitle(int code) {
+        if (titlecaseCType == 0) {
+            titlecaseCType = propertyNameToCType("titlecaseletter".getBytes(), 0, "titlecaseletter".length());
+        }
+        return isCodeCType(code, titlecaseCType);
     }
 
     public final boolean isCntrl(int code) {

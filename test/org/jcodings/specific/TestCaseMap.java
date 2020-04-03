@@ -9,6 +9,7 @@ import org.jcodings.Config;
 import org.jcodings.Encoding;
 import org.jcodings.EncodingDB;
 import org.jcodings.IntHolder;
+import org.jcodings.unicode.UnicodeEncoding;
 import org.jcodings.util.CaseInsensitiveBytesHash;
 import org.junit.Test;
 
@@ -80,5 +81,10 @@ public class TestCaseMap {
             assertTrue(caseMap(enc, "ß", Config.CASE_UPCASE).equals("SS"));
             assertTrue(caseMap(enc, "ß", Config.CASE_DOWNCASE).equals("ß"));
         }
+    }
+
+    @Test
+    public void testTitleCase() {
+        assertTrue(UTF8Encoding.INSTANCE.isTitle("ǲ".codePointAt(0)));
     }
 }
