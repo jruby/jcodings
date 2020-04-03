@@ -78,7 +78,7 @@ def generate_encoding_list
       "Windows-1257" => "Windows_1257"
     }
 
-    defines, other = open("#{REPO_PATH}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).partition { |a, b| a =~ /DEFINE/ }
+    defines, other = open("#{REPO_PATH}/encdb.h").read.tr('()', '').scan(/ENC_([A-Z_]+)(.*?);/m).reject{|a, b| b =~ /CESU/}.partition { |a, b| a =~ /DEFINE/ }
     other << ["ALIAS", "\"MS932\", \"Windows-31J\""]
     other << ["ALIAS", "\"UTF8\", \"UTF-8\""]
 
@@ -93,7 +93,7 @@ def generate_transcoder_list
     generic_list = []
     transcoder_list = []
 
-    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.sort.each do |trans_file|
+    Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/ || f =~ /cesu/}.sort.each do |trans_file|
         name = trans_file[/(\w+)\.c/, 1].split('_').map{|e| e.capitalize}.join("")
         trans_src = open(trans_file){|f|f.read}
 
