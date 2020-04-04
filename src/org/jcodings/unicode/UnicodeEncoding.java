@@ -507,7 +507,7 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                             code = codes[i];
                         }
                     }
-                } else if ((folded = CaseUnfold11.Values.get(code)) != null && (flags & folded.flags) != 0) { /* data about character found in CaseUnfold_11_Table */
+                } else if ((folded = CaseUnfold11.Values.get(code)) != null) { /* data about character found in CaseUnfold_11_Table */
                     if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) { /* Titlecase needed, but already Titlecase */
                         /* already Titlecase, no changes needed */
                     } else if ((flags & folded.flags) != 0) { /* needs and data availability match */
