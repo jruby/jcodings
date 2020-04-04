@@ -461,9 +461,12 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                         flags |= Config.CASE_MODIFIED;
                         code = 'I';
                     }
-                } else if ((folded = CaseFold.Values.get(code)) != null) {
-                    if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) {
-
+                } else if ((folded = CaseFold.Values.get(code)) != null) { /* data about character found in CaseFold_Table */
+                    if ((flags & Config.CASE_TITLECASE) != 0 && code >= 0x1C90 && code <= 0x1CBF) { /* Georgian MTAVRULI */
+                        flags |= Config.CASE_MODIFIED;
+                        code += 0x10D0 - 0x1C90;
+                    } else if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) { /* Titlecase needed, but already Titlecase */
+                        /* already Titlecase, no changes needed */
                     } else if ((flags & folded.flags) != 0) {
                         final int[]codes;
                         final int start;
@@ -504,9 +507,13 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
                             code = codes[i];
                         }
                     }
-                } else if ((folded = CaseUnfold11.Values.get(code)) != null && (flags & folded.flags) != 0) {
-                    flags |= Config.CASE_MODIFIED;
-                    code = folded.codes[(flags & folded.flags & Config.CASE_TITLECASE) != 0 ? 1 : 0];
+                } else if ((folded = CaseUnfold11.Values.get(code)) != null && (flags & folded.flags) != 0) { /* data about character found in CaseUnfold_11_Table */
+                    if ((flags & Config.CASE_TITLECASE) != 0 && (folded.flags & Config.CASE_IS_TITLECASE) != 0) { /* Titlecase needed, but already Titlecase */
+                        /* already Titlecase, no changes needed */
+                    } else if ((flags & folded.flags) != 0) { /* needs and data availability match */
+                        flags |= Config.CASE_MODIFIED;
+                        code = folded.codes[(flags & folded.flags & Config.CASE_TITLECASE) != 0 ? 1 : 0];
+                    }
                 }
             }
             toP += codeToMbc(code, to, toP);
