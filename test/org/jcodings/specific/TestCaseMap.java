@@ -81,4 +81,17 @@ public class TestCaseMap {
             assertTrue(caseMap(enc, "ß", Config.CASE_DOWNCASE).equals("ß"));
         }
     }
+
+    @Test
+    public void testGeorgian() throws Exception {
+        Encoding enc = UTF8Encoding.INSTANCE;
+        assertTrue(caseMap(enc, "\u1C90\u1C91\u1C92", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u1C90\u1C91\u10D2", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u1C90\u10D1\u1C92", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u1C90\u10D1\u10D2", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u10D0\u1C91\u1C92", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u10D0\u1C91\u10D2", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u10D0\u10D1\u1C92", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+        assertTrue(caseMap(enc, "\u10D0\u10D1\u10D2", Config.CASE_UPCASE | Config.CASE_TITLECASE).equals("\u10D0\u10D1\u10D2"));
+    }
 }
