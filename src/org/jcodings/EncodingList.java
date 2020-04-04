@@ -33,7 +33,6 @@ final class EncodingList {
         EncodingDB.declare("EUC-JP", "EUCJP");
         EncodingDB.declare("EUC-KR", "EUCKR");
         EncodingDB.declare("EUC-TW", "EUCTW");
-        EncodingDB.declare("GB2312", "GB2312");
         EncodingDB.declare("GB18030", "GB18030");
         EncodingDB.declare("GBK", "GBK");
         EncodingDB.declare("ISO-8859-1", "ISO8859_1");
@@ -126,6 +125,7 @@ final class EncodingList {
         EncodingDB.alias("EUC-JISX0213", "EUC-JIS-2004" /* defined at JIS X 0213:2000, and obsolete at JIS X 0213:2004 */);
         EncodingDB.alias("eucKR", "EUC-KR");
         EncodingDB.alias("eucTW", "EUC-TW");
+        EncodingDB.replicate("GB2312", "EUC-KR");
         EncodingDB.alias("EUC-CN", "GB2312");
         EncodingDB.alias("eucCN", "GB2312");
         EncodingDB.replicate("GB12345", "GB2312");
@@ -210,7 +210,6 @@ final class EncodingList {
             case "EUCJP": return EUCJPEncoding.INSTANCE;
             case "EUCKR": return EUCKREncoding.INSTANCE;
             case "EUCTW": return EUCTWEncoding.INSTANCE;
-            case "GB2312": return GB2312Encoding.INSTANCE;
             case "GB18030": return GB18030Encoding.INSTANCE;
             case "GBK": return GBKEncoding.INSTANCE;
             case "ISO8859_1": return ISO8859_1Encoding.INSTANCE;
