@@ -879,6 +879,10 @@ public enum UnicodeCodeRange {
         return CodeRange.isInCodeRange(range, code);
     }
 
+    public int getCType() {
+        return ordinal();
+    }
+
     static final UnicodeCodeRange[]CodeRangeTable = UnicodeCodeRange.values();
     static final int MAX_WORD_LENGTH = 44;
 }
