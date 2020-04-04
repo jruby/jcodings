@@ -38,7 +38,7 @@ import org.jcodings.util.IntArrayHash;
 import org.jcodings.util.IntHash;
 
 public abstract class UnicodeEncoding extends MultiByteEncoding {
-    private static final int PROPERTY_NAME_MAX_SIZE = UnicodeProperties.MAX_WORD_LENGTH + 1;
+    private static final int PROPERTY_NAME_MAX_SIZE = UnicodeCodeRange.MAX_WORD_LENGTH + 1;
     static final int I_WITH_DOT_ABOVE = 0x0130;
     static final int DOTLESS_i = 0x0131;
     static final int DOT_ABOVE = 0x0307;
@@ -68,17 +68,21 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
             if (code < 256) return isCodeCTypeInternal(code, ctype);
         }
 
-        if (ctype > UnicodeProperties.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
+        if (ctype > UnicodeCodeRange.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
 
-        return CodeRange.isInCodeRange(UnicodeProperties.CodeRangeTable[ctype].getRange(), code);
+        return CodeRange.isInCodeRange(UnicodeCodeRange.CodeRangeTable[ctype].getRange(), code);
 
+    }
+
+    public static boolean isInCodeRange(UnicodeCodeRange range, int code) {
+        return CodeRange.isInCodeRange(range.getRange(), code);
     }
 
     // onigenc_unicode_ctype_code_range
     protected final int[]ctypeCodeRange(int ctype) {
-        if (ctype >= UnicodeProperties.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
+        if (ctype >= UnicodeCodeRange.CodeRangeTable.length) throw new InternalError(ErrorMessages.ERR_TYPE_BUG);
 
-        return UnicodeProperties.CodeRangeTable[ctype].getRange();
+        return UnicodeCodeRange.CodeRangeTable[ctype].getRange();
     }
 
     // onigenc_unicode_property_name_to_ctype
@@ -560,29 +564,13 @@ public abstract class UnicodeEncoding extends MultiByteEncoding {
           0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2, 0x30e2
     };
 
-    static final class CodeRangeEntry {
-        final String table;
-        final byte[]name;
-        int[]range;
-
-        CodeRangeEntry(String name, String table) {
-            this.table = table;
-            this.name = name.getBytes();
-        }
-
-        public int[]getRange() {
-            if (range == null) range = ArrayReader.readIntArray(table);
-            return range;
-        }
-    }
-
     static class CTypeName {
         private static final CaseInsensitiveBytesHash<Integer> Values = initializeCTypeNameTable();
 
         private static CaseInsensitiveBytesHash<Integer> initializeCTypeNameTable() {
             CaseInsensitiveBytesHash<Integer> table = new CaseInsensitiveBytesHash<Integer>();
-            for (int i = 0; i < UnicodeProperties.CodeRangeTable.length; i++) {
-                table.putDirect(UnicodeProperties.CodeRangeTable[i].name, i);
+            for (int i = 0; i < UnicodeCodeRange.CodeRangeTable.length; i++) {
+                table.putDirect(UnicodeCodeRange.CodeRangeTable[i].name, i);
             }
             return table;
         }

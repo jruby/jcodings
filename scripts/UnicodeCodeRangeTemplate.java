@@ -19,12 +19,30 @@
  */
 package org.jcodings.unicode;
 
-import org.jcodings.unicode.UnicodeEncoding.CodeRangeEntry;
+import org.jcodings.util.ArrayReader;
+import org.jcodings.CodeRange;
 
-public class UnicodeProperties {
-    static final CodeRangeEntry[]CodeRangeTable = new CodeRangeEntry[] {
-%{extcrs}
-    };
+public enum UnicodeCodeRange {
+%{extcrs};
 
+    private final String table;
+    final byte[]name;
+    private int[]range;
+
+    private UnicodeCodeRange(String name, String table) {
+        this.table = table;
+        this.name = name.getBytes();
+    }
+
+    int[]getRange() {
+        if (range == null) range = ArrayReader.readIntArray(table);
+        return range;
+    }
+
+    public boolean contains(int code) {
+        return CodeRange.isInCodeRange(range, code);
+    }
+
+    static final UnicodeCodeRange[]CodeRangeTable = UnicodeCodeRange.values();
     static final int MAX_WORD_LENGTH = %{max_length};
 }
