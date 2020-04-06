@@ -72,9 +72,33 @@ abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
         return p_ - p;
     }
 
+    private boolean isInRange(int code, int from, int to) {
+        return code - from <= to - from;
+    }
+
+    private int getLowerCase(int code) {
+        if (isInRange(code, 0x8260, 0x8279)) {
+            return code + 0x0021;
+        } else if (isInRange(code, 0x839f, 0x83b6)) {
+            return code + 0x0020;
+        } else if (isInRange(code, 0x8440, 0x8460)) {
+            int d = code >= 0x844f ? 1 : 0;
+            return code + (0x0030 + d);
+        }
+        return code;
+    }
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
-        return mbnMbcCaseFold(flag, bytes, pp, end, lower);
+        if (isAscii(bytes[pp.value])) {
+            return asciiMbcCaseFold(flag, bytes, pp, end, lower);
+        } else {
+            int lowerP = 0;
+            int code = getLowerCase(mbcToCode(bytes, pp.value, end));
+            int len = codeToMbc(code, lower, lowerP);
+            pp.value += len;
+            return len;
+        }
     }
 
     private static final int CR_Hiragana[] = {
