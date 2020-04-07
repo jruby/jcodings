@@ -62,6 +62,17 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
         return p_ - p;
     }
 
+    private static int getLowerCase(int code) {
+        if (isInRange(code, 0xa3c1, 0xa3da)) {
+            return code + 0x0020;
+        } else if (isInRange(code, 0xa6a1, 0xa6b8)) {
+            return code + 0x0020;
+        } else if (isInRange(code, 0xa7a1, 0xa7c1)) {
+            return code + 0x0030;
+        }
+        return code;
+    }
+
     @Override
     public int mbcCaseFold(int flag, byte[]bytes, IntHolder pp, int end, byte[]lower) {
         int p = pp.value;
@@ -72,10 +83,10 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
             pp.value++;
             return 1;
         } else {
-            int len = length(bytes, p, end);
-            for (int i=0; i<len; i++) {
-                lower[lowerP++] = bytes[p++];
-            }
+            //int len = length(bytes, p, end);
+            int code = getLowerCase(mbcToCode(bytes, pp.value, end));
+            int len = codeToMbc(code, lower, lowerP);
+            if (len == ErrorCodes.ERR_INVALID_CODE_POINT_VALUE) len = 1;
             pp.value += len;
             return len; /* return byte length of converted char to lower */
         }

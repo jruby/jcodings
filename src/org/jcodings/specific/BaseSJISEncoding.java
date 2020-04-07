@@ -72,11 +72,7 @@ abstract class BaseSJISEncoding extends CanBeTrailTableEncoding {
         return p_ - p;
     }
 
-    private boolean isInRange(int code, int from, int to) {
-        return code - from <= to - from;
-    }
-
-    private int getLowerCase(int code) {
+    private static int getLowerCase(int code) {
         if (isInRange(code, 0x8260, 0x8279)) {
             return code + 0x0021;
         } else if (isInRange(code, 0x839f, 0x83b6)) {
