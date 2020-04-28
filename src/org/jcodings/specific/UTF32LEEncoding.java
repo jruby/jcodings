@@ -67,10 +67,12 @@ public final class UTF32LEEncoding extends FixedWidthUnicodeEncoding {
         int foldP = 0;
         if (isAscii(bytes[p] & 0xff) && bytes[p + 1] == 0 && bytes[p + 2] == 0 && bytes[p + 3] == 0) {
 
-            if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI && (flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
-                if (bytes[p] == (byte)0x49) {
-                    fold[foldP++] = (byte)0x31;
-                        fold[foldP] = (byte)0x01;
+            if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
+                if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
+                    if (bytes[p] == (byte)0x49) {
+                        fold[foldP++] = (byte)0x31;
+                        fold[foldP++] = (byte)0x01;
+                    }
                 }
             } else {
                 fold[foldP++] = AsciiTables.ToLowerCaseTable[bytes[p] & 0xff];
