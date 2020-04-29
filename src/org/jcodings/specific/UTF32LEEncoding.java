@@ -33,15 +33,14 @@ public final class UTF32LEEncoding extends FixedWidthUnicodeEncoding {
     @Override
     public boolean isNewLine(byte[]bytes, int p, int end) {
         if (p + 3 < end) {
-            if (bytes[p] == (byte)0x0a && bytes[p + 1] == 0 && bytes[p + 2] == 0 && bytes[p + 3] == 0) return true;
+            if (bytes[p + 3] == 0 && bytes[p + 2] == 0 && bytes[p + 1] == 0 && bytes[p] == (byte)0x0a) return true;
 
             if (Config.USE_UNICODE_ALL_LINE_TERMINATORS) {
-                if ((Config.USE_CRNL_AS_LINE_TERMINATOR && bytes[p] == (byte)0x0d) ||
-                   bytes[p] == (byte)0x85 && bytes[p + 1] == 0 && bytes[p + 2] == 0 && bytes[3] == 0) return true;
+                if (bytes[p + 3] == 0 && bytes[p + 2] == 0 && bytes[p + 1] == 0 &&
+                    (bytes[p] == (byte)0x0b || bytes[p] == (byte)0x0c || bytes[p] == (byte)0x0d || bytes[p] == (byte)0x85)) return true;
 
-                if (bytes[p + 1] == (byte)0x20 &&
-                   (bytes[p] == (byte)0x29 || bytes[p] == (byte)0x28) &&
-                    bytes[p + 2] == 0 && bytes[p + 3] == 0) return true;
+                if (bytes[p + 3] == 0 && bytes[p + 2] == 0 && bytes[p + 1] == (byte)0x20 &&
+                   (bytes[p] == (byte)0x29 || bytes[p] == (byte)0x28)) return true;
             } // USE_UNICODE_ALL_LINE_TERMINATORS
         }
         return false;
@@ -68,10 +67,12 @@ public final class UTF32LEEncoding extends FixedWidthUnicodeEncoding {
         int foldP = 0;
         if (isAscii(bytes[p] & 0xff) && bytes[p + 1] == 0 && bytes[p + 2] == 0 && bytes[p + 3] == 0) {
 
-            if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI && (flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
-                if (bytes[p] == (byte)0x49) {
-                    fold[foldP++] = (byte)0x31;
-                        fold[foldP] = (byte)0x01;
+            if (Config.USE_UNICODE_CASE_FOLD_TURKISH_AZERI) {
+                if ((flag & Config.CASE_FOLD_TURKISH_AZERI) != 0) {
+                    if (bytes[p] == (byte)0x49) {
+                        fold[foldP++] = (byte)0x31;
+                        fold[foldP++] = (byte)0x01;
+                    }
                 }
             } else {
                 fold[foldP++] = AsciiTables.ToLowerCaseTable[bytes[p] & 0xff];

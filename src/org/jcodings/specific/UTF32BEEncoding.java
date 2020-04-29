@@ -36,8 +36,8 @@ public final class UTF32BEEncoding extends FixedWidthUnicodeEncoding {
             if (bytes[p + 3] == (byte)0x0a && bytes[p + 2] == 0 && bytes[p + 1] == 0 && bytes[p] == 0) return true;
 
             if (Config.USE_UNICODE_ALL_LINE_TERMINATORS) {
-                if ((Config.USE_CRNL_AS_LINE_TERMINATOR && bytes[p + 3] == (byte)0x0d) ||
-                   bytes[p + 3] == (byte)0x85 && bytes[p + 2] == 0 && bytes[p + 1] == 0 && bytes[p] == 0) return true;
+                if ((bytes[p + 3] == (byte)0x0b || bytes[p + 3] == (byte)0x0c || bytes[p + 3] == (byte)0x0d || bytes[p + 3] == (byte)0x85) 
+                    && bytes[p + 2] == 0 && bytes[p + 1] == 0 && bytes[p] == 0) return true;
 
                 if (bytes[p + 2] == (byte)0x20 &&
                    (bytes[p + 3] == (byte)0x29 || bytes[p + 3] == (byte)0x28) &&
