@@ -666,7 +666,7 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     public static byte getGB4bt2(int a) {
-        return (byte)(a >>> 160);
+        return (byte)(a >>> 16);
     }
 
     public static byte getGB4bt3(int a) {
