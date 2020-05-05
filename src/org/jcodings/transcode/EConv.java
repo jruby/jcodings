@@ -395,7 +395,7 @@ public final class EConv implements EConvFlags {
             Ptr inDataStartPtr = new Ptr(inBuf.dataStart);
             res = transConv(inBuf.bytes, inDataStartPtr, inBuf.dataEnd, out, outPtr, outStop, (flags & ~AFTER_OUTPUT) | PARTIAL_INPUT, resultPosition);
             inBuf.dataStart = inDataStartPtr.p;
-            if (!res.isSourceBufferEmpty()) return convertInternalResult(EConvResult.SourceBufferEmpty, resultPosition);
+            if (!res.isSourceBufferEmpty()) return convertInternalResult(res, resultPosition);
         }
 
         if (hasOutput && (flags & AFTER_OUTPUT) != 0 && inPtr.p != inStop) {
