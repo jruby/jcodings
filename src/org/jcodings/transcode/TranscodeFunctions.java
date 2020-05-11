@@ -519,7 +519,7 @@ public class TranscodeFunctions {
             int c = sp[2] & 0x7F;
             int p = (c - 0x21) * 2;
             byte[] pBytes = tbl0208;
-            if (sp[1] == G0_JISX0208_1983) {
+            if (sp[1] != G0_JISX0208_1983) {
                 o[oStart++] = 0x1B;
                 o[oStart++] = (byte)'$';
                 o[oStart++] = (byte)'B';
