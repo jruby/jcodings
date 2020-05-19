@@ -66,8 +66,8 @@ public interface Config {
     final int UNICODE_VERSION_MAJOR = 12;
     final int UNICODE_VERSION_MINOR = 1;
     final int UNICODE_VERSION_TEENY = 0;
-    final String UNICODE_EMOJI_VERSION_STRING = "12.1";
+    final String UNICODE_EMOJI_VERSION_STRING = "12.0";
     final int UNICODE_EMOJI_VERSION_MAJOR = 12;
-    final int UNICODE_EMOJI_VERSION_MINOR = 1;
+    final int UNICODE_EMOJI_VERSION_MINOR = 0;
 
 }
