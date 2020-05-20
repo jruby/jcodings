@@ -221,6 +221,6 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     }
 
     public static boolean isInRange(int code, int from, int to) {
-        return code - from <= to - from;
+        return code - from >= 0 && to - code >= 0;
     }
 }
