@@ -6,3 +6,11 @@ jdk:
 
 script: mvn test
 
+matrix:
+  include:
+    - arch: ppc64le
+      addons: [ apt: [ packages: maven ]]
+      jdk: openjdk8
+    - arch: ppc64le
+      addons: [ apt: [ packages: maven ]]
+      jdk: openjdk11
