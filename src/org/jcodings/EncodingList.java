@@ -28,6 +28,7 @@ final class EncodingList {
         EncodingDB.declare("Big5", "BIG5");
         EncodingDB.declare("Big5-HKSCS", "Big5HKSCS");
         EncodingDB.declare("Big5-UAO", "Big5UAO");
+        EncodingDB.declare("CESU-8", "CESU8");
         EncodingDB.declare("CP949", "CP949");
         EncodingDB.declare("Emacs-Mule", "EmacsMule");
         EncodingDB.declare("EUC-JP", "EUCJP");
@@ -68,6 +69,8 @@ final class EncodingList {
         EncodingDB.alias("BINARY", "ASCII-8BIT");
         EncodingDB.replicate("IBM437", "ASCII-8BIT");
         EncodingDB.alias("CP437", "IBM437");
+        EncodingDB.replicate("IBM720", "ASCII-8BIT");
+        EncodingDB.alias("CP720", "IBM720");
         EncodingDB.replicate("IBM737", "ASCII-8BIT");
         EncodingDB.alias("CP737", "IBM737");
         EncodingDB.replicate("IBM775", "ASCII-8BIT");
@@ -205,6 +208,7 @@ final class EncodingList {
             case "BIG5": return BIG5Encoding.INSTANCE;
             case "Big5HKSCS": return Big5HKSCSEncoding.INSTANCE;
             case "Big5UAO": return Big5UAOEncoding.INSTANCE;
+            case "CESU8": return CESU8Encoding.INSTANCE;
             case "CP949": return CP949Encoding.INSTANCE;
             case "EmacsMule": return EmacsMuleEncoding.INSTANCE;
             case "EUCJP": return EUCJPEncoding.INSTANCE;

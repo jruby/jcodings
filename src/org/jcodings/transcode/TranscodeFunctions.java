@@ -11,6 +11,27 @@ public class TranscodeFunctions {
     public static final int BE = 1;
     public static final int LE = 2;
 
+    public static int funSoToCESU8(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+        long scalar = ((s[0]&0x07)<<18) | ((s[1]&0x3F)<<12) | ((s[2]&0x3F)<< 6) | (s[3]&0x3F);
+        scalar -= 0x10000;
+        o[0] = (byte)0xED;
+        o[1] = (byte)(0xA0 | (scalar >> 16));
+        o[2] = (byte)(0x80 | ((scalar >> 10) & 0x3F));
+        o[3] = (byte)0xED;
+        o[4] = (byte)(0xB0 | ((scalar >> 6) & 0x0F));
+        o[5] = (byte)(0x80 | (scalar & 0x3F));
+        return 6;
+    }
+
+    public static int funSoFromCESU8(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int osize) {
+        long scalar = ( ((s[1]&0x0F)<<16) | ((s[2]&0x3F)<<10) | ((s[4]&0x0F)<< 6) | (s[5]&0x3F)) + 0x10000;
+        o[0] = (byte)(0xF0 | (scalar >> 18));
+        o[1] = (byte)(0x80 | ((scalar >> 12) & 0x3F));
+        o[2] = (byte)(0x80 | ((scalar >> 6) & 0x3F));
+        o[3] = (byte)(0x80 | (scalar & 0x3F));
+        return 4;
+    }
+
     public static int funSoToUTF16(byte[] statep, byte[] sBytes, int sStart, int l, byte[] o, int oStart, int osize) {
         int sp = 0;
         if (statep[sp] == 0) {
