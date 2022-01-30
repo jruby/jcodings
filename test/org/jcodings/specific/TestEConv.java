@@ -78,6 +78,20 @@ public class TestEConv {
     }
 
     @Test
+    public void testEscapeApos() throws Exception {
+        EConv econv = TranscoderDB.open("", "", EConvFlags.XML_ATTR_CONTENT_DECORATOR | EConvFlags.XML_ATTR_QUOTE_DECORATOR | EConvFlags.UNDEF_HEX_CHARREF);
+
+        byte[] src = "'".getBytes();
+
+        byte[] dest = new byte[50];
+        Ptr destP = new Ptr(0);
+
+        econv.convert(src, new Ptr(0), src.length, dest, destP, dest.length, 0);
+
+        Assert.assertArrayEquals("\"&apos;\"".getBytes(), Arrays.copyOf(dest, destP.p));
+    }
+
+    @Test
     public void testXMLText() throws Exception {
 //        EConv econv = TranscoderDB.open("utf-8".getBytes(), "iso-2022-jp".getBytes(), EConvFlags.XML_TEXT_DECORATOR);
 //
