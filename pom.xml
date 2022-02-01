@@ -74,8 +74,6 @@
           <execution>
             <id>default-compile</id>
             <configuration>
-              <source>1.7</source>
-              <target>1.7</target>
               <excludes>
                 <exclude>module-info.java</exclude>
               </excludes>
@@ -84,6 +82,8 @@
         </executions>
         <configuration>
           <encoding>UTF-8</encoding>
+          <source>1.8</source>
+          <target>1.8</target>
         </configuration>
       </plugin>
       <plugin>
