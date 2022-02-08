@@ -26,7 +26,7 @@ import org.jcodings.transcode.Transcoding;
 
 public class Universal_newline_Transcoder extends Transcoder {
     protected Universal_newline_Transcoder() {
-        super("", "universal_newline", universal_newline, "Newline", 1, 1, 2, AsciiCompatibility.CONVERTER, 2);
+        super("", "universal_newline", 4, "Newline", 1, 1, 2, AsciiCompatibility.CONVERTER, 2);
     }
 
     private static final int universal_newline = Transcoding.WORDINDEX2INFO(1);

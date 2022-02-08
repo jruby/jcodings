@@ -25,7 +25,7 @@ import org.jcodings.transcode.Transcoder;
 
 public class From_CESU_8_Transcoder extends Transcoder {
     protected From_CESU_8_Transcoder () {
-        super("CESU-8", "UTF-8", 148, "CESU8UTF8", 1, 6, 4, AsciiCompatibility.DECODER, 0);
+        super("CESU-8", "UTF-8", 148, "Cesu8", 1, 6, 4, AsciiCompatibility.DECODER, 0);
     }
 
     public static final Transcoder INSTANCE = new From_CESU_8_Transcoder();

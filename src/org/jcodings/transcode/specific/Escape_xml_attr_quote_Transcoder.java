@@ -25,7 +25,7 @@ import org.jcodings.transcode.Transcoder;
 
 public class Escape_xml_attr_quote_Transcoder extends Transcoder {
     protected Escape_xml_attr_quote_Transcoder () {
-        super("", "xml_attr_quote", 72, "Escape", 1, 1, 7, AsciiCompatibility.ENCODER, 1);
+        super("", "xml_attr_quote", 76, "Escape", 1, 1, 7, AsciiCompatibility.ENCODER, 1);
     }
 
     public static final Transcoder INSTANCE = new Escape_xml_attr_quote_Transcoder();
