@@ -78,6 +78,19 @@ public class TestEConv {
     }
 
     @Test
+    public void testEscapeApos() throws Exception {
+        EConv econv = TranscoderDB.open("".getBytes(), "".getBytes(), EConvFlags.XML_ATTR_CONTENT_DECORATOR);
+
+        byte[] src = "&'&".getBytes();
+
+        byte[] dest = new byte[16];
+        Ptr destP = new Ptr(0);
+
+        econv.convert(src, new Ptr(0), src.length, dest, destP, dest.length, 0);
+        Assert.assertEquals(new String("&amp;&apos;&amp;".getBytes()), new String(Arrays.copyOf(dest, destP.p)));
+    }
+
+    @Test
     public void testXMLText() throws Exception {
 //        EConv econv = TranscoderDB.open("utf-8".getBytes(), "iso-2022-jp".getBytes(), EConvFlags.XML_TEXT_DECORATOR);
 //
