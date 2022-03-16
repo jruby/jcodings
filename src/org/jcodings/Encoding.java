@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.constants.CharacterType;
 import org.jcodings.exception.EncodingException;
+import org.jcodings.exception.EncodingError;
 import org.jcodings.exception.ErrorMessages;
 import org.jcodings.exception.InternalException;
 import org.jcodings.util.BytesHash;
@@ -147,7 +148,7 @@ public abstract class Encoding implements Cloneable {
             clone.index = count++;
             return clone;
         } catch (CloneNotSupportedException cnse){
-            throw new EncodingException(ErrorMessages.ERR_COULD_NOT_REPLICATE, new String(name));
+            throw new EncodingException(EncodingError.ERR_COULD_NOT_REPLICATE, new String(name));
         }
     }
 
