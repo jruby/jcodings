@@ -25,7 +25,7 @@ import org.jcodings.transcode.Transcoder;
 
 public class From_UTF8_MAC_Transcoder extends Transcoder {
     protected From_UTF8_MAC_Transcoder () {
-        super("UTF8-MAC", "UTF-8", 52544, "Utf8Mac", 1, 4, 10, AsciiCompatibility.ENCODER, 24);
+        super("UTF8-MAC", "UTF-8", 52544, "Utf8Mac", 1, 4, 10, AsciiCompatibility.ENCODER, 0);
     }
 
     public static final Transcoder INSTANCE = new From_UTF8_MAC_Transcoder();

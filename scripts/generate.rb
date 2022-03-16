@@ -92,6 +92,7 @@ end
 
 def generate_transcoder_list
     generic_list = []
+    specific_list = []
     transcoder_list = []
 
     Dir["#{REPO_PATH}/enc/trans/*.c"].reject{|f| f =~ /transdb/}.sort.each do |trans_file|
@@ -108,7 +109,11 @@ def generate_transcoder_list
             state_size = "0" if state_size == "sizeof(struct from_utf8_mac_status)"
             generic = funcs.all?{|f|f == "NULL" || f == "0"}
 
-            generic_list << [src, dst, tree_start, "\"#{name}\"", iul, max_in, max_out, "AsciiCompatibility.#{conv.split('_').last.upcase}", state_size] if generic
+            if generic
+              generic_list << [src, dst, tree_start, "\"#{name}\"", iul, max_in, max_out, "AsciiCompatibility.#{conv.split('_').last.upcase}", state_size]
+            else
+              specific_list << [t_name, src, dst, tree_start, "\"#{name}\"", iul, max_in, max_out, "AsciiCompatibility.#{conv.split('_').last.upcase}", state_size]
+            end
             transcoder_list << [src, dst, t_name, !generic]
         end
 
@@ -118,6 +123,20 @@ def generate_transcoder_list
         sub(/%\{generic\}/, generic_list.map{|g| "#{INDENT*2}new GenericTranscoderEntry(#{g.join(', ')})"}.join(",\n")).
         sub(/%\{switch\}/, transcoder_list.map{|src, dst, cls, specific| "#{INDENT*3}case \"#{cls}\": return #{cls}_Transcoder.INSTANCE;" if specific}.compact.join("\n"))
 
+    generate_specific_transcoder_data(specific_list)
+end
+
+def generate_specific_transcoder_data(specific_list)
+    specific_list.each do |transcoder|
+        path = "#{SRC_DIR}/transcode/specific/#{transcoder[0]}_Transcoder.java"
+        next unless File.exist?(path)
+
+        content = open(path, "rb"){ |f| f.read }
+        if content.match("super\\((.*)\\);")
+            content.sub!($1, transcoder[1..-1].join(", "))
+            open(path, "wb") << content
+        end
+    end
 end
 
 def generate_transoder_data
