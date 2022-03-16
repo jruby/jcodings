@@ -25,6 +25,8 @@ import org.jcodings.ascii.AsciiTables;
 import org.jcodings.exception.ErrorCodes;
 import org.jcodings.unicode.UnicodeEncoding;
 
+import static java.lang.Integer.toUnsignedLong;
+
 abstract class BaseUTF8Encoding extends UnicodeEncoding {
     static final boolean USE_INVALID_CODE_SCHEME = true;
 
@@ -72,7 +74,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             return 2;
         } else if ((code & 0xffff0000) == 0) {
             return 3;
-        } else if ((code & 0xFFFFFFFFL) <= VALID_CODE_LIMIT) {
+        } else if (toUnsignedLong(code) <= VALID_CODE_LIMIT) {
             return 4;
         } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
             return 1;
@@ -125,7 +127,7 @@ abstract class BaseUTF8Encoding extends UnicodeEncoding {
             } else if ((code & 0xffff0000) == 0) {
                 bytes[p_++] = (byte)(((code >>> 12) & 0x0f) | 0xe0);
                 bytes[p_++] = trailS(code, 6);
-            } else if ((code & 0xFFFFFFFFL) <= VALID_CODE_LIMIT) {
+            } else if (toUnsignedLong(code) <= VALID_CODE_LIMIT) {
                 bytes[p_++] = (byte)(((code >>> 18) & 0x07) | 0xf0);
                 bytes[p_++] = trailS(code, 12);
                 bytes[p_++] = trailS(code, 6);
