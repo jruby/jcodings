@@ -22,6 +22,8 @@ package org.jcodings;
 import org.jcodings.ascii.AsciiTables;
 import org.jcodings.exception.ErrorCodes;
 
+import static java.lang.Integer.toUnsignedLong;
+
 public abstract class MultiByteEncoding extends AbstractEncoding {
 
     protected final int EncLen[];
@@ -184,7 +186,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     }
 
     protected final boolean mb2IsCodeCType(int code, int ctype) {
-        if ((code & 0xFFFFFFFFL) < 128) { // unsigned 32-bit
+        if (toUnsignedLong(code) < 128) { // unsigned 32-bit
             return isCodeCTypeInternal(code, ctype); // configured with ascii
         } else {
             if (isWordGraphPrint(ctype)) {

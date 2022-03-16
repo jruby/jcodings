@@ -25,6 +25,8 @@ import org.jcodings.ascii.AsciiTables;
 import org.jcodings.exception.ErrorCodes;
 import org.jcodings.unicode.UnicodeEncoding;
 
+import static java.lang.Integer.toUnsignedLong;
+
 public final class CESU8Encoding extends UnicodeEncoding {
   static final boolean USE_INVALID_CODE_SCHEME = true;
 
@@ -120,7 +122,7 @@ public final class CESU8Encoding extends UnicodeEncoding {
       return 2;
     } else if ((code & 0xffff0000) == 0) {
       return 3;
-    } else if ((code & 0xFFFFFFFFL) <= VALID_CODE_LIMIT) {
+    } else if (toUnsignedLong(code) <= VALID_CODE_LIMIT) {
       return 6;
     } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
       return 1;
@@ -187,7 +189,7 @@ public final class CESU8Encoding extends UnicodeEncoding {
       } else if ((code & 0xffff0000) == 0) {
         bytes[p_++] = (byte) (((code >>> 12) & 0x0f) | 0xe0);
         bytes[p_++] = trailS(code, 6);
-      } else if ((code & 0xFFFFFFFFL) <= VALID_CODE_LIMIT) {
+      } else if (toUnsignedLong(code) <= VALID_CODE_LIMIT) {
         long high = (code >> 10) + 0xD7C0;
         code = (code & 0x3FF) + 0xDC00;
         bytes[p_++] = (byte)(((high>>12) & 0x0f) | 0xe0);

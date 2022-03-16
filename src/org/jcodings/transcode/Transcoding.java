@@ -21,6 +21,8 @@ package org.jcodings.transcode;
 
 import org.jcodings.Ptr;
 
+import static java.lang.Byte.toUnsignedInt;
+
 public class Transcoding implements TranscodingInstruction {
     public Transcoding(Transcoder transcoder, int flags) {
         this.transcoder = transcoder;
@@ -157,7 +159,7 @@ public class Transcoding implements TranscodingInstruction {
                     nextByte = in_bytes[in_p++];
                     // fall through
                 case FOLLOW_BYTE: // follow_byte:
-                    if ((nextByte & 0xFF) < BL_MIN_BYTE(this) || BL_MAX_BYTE(this) < (nextByte & 0xFF)) {
+                    if (toUnsignedInt(nextByte) < BL_MIN_BYTE(this) || BL_MAX_BYTE(this) < toUnsignedInt(nextByte)) {
                         nextInfo = INVALID;
                     } else {
                         nextInfo = BL_ACTION(this, nextByte);
@@ -642,19 +644,19 @@ public class Transcoding implements TranscodingInstruction {
     }
 
     public static int BL_MIN_BYTE(Transcoding tc) {
-        return tc.transcoder.byteArray[BL_BASE(tc)] & 0xFF;
+        return toUnsignedInt(tc.transcoder.byteArray[BL_BASE(tc)]);
     }
 
     public static int BL_MAX_BYTE(Transcoding tc) {
-        return tc.transcoder.byteArray[BL_BASE(tc) + 1] & 0xFF;
+        return toUnsignedInt(tc.transcoder.byteArray[BL_BASE(tc) + 1]);
     }
 
     public static int BL_OFFSET(Transcoding tc, int b) {
-        return tc.transcoder.byteArray[BL_BASE(tc) + 2 + b - BL_MIN_BYTE(tc)] & 0xFF;
+        return toUnsignedInt(tc.transcoder.byteArray[BL_BASE(tc) + 2 + b - BL_MIN_BYTE(tc)]);
     }
 
     public static int BL_ACTION(Transcoding tc, byte b) {
-        return tc.transcoder.intArray[BL_INFO(tc) + BL_OFFSET(tc, b & 0xFF)];
+        return tc.transcoder.intArray[BL_INFO(tc) + BL_OFFSET(tc, toUnsignedInt(b))];
     }
 
     public static byte getGB4bt0(int a) {

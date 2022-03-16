@@ -28,6 +28,8 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 import java.nio.charset.CoderResult;
 
+import static java.lang.Byte.toUnsignedInt;
+
 /**
  * Implementation of Charset, CharsetDecoder, and CharsetEncoder for ISO-8859-16.
  */
@@ -63,7 +65,7 @@ public class ISO_8859_16 extends Charset {
             for (;;) {
                 if (!in.hasRemaining()) return CoderResult.UNDERFLOW;
                 if (!out.hasRemaining()) return CoderResult.OVERFLOW;
-                int b = in.get() & 0xFF;
+                int b = toUnsignedInt(in.get());
                 char c = TABLE[b];
                 out.put(c);
             }
