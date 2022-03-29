@@ -62,12 +62,12 @@ public interface Config {
     final int ENC_CASE_FOLD_MIN = INTERNAL_ENC_CASE_FOLD_MULTI_CHAR;
     final int ENC_CASE_FOLD_DEFAULT = ENC_CASE_FOLD_MIN;
 
-    final String UNICODE_VERSION_STRING = "12.1.0";
-    final int UNICODE_VERSION_MAJOR = 12;
-    final int UNICODE_VERSION_MINOR = 1;
+    final String UNICODE_VERSION_STRING = "13.0.0";
+    final int UNICODE_VERSION_MAJOR = 13;
+    final int UNICODE_VERSION_MINOR = 0;
     final int UNICODE_VERSION_TEENY = 0;
-    final String UNICODE_EMOJI_VERSION_STRING = "12.0";
-    final int UNICODE_EMOJI_VERSION_MAJOR = 12;
-    final int UNICODE_EMOJI_VERSION_MINOR = 0;
+    final String UNICODE_EMOJI_VERSION_STRING = "13.1";
+    final int UNICODE_EMOJI_VERSION_MAJOR = 13;
+    final int UNICODE_EMOJI_VERSION_MINOR = 1;
 
 }
