@@ -48,7 +48,7 @@ public class Macros {
 
     // UNICODE_VALID_CODEPOINT_P
     public static boolean UNICODE_VALID_CODEPOINT_P(int c) {
-        return ((c) <= 0x10ffff) &&
+        return (Integer.compareUnsigned(c, 0x10ffff) <= 0) &&
             !((c) < 0x10000 && UTF16_IS_SURROGATE((c) >> 8));
     }
 
