@@ -31,17 +31,6 @@ public class To_CESU_8_Transcoder extends Transcoder {
     public static final Transcoder INSTANCE = new To_CESU_8_Transcoder();
 
     @Override
-    public boolean hasStateInit() {
-        return true;
-    }
-
-    @Override
-    public int stateInit(byte[] statep) {
-        statep[0] = 0;
-        return 0;
-    }
-
-    @Override
     public int startToOutput(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
         return TranscodeFunctions.funSoToCESU8(statep, s, sStart, l, o, oStart, oSize);
     }
