@@ -142,15 +142,14 @@ public final class CESU8Encoding extends UnicodeEncoding {
       case 1:
         return c;
       case 2:
-        return ((c & 0x1F)  << 6) | (bytes[p + 1] & 0xff & 0x3f);
+        return ((c & 0x1F) << 6) | (bytes[p + 1] & 0xff & 0x3f);
       case 3:
-        return ((c & 0xF) << 12) | ((bytes[p + 1] & 0xff & 0x3f) << 6) | (bytes[p + 2] & 0xff & 0x3f);
-      case 6:
-        {
-            int high = ((c & 0xF) << 12) | ((bytes[p + 1] & 0xff & 0x3f) << 6) | (bytes[p + 2] & 0xff & 0x3f);
-            int low  = ((bytes[p + 3] & 0xff & 0xF) << 12) | ((bytes[p + 4] & 0xff & 0x3f) << 6) | (bytes[p + 5] & 0xff & 0x3f);
-            return ((high & 0x03ff) << 10) + (low & 0x03ff) + 0x10000;
-        }
+        return utf8Decode3ByteSequence(bytes, p, c);
+      case 6: {
+        int high = utf8Decode3ByteSequence(bytes, p, c);
+        int low = utf8Decode3ByteSequence(bytes, p + 3);
+        return ((high & 0x03ff) << 10) + (low & 0x03ff) + 0x10000;
+      }
     }
 
     if (USE_INVALID_CODE_SCHEME) {
@@ -159,6 +158,14 @@ public final class CESU8Encoding extends UnicodeEncoding {
       }
     }
     return c;
+  }
+
+  private static int utf8Decode3ByteSequence(byte[] bytes, int p) {
+    return utf8Decode3ByteSequence(bytes, p, bytes[p]);
+  }
+
+  private static int utf8Decode3ByteSequence(byte[] bytes, int p, int c) {
+    return ((c & 0xF) << 12) | ((bytes[p + 1] & 0xff & 0x3f) << 6) | (bytes[p + 2] & 0xff & 0x3f);
   }
 
   static byte trailS(int code, int shift) {
@@ -192,10 +199,10 @@ public final class CESU8Encoding extends UnicodeEncoding {
       } else if (toUnsignedLong(code) <= VALID_CODE_LIMIT) {
         long high = (code >> 10) + 0xD7C0;
         code = (code & 0x3FF) + 0xDC00;
-        bytes[p_++] = (byte)(((high>>12) & 0x0f) | 0xe0);
+        bytes[p_++] = (byte) (((high >> 12) & 0x0f) | 0xe0);
         bytes[p_++] = trailS(high, 6);
         bytes[p_++] = trail0(high);
-        bytes[p_++] = (byte)(((code>>12) & 0x0f) | 0xe0);
+        bytes[p_++] = (byte) (((code >> 12) & 0x0f) | 0xe0);
         bytes[p_++] = trailS(code, 6);
       } else if (USE_INVALID_CODE_SCHEME && code == INVALID_CODE_FE) {
         bytes[p_] = (byte) 0xfe;
@@ -254,6 +261,14 @@ public final class CESU8Encoding extends UnicodeEncoding {
     int p_ = s;
     while (!utf8IsLead(bytes[p_] & 0xff) && p_ > p)
       p_--;
+    if (p_ > p && s - p_ == 2 && Character.isLowSurrogate((char) utf8Decode3ByteSequence(bytes, p_))) {
+      int pSurrogatePair = p_ - 1;
+      while (!utf8IsLead(bytes[pSurrogatePair] & 0xff) && pSurrogatePair > p)
+        pSurrogatePair--;
+      if (p_ - pSurrogatePair == 3 && Character.isHighSurrogate((char) utf8Decode3ByteSequence(bytes, pSurrogatePair))) {
+        return pSurrogatePair;
+      }
+    }
     return p_;
   }
 

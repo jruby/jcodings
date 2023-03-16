@@ -18,6 +18,12 @@ public class TestCESU8 {
     }
 
     @Test
+    public void testPrevCharHead6byteChar() throws Exception {
+        byte[]bytes = "\u00ed\u00a0\u0080\u00ed\u00b0\u0080".getBytes("ISO-8859-1");
+        assertEquals(0, enc.prevCharHead(bytes, 0, bytes.length, bytes.length));
+    }
+
+    @Test
     public void testUnicodeLength() throws Exception {
         byte[]bytes = "test\u00C5\u0099".getBytes();
         assertEquals(6, enc.strLength(bytes, 0, bytes.length));
