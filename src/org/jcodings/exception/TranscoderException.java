@@ -20,6 +20,9 @@
 package org.jcodings.exception;
 
 public class TranscoderException extends JCodingsException {
+
+    private static final long serialVersionUID = 1L;
+
     public TranscoderException(String message) {
         super(message);
     }
