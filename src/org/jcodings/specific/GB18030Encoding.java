@@ -120,7 +120,7 @@ public final class GB18030Encoding extends MultiByteEncoding {
         Odd_CM_Odd_C4CM,
         Even_CM_Even_C4CM,
         Odd_CM_Even_C4CM
-    };
+    }
 
     @Override
     public int leftAdjustCharHead(byte[]bytes, int start, int s, int end) {

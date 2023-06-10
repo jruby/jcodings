@@ -99,7 +99,7 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
         int p_ = s;
         while (!islead(bytes[p_] & 0xff) && p_ > p) p_--;
         return p_;
-    };
+    }
 
     @Override
     public boolean isReverseMatchAllowed(byte[]bytes, int p, int end) {
