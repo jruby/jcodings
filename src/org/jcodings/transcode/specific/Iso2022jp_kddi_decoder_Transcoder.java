@@ -40,6 +40,7 @@ public class Iso2022jp_kddi_decoder_Transcoder extends Transcoder {
         return TranscodeFunctions.iso2022jpKddiInit(state);
     }
 
+    @Override
     public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
         return TranscodeFunctions.funSiIso2022jpKddiDecoder(statep, s, sStart, l);
     }

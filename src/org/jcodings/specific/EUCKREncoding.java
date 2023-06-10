@@ -69,6 +69,7 @@ public class EUCKREncoding extends EucEncoding {
     }
 
     // euckr_islead
+    @Override
     protected boolean isLead(int c) {
         return ((c) < 0xa1 || (c) == 0xff);
     }

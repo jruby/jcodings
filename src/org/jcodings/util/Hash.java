@@ -133,6 +133,7 @@ public abstract class Hash<V> implements Iterable<V> {
         return h & HASH_SIGN_BIT_MASK;
     }
 
+    @Override
     public Iterator<V> iterator() {
         return new HashIterator();
     }
@@ -144,16 +145,19 @@ public abstract class Hash<V> implements Iterable<V> {
             next = head.after;
         }
 
+        @Override
         public boolean hasNext() {
             return next != head;
         }
 
+        @Override
         public V next() {
             HashEntry<V> e = next;
             next = e.after;
             return e.value;
         }
 
+        @Override
         public void remove() {
             throw new InternalException("not supported operation exception");
         }
@@ -170,20 +174,24 @@ public abstract class Hash<V> implements Iterable<V> {
             next = head.after;
         }
 
+        @Override
         public Iterator<HashEntry<V>> iterator() {
             return this;
         }
 
+        @Override
         public boolean hasNext() {
             return next != head;
         }
 
+        @Override
         public HashEntry<V> next() {
             HashEntry<V> e = next;
             next = e.after;
             return e;
         }
 
+        @Override
         public void remove() {
             throw new InternalException("not supported operation exception");
         }

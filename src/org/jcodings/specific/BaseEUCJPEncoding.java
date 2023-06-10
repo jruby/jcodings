@@ -92,6 +92,7 @@ abstract class BaseEUCJPEncoding extends EucEncoding {
         }
     }
 
+    @Override
     protected boolean isLead(int c) {
         return ((c - 0xa1) & 0xff) > 0xfe - 0xa1;
     }

@@ -29,6 +29,7 @@ public final class BytesHash<V> extends Hash<V>{
         super(size);
     }
 
+    @Override
     protected void init() {
         head = new BytesHashEntry<V>();
     }

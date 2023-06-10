@@ -31,6 +31,7 @@ public final class CaseInsensitiveBytesHash<V> extends Hash<V>{
         super(size);
     }
 
+    @Override
     protected void init() {
         head = new CaseInsensitiveBytesHashEntry<V>();
     }

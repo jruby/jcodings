@@ -10,10 +10,13 @@ import java.util.List;
  */
 public class Charsets extends java.nio.charset.spi.CharsetProvider {
     private static final List<Charset> charsets = Collections.singletonList((Charset) ISO_8859_16.INSTANCE);
+
+    @Override
     public Iterator<Charset> charsets() {
         return charsets.iterator();
     }
 
+    @Override
     public Charset charsetForName(String charsetName) {
         if ("ISO-8859-16".equals(charsetName) || ISO_8859_16.INSTANCE.aliases().contains(charsetName)) {
             return ISO_8859_16.INSTANCE;
