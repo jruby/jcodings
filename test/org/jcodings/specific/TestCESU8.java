@@ -1,6 +1,6 @@
 package org.jcodings.specific;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.jcodings.Encoding;
 import org.junit.Test;

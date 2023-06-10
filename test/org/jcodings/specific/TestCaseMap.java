@@ -1,6 +1,6 @@
 package org.jcodings.specific;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
