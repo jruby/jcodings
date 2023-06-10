@@ -851,7 +851,6 @@ public final class EConv implements EConvFlags {
         EConv ec2 = (EConv)other;
         int i;
 
-        if (ec2 == null) return false;
         if (ec1.source != ec2.source &&
                 !Arrays.equals(ec1.source, ec2.source))
             return false;
