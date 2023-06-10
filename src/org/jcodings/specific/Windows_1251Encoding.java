@@ -21,7 +21,6 @@ package org.jcodings.specific;
 
 import org.jcodings.CaseFoldMapEncoding;
 import org.jcodings.Config;
-import org.jcodings.ISOEncoding;
 import org.jcodings.IntHolder;
 import org.jcodings.constants.CharacterType;
 

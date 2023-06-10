@@ -1,11 +1,8 @@
 package org.jcodings.specific;
 
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 import org.jcodings.Encoding;
-import org.jcodings.constants.CharacterType;
-import java.nio.charset.StandardCharsets;
 import org.junit.Test;
 
 public class TestCESU8 {

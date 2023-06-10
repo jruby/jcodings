@@ -5,7 +5,6 @@ import static org.junit.Assume.assumeTrue;
 
 import java.nio.charset.Charset;
 
-import org.jcodings.specific.BIG5Encoding;
 import org.junit.Test;
 
 public class TestBig5 {
