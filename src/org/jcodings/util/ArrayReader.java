@@ -44,12 +44,17 @@ public class ArrayReader {
                 bytes[i] = dis.readByte();
             }
             checkAvailable(dis, name);
-            dis.close();
             return bytes;
         } catch (IOException ioe) {
             decorate(ioe, name);
-            return null;
+        } finally {
+            try {
+                dis.close();
+            } catch (IOException ex) {
+                // ignore
+            }
         }
+        return null;
     }
 
     public static int[] readIntArray(String name) {
@@ -61,12 +66,17 @@ public class ArrayReader {
                 ints[i] = dis.readInt();
             }
             checkAvailable(dis, name);
-            dis.close();
             return ints;
         } catch (IOException ioe) {
             decorate(ioe, name);
-            return null;
-        }
+        } finally {
+            try {
+                dis.close();
+            } catch (IOException ex) {
+                // ignore
+            }
+       }
+       return null;
     }
 
     public static int[][] readNestedIntArray(String name) {
@@ -82,14 +92,18 @@ public class ArrayReader {
                     iints[k] = dis.readInt();
                 }
             }
-
             checkAvailable(dis, name);
-            dis.close();
             return ints;
         } catch (IOException ioe) {
             decorate(ioe, name);
-            return null;
+        } finally {
+            try {
+                dis.close();
+            } catch (IOException ex) {
+                // ignore
+            }
         }
+        return null;
     }
 
     static void checkAvailable(DataInputStream dis, String name) throws IOException {

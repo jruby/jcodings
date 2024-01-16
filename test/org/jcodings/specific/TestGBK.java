@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
 import org.jcodings.Encoding;
 import org.jcodings.EncodingDB;
 import org.jcodings.EncodingDB.Entry;
-import org.jcodings.specific.GBKEncoding;
 import org.jcodings.util.CaseInsensitiveBytesHash;
 import org.junit.Before;
 import org.junit.Test;

@@ -29,6 +29,7 @@ public final class IntArrayHash<V> extends Hash<V>{
         super(size);
     }
 
+    @Override
     protected void init() {
         head = new IntArrayHashEntry<V>();
     }

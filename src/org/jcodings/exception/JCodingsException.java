@@ -20,6 +20,9 @@
 package org.jcodings.exception;
 
 public class JCodingsException extends RuntimeException {
+
+    private static final long serialVersionUID = 1L;
+
     public JCodingsException(String message) {
         super(message);
     }

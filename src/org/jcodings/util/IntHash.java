@@ -29,6 +29,7 @@ public class IntHash<V> extends Hash<V> {
         super(size);
     }
 
+    @Override
     protected void init() {
         head = new IntHashEntry<V>();
     }

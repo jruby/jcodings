@@ -40,6 +40,7 @@ public class Iso2022jp_decoder_Transcoder extends Transcoder {
         return TranscodeFunctions.iso2022jpInit(state);
     }
 
+    @Override
     public int startToInfo(byte[] statep, byte[] s, int sStart, int l) {
         return TranscodeFunctions.funSiIso50220jpDecoder(statep, s, sStart, l);
     }

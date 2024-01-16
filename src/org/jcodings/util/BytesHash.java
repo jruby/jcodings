@@ -29,6 +29,7 @@ public final class BytesHash<V> extends Hash<V>{
         super(size);
     }
 
+    @Override
     protected void init() {
         head = new BytesHashEntry<V>();
     }
@@ -62,7 +63,7 @@ public final class BytesHash<V> extends Hash<V>{
 
     public static int hashCode(byte[]bytes, int p, int end) {
         int key = 0;
-        while (p < end) key = ((key << 16) + (key << 6) - key) + (int)(bytes[p++]); // & 0xff ? we have to match jruby string hash
+        while (p < end) key = ((key << 16) + (key << 6) - key) + bytes[p++]; // & 0xff ? we have to match jruby string hash
         key = key + (key >> 5);
         return key;
     }

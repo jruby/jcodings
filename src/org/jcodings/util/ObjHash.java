@@ -21,6 +21,7 @@ package org.jcodings.util;
 
 public final class ObjHash<K, V> extends Hash<V> {
 
+   @Override
     protected void init() {
         head = new ObjHashEntry<K, V>();
     }
@@ -38,6 +39,7 @@ public final class ObjHash<K, V> extends Hash<V> {
             key = null;
         }
 
+        @Override
         public boolean equals(Object key) {
             if (this.key == key) return true;
             return this.key.equals(key);

@@ -20,6 +20,9 @@
 package org.jcodings.exception;
 
 public class EncodingException extends JCodingsException {
+
+    private static final long serialVersionUID = 1L;
+
     private final EncodingError error;
 
     public EncodingException(EncodingError error) {

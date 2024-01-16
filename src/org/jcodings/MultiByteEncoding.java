@@ -201,6 +201,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
     }
 
     /* onigenc_strlen */
+    @Override
     public int strLength(byte[]bytes, int p, int end) {
         int n = 0;
         int q = p;
@@ -211,6 +212,7 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         return n;
     }
 
+    @Override
     public int strCodeAt(byte[]bytes, int p, int end, int index) {
         int n = 0;
         int q = p;

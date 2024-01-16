@@ -21,7 +21,9 @@ package org.jcodings.exception;
 
 public class CharacterPropertyException extends EncodingException {
 
-    public CharacterPropertyException(EncodingError error) {
+   private static final long serialVersionUID = 1L;
+
+   public CharacterPropertyException(EncodingError error) {
         super(error);
     }
 

@@ -223,7 +223,7 @@ final class TranscoderList {
         TranscoderDB.declare("UTF-32", "UTF-8", "From_UTF_32");
         TranscoderDB.declare("UTF-8", "UTF-16", "To_UTF_16");
         TranscoderDB.declare("UTF-8", "UTF-32", "To_UTF_32");
-    };
+    }
 
     static final GenericTranscoderEntry[] GENERIC_LIST = new GenericTranscoderEntry[] {
         new GenericTranscoderEntry("Big5", "UTF-8", 57100, "Big5", 1, 2, 1, AsciiCompatibility.CONVERTER, 0),
