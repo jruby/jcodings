@@ -545,6 +545,7 @@ public class TranscodeFunctions {
             sp[2] = 0;
             byte[] pBytes = tbl0208;
             oStart = iso2022jp_put_state(sp, o, (int)sp[1], G0_JISX0208_1983, oStart);
+            sp[0] = G0_JISX0208_1983;
 
             o[oStart++] = pBytes[p++];
             s0 = toUnsignedInt(s[sStart]);
@@ -641,10 +642,7 @@ public class TranscodeFunctions {
             o[oStart++] = pBytes[p];
         }
 
-        o[oStart++] = 0x1b;
-        o[oStart++] = '(';
-        o[oStart++] = 'B';
-        sp[0] = G0_ASCII;
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_ASCII, oStart);
 
         return oStart - output0;
     }
