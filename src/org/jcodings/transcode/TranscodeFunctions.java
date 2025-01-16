@@ -539,16 +539,13 @@ public class TranscodeFunctions {
         int output0 = oStart;
         byte[] sp = statep;
 
-        if (sp[0] == G0_JISX0201_KATAKANA) {
+        if (sp[0] == G0_JISX0201_KATAKANA && sp[2] != 0) {
             int c = sp[2] & 0x7F;
             int p = (c - 0x21) * 2;
+            sp[2] = 0;
             byte[] pBytes = tbl0208;
-            if (sp[1] != G0_JISX0208_1983) {
-                o[oStart++] = 0x1B;
-                o[oStart++] = (byte)'$';
-                o[oStart++] = (byte)'B';
-            }
-            sp[0] = G0_JISX0208_1983;
+            oStart = iso2022jp_put_state(sp, o, (int)sp[1], G0_JISX0208_1983, oStart);
+
             o[oStart++] = pBytes[p++];
             s0 = toUnsignedInt(s[sStart]);
             s1 = toUnsignedInt(s[sStart+1]);
@@ -568,22 +565,25 @@ public class TranscodeFunctions {
         if (l == 2 && s0 == 0x8E) {
             s1 = toUnsignedInt(s[sStart+1]);
             int p = (s1 - 0xA1) * 2;
-            byte[] pBytes = tbl0208;
             if ((0xA1 <= s1 && s1 <= 0xB5) ||
                     (0xC5 <= s1 && s1 <= 0xC9) ||
                     (0xCF <= s1 && s1 <= 0xDF)) {
-                if (sp[0] != G0_JISX0208_1983) {
-                    o[oStart++] = 0x1b;
-                    o[oStart++] = '$';
-                    o[oStart++] = 'B';
-                    sp[0] = G0_JISX0208_1983;
-                }
+                byte[] pBytes = tbl0208;
+                oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_JISX0208_1983, oStart);
+
                 o[oStart++] = pBytes[p++];
                 o[oStart++] = pBytes[p];
                 return oStart - output0;
             }
 
-            sp[2] = (byte)s1;
+            if (s1 > 0xDF) {      /* undef */
+                oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_JISX0201_KATAKANA, oStart);
+                o[oStart++] = (byte) (s1 & 0x7f);
+                sp[2] = 0;
+                return oStart - output0;
+            }
+
+            sp[2] = (byte) s1;
             sp[1] = sp[0];
             sp[0] = G0_JISX0201_KATAKANA;
             return oStart - output0;
@@ -609,24 +609,7 @@ public class TranscodeFunctions {
             newstate = G0_JISX0208_1983;
         }
 
-        if (sp[0] != newstate) {
-            if (newstate == G0_ASCII) {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '(';
-                o[oStart++] = 'B';
-            }
-            else if (newstate == G0_JISX0201_KATAKANA) {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '(';
-                o[oStart++] = 'I';
-            }
-            else {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '$';
-                o[oStart++] = 'B';
-            }
-            sp[0] = (byte)newstate;
-        }
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], newstate, oStart);
 
         s0 = toUnsignedInt(s[sStart]);
         if (l == 1) {
@@ -647,16 +630,13 @@ public class TranscodeFunctions {
 
         if (sp[0] == G0_ASCII) return 0;
 
-        if (sp[0] == G0_JISX0201_KATAKANA) {
+        if (sp[0] == G0_JISX0201_KATAKANA && sp[2] != 0) {
             int c = sp[2] & 0x7F;
             int p = (c - 0x21) * 2;
             byte[] pBytes = tbl0208;
-            if (sp[1] != G0_JISX0208_1983) {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '$';
-                o[oStart++] = 'B';
-            }
-            sp[0] = G0_JISX0208_1983;
+
+            oStart = iso2022jp_put_state(sp, o, (int)sp[1], G0_JISX0208_1983, oStart);
+
             o[oStart++] = pBytes[p++];
             o[oStart++] = pBytes[p];
         }
@@ -739,6 +719,32 @@ public class TranscodeFunctions {
         return 3;
     }
 
+    private static int iso2022jp_put_state(byte[] sp, byte[] o, int oldstate, int newstate, int oStart) {
+        if (oldstate != newstate) {
+            o[oStart++] = 0x1b;
+            switch (newstate) {
+                case G0_ASCII:
+                    o[oStart++] = '(';
+                    o[oStart++] = 'B';
+                    break;
+                case G0_JISX0201_KATAKANA:
+                    o[oStart++] = '(';
+                    o[oStart++] = 'I';
+                    break;
+                case G0_JISX0208_1978:
+                    o[oStart++] = '$';
+                    o[oStart++] = '@';
+                    break;
+                default:
+                    o[oStart++] = '$';
+                    o[oStart++] = 'B';
+                    break;
+            }
+            sp[0] = (byte) newstate;
+        }
+        return oStart;
+    }
+
     public static int funSoIso2022jpEncoder(byte[] statep, byte[] s, int sStart, int l, byte[] o, int oStart, int oSize) {
         byte[] sp = statep;
         int output0 = oStart;
@@ -751,24 +757,7 @@ public class TranscodeFunctions {
         else
             newstate = G0_JISX0208_1983;
 
-        if (sp[0] != newstate) {
-            if (newstate == G0_ASCII) {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '(';
-                o[oStart++] = 'B';
-            }
-            else if (newstate == G0_JISX0208_1978) {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '$';
-                o[oStart++] = '@';
-            }
-            else {
-                o[oStart++] = 0x1b;
-                o[oStart++] = '$';
-                o[oStart++] = 'B';
-            }
-            sp[0] = (byte)newstate;
-        }
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], newstate, oStart);
 
         if (l == 1) {
             o[oStart++] = (byte)(s[sStart] & 0x7f);
@@ -787,10 +776,8 @@ public class TranscodeFunctions {
 
         if (sp[0] == G0_ASCII) return 0;
 
-        o[oStart++] = 0x1b;
-        o[oStart++] = '(';
-        o[oStart++] = 'B';
-        sp[0] = G0_ASCII;
+
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_ASCII, oStart);
 
         return oStart - output0;
     }
@@ -960,24 +947,7 @@ public class TranscodeFunctions {
         else
             newstate = G0_JISX0208_1983;
 
-        if (sp[0] != newstate) {
-            o[oStart++] = 0x1b;
-            switch (newstate) {
-                case G0_ASCII:
-                    o[oStart++] = '(';
-                    o[oStart++] = 'B';
-                    break;
-                case G0_JISX0208_1978:
-                    o[oStart++] = '$';
-                    o[oStart++] = '@';
-                    break;
-                default:
-                    o[oStart++] = '$';
-                    o[oStart++] = 'B';
-                    break;
-            }
-            sp[0] = (byte)newstate;
-        }
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_ASCII, oStart);
 
         if (l == 1) {
             o[oStart++] = (byte)(s0 & 0x7f);
@@ -999,10 +969,8 @@ public class TranscodeFunctions {
 
         if (sp[0] == G0_ASCII) return 0;
 
-        o[oStart++] = 0x1b;
-        o[oStart++] = '(';
-        o[oStart++] = 'B';
-        sp[0] = G0_ASCII;
+
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_ASCII, oStart);
 
         return oStart - output0;
     }
