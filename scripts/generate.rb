@@ -8,7 +8,7 @@ when /darwin/i; ["const_data", "g"]
 else ;["rdata", ""]
 end
 
-UNICODE_VERSION = "13.0.0"
+UNICODE_VERSION = "15.0.0"
 SRC_DIR = "../src/org/jcodings"
 DST_BIN_DIR =  "../resources/tables"
 INDENT = " " * 4
@@ -107,6 +107,7 @@ def generate_transcoder_list
             src, dst, tree_start, table_info, iul, max_in, max_out, conv, state_size, state_init, state_fini, *funcs = body
             tree_start = trans_src[/#define\s+#{tree_start}\s+WORDINDEX2INFO\((\d+)\)/, 1].to_i << 2
             state_size = "24" if state_size == "sizeof(struct from_utf8_mac_status)"
+            t_name = "universal_newline" if t_name == "Lf_newline"
             generic = funcs.all?{|f|f == "NULL" || f == "0"}
 
             if generic
