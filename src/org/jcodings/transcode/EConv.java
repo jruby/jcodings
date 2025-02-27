@@ -732,6 +732,11 @@ public final class EConv implements EConvFlags {
             if (entry.getTranscoder() != null) transcoders[n++] = entry.getTranscoder();
         }
 
+        if ((flags & LF_NEWLINE_DECORATOR) != 0) {
+            TranscoderDB.Entry entry = TranscoderDB.getEntry(NULL_STRING, "lf_newline".getBytes());
+            if (entry.getTranscoder() != null) transcoders[n++] = entry.getTranscoder();
+        }
+
         int nTrans = numTranscoders;
         int j = 0;
         for (int i = 0; i < nTrans; i++) {

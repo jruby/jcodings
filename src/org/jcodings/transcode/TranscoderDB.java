@@ -247,6 +247,7 @@ public class TranscoderDB implements EConvFlags {
         case UNIVERSAL_NEWLINE_DECORATOR:
         case CRLF_NEWLINE_DECORATOR:
         case CR_NEWLINE_DECORATOR:
+        case LF_NEWLINE_DECORATOR:
         case 0:
             break;
         default:
@@ -263,6 +264,7 @@ public class TranscoderDB implements EConvFlags {
 
         if ((ecflags & CRLF_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "crlf_newline".getBytes();
         if ((ecflags & CR_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "cr_newline".getBytes();
+        if ((ecflags & LF_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "lf_newline".getBytes();
         if ((ecflags & UNIVERSAL_NEWLINE_DECORATOR) != 0) decorators[numDecorators++] = "universal_newline".getBytes();
 
         return numDecorators;

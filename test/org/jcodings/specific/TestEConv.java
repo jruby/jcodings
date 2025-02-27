@@ -64,6 +64,18 @@ public class TestEConv {
     }
 
     @Test
+    public void testLfNewline() throws Exception {
+        EConv econv = TranscoderDB.open("".getBytes(), "".getBytes(), EConvFlags.LF_NEWLINE_DECORATOR);
+
+        byte[] src = "foo\nbar\r\nbaz".getBytes();
+        byte[] dest = new byte[11];
+
+        econv.convert(src, new Ptr(0), 12, dest, new Ptr(0), dest.length, 0);
+
+        Assert.assertArrayEquals("foo\nbar\nbaz".getBytes(), dest);
+    }
+
+    @Test
     public void testXMLWithCharref() throws Exception {
         EConv econv = TranscoderDB.open("utf-8".getBytes(), "euc-jp".getBytes(), EConvFlags.XML_ATTR_CONTENT_DECORATOR | EConvFlags.XML_ATTR_QUOTE_DECORATOR | EConvFlags.UNDEF_HEX_CHARREF);
 

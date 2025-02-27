@@ -101,7 +101,7 @@ final class TranscoderList {
         TranscoderDB.declare("", "universal_newline", "Universal_newline");
         TranscoderDB.declare("", "crlf_newline", null /*Crlf_newline*/);
         TranscoderDB.declare("", "cr_newline", null /*Cr_newline*/);
-        TranscoderDB.declare("", "lf_newline", "Lf_newline");
+        TranscoderDB.declare("", "lf_newline", "Universal_newline");
         TranscoderDB.declare("US-ASCII", "UTF-8", null /*From_US_ASCII*/);
         TranscoderDB.declare("UTF-8", "US-ASCII", null /*To_US_ASCII*/);
         TranscoderDB.declare("ASCII-8BIT", "UTF-8", null /*From_ASCII_8BIT*/);
@@ -421,7 +421,7 @@ final class TranscoderList {
             case "Eucjp2sjis": return Eucjp2sjis_Transcoder.INSTANCE;
             case "Sjis2eucjp": return Sjis2eucjp_Transcoder.INSTANCE;
             case "Universal_newline": return Universal_newline_Transcoder.INSTANCE;
-            case "Lf_newline": return Lf_newline_Transcoder.INSTANCE;
+            case "Lf_newline": return Universal_newline_Transcoder.INSTANCE;
             case "From_UTF8_MAC": return From_UTF8_MAC_Transcoder.INSTANCE;
             case "From_UTF_16BE": return From_UTF_16BE_Transcoder.INSTANCE;
             case "To_UTF_16BE": return To_UTF_16BE_Transcoder.INSTANCE;
