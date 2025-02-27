@@ -8,7 +8,7 @@ when /darwin/i; ["const_data", "g"]
 else ;["rdata", ""]
 end
 
-UNICODE_VERSION = "13.0.0"
+UNICODE_VERSION = "15.0.0"
 SRC_DIR = "../src/org/jcodings"
 DST_BIN_DIR =  "../resources/tables"
 INDENT = " " * 4

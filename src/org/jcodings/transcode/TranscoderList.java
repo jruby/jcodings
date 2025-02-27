@@ -101,6 +101,7 @@ final class TranscoderList {
         TranscoderDB.declare("", "universal_newline", "Universal_newline");
         TranscoderDB.declare("", "crlf_newline", null /*Crlf_newline*/);
         TranscoderDB.declare("", "cr_newline", null /*Cr_newline*/);
+        TranscoderDB.declare("", "lf_newline", "Lf_newline");
         TranscoderDB.declare("US-ASCII", "UTF-8", null /*From_US_ASCII*/);
         TranscoderDB.declare("UTF-8", "US-ASCII", null /*To_US_ASCII*/);
         TranscoderDB.declare("ASCII-8BIT", "UTF-8", null /*From_ASCII_8BIT*/);
@@ -175,6 +176,8 @@ final class TranscoderList {
         TranscoderDB.declare("UTF-8", "IBM862", null /*To_IBM862*/);
         TranscoderDB.declare("IBM863", "UTF-8", null /*From_IBM863*/);
         TranscoderDB.declare("UTF-8", "IBM863", null /*To_IBM863*/);
+        TranscoderDB.declare("IBM864", "UTF-8", null /*From_IBM864*/);
+        TranscoderDB.declare("UTF-8", "IBM864", null /*To_IBM864*/);
         TranscoderDB.declare("IBM865", "UTF-8", null /*From_IBM865*/);
         TranscoderDB.declare("UTF-8", "IBM865", null /*To_IBM865*/);
         TranscoderDB.declare("IBM866", "UTF-8", null /*From_IBM866*/);
@@ -223,7 +226,7 @@ final class TranscoderList {
         TranscoderDB.declare("UTF-32", "UTF-8", "From_UTF_32");
         TranscoderDB.declare("UTF-8", "UTF-16", "To_UTF_16");
         TranscoderDB.declare("UTF-8", "UTF-32", "To_UTF_32");
-    }
+    };
 
     static final GenericTranscoderEntry[] GENERIC_LIST = new GenericTranscoderEntry[] {
         new GenericTranscoderEntry("Big5", "UTF-8", 57100, "Big5", 1, 2, 1, AsciiCompatibility.CONVERTER, 0),
@@ -359,36 +362,38 @@ final class TranscoderList {
         new GenericTranscoderEntry("UTF-8", "IBM862", 35228, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("IBM863", "UTF-8", 35752, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "IBM863", 36132, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("IBM865", "UTF-8", 36656, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "IBM865", 36968, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("IBM866", "UTF-8", 37492, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "IBM866", 37948, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("IBM869", "UTF-8", 38440, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "IBM869", 38956, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACCROATIAN", "UTF-8", 39480, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACCROATIAN", 40312, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACCYRILLIC", "UTF-8", 40836, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACCYRILLIC", 41540, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACGREEK", "UTF-8", 42064, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACGREEK", 42764, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACICELAND", "UTF-8", 43288, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACICELAND", 44004, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACROMAN", "UTF-8", 44528, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACROMAN", 45012, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACROMANIA", "UTF-8", 45536, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACROMANIA", 45912, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACTURKISH", "UTF-8", 46432, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACTURKISH", 46788, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("MACUKRAINE", "UTF-8", 47312, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "MACUKRAINE", 47536, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("KOI8-U", "UTF-8", 48060, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "KOI8-U", 48844, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("KOI8-R", "UTF-8", 49368, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "KOI8-R", 49900, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("TIS-620", "UTF-8", 50264, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "TIS-620", 50308, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("CP850", "UTF-8", 50832, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
-        new GenericTranscoderEntry("UTF-8", "CP850", 51380, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("IBM864", "UTF-8", 36644, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "IBM864", 37504, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("IBM865", "UTF-8", 38028, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "IBM865", 38340, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("IBM866", "UTF-8", 38864, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "IBM866", 39320, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("IBM869", "UTF-8", 39812, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "IBM869", 40328, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACCROATIAN", "UTF-8", 40852, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACCROATIAN", 41684, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACCYRILLIC", "UTF-8", 42208, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACCYRILLIC", 42912, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACGREEK", "UTF-8", 43436, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACGREEK", 44136, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACICELAND", "UTF-8", 44660, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACICELAND", 45376, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACROMAN", "UTF-8", 45900, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACROMAN", 46384, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACROMANIA", "UTF-8", 46908, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACROMANIA", 47284, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACTURKISH", "UTF-8", 47804, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACTURKISH", 48160, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("MACUKRAINE", "UTF-8", 48684, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "MACUKRAINE", 48908, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("KOI8-U", "UTF-8", 49432, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "KOI8-U", 50216, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("KOI8-R", "UTF-8", 50740, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "KOI8-R", 51272, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("TIS-620", "UTF-8", 51636, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "TIS-620", 51680, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("CP850", "UTF-8", 52204, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
+        new GenericTranscoderEntry("UTF-8", "CP850", 52752, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("CP852", "UTF-8", 29992, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("UTF-8", "CP852", 30608, "SingleByte", 1, 4, 1, AsciiCompatibility.CONVERTER, 0),
         new GenericTranscoderEntry("CP855", "UTF-8", 31132, "SingleByte", 1, 1, 1, AsciiCompatibility.CONVERTER, 0),
@@ -416,6 +421,7 @@ final class TranscoderList {
             case "Eucjp2sjis": return Eucjp2sjis_Transcoder.INSTANCE;
             case "Sjis2eucjp": return Sjis2eucjp_Transcoder.INSTANCE;
             case "Universal_newline": return Universal_newline_Transcoder.INSTANCE;
+            case "Lf_newline": return Lf_newline_Transcoder.INSTANCE;
             case "From_UTF8_MAC": return From_UTF8_MAC_Transcoder.INSTANCE;
             case "From_UTF_16BE": return From_UTF_16BE_Transcoder.INSTANCE;
             case "To_UTF_16BE": return To_UTF_16BE_Transcoder.INSTANCE;
