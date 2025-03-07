@@ -945,7 +945,7 @@ public class TranscodeFunctions {
         else
             newstate = G0_JISX0208_1983;
 
-        oStart = iso2022jp_put_state(sp, o, (int)sp[0], G0_ASCII, oStart);
+        oStart = iso2022jp_put_state(sp, o, (int)sp[0], newstate, oStart);
 
         if (l == 1) {
             o[oStart++] = (byte)(s0 & 0x7f);
