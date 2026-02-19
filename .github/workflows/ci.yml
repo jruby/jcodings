@@ -27,12 +27,32 @@ jobs:
         java-version: ${{ matrix.java-version }}
         cache: 'maven'
     - name: Run tests
-      run: mvn test --file pom.xml
+      run: mvn -ntp test --file pom.xml
 
+  version:
+
+    needs: test
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'temurin'
+          java-version: 11
+          cache: 'maven'
+      - name: version
+        run: |
+          echo version=`mvn help:evaluate -Dexpression=project.version -q -DforceStdout` >> $GITHUB_OUTPUT
 
   snapshot:
 
-    needs: test
+    needs: [test, version]
 
     runs-on: ubuntu-latest
 
@@ -48,8 +68,8 @@ jobs:
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
       - name: Publish package
-        run: mvn -B deploy
+        run: mvn -ntp deploy
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
-        if: ${{ github.ref == 'refs/heads/master' && github.repository == 'jruby/jcodings' }}
+        if: ${{ contains('SNAPSHOT', needs.version.outputs.version) && github.ref == 'refs/heads/master' && github.repository == 'jruby/jcodings' }}
