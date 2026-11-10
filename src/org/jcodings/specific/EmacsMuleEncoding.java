@@ -42,16 +42,14 @@ public final class EmacsMuleEncoding extends MultiByteEncoding {
 
     @Override
     public int codeToMbcLength(int code) {
-        // TODO: this won't work with signed values, probably need to move to long or use bitwise 'and' and masks
-        if (isAscii(code)) {
+        // code is an unsigned 32-bit value held in an int, so test the high bit of each byte
+        if (Integer.compareUnsigned(code, 0x80) < 0) {
             return 1;
-        } else if (code > 0xffffffff) {
-            return 0;
-        } else if ((code & 0xff000000) >= 0x80000000) {
+        } else if ((code & 0x80000000) != 0) {
             return 4;
-        } else if ((code & 0xff0000) >= 0x800000) {
+        } else if ((code & 0x800000) != 0) {
             return 3;
-        } else if ((code & 0xff00) >= 0x8000) {
+        } else if ((code & 0x8000) != 0) {
             return 2;
         }
         return ErrorCodes.ERR_INVALID_CODE_POINT_VALUE;
