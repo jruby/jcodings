@@ -320,6 +320,58 @@ public abstract class Encoding implements Cloneable {
      */
     public abstract int caseMap(IntHolder flagP, byte[]bytes, IntHolder pp, int end, byte[]to, int toP, int toEnd);
 
+    /** onigenc_ascii_only_case_map / onigenc_single_byte_ascii_only_case_map
+     */
+    public int asciiOnlyCaseMap(IntHolder flagP, byte[]bytes, IntHolder pp, int end, byte[]to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            // specialize for singlebyte ?
+            int length = length(bytes, pp.value, end);
+            if (length < 0) return length;
+            int code = mbcToCode(bytes, pp.value, end);
+            pp.value += length;
+
+            if (code >= 'a' && code <= 'z' && ((flags & Config.CASE_UPCASE) != 0)) {
+                flags |= Config.CASE_MODIFIED;
+                code += 'A' - 'a';
+            } else if (code >= 'A' && code <= 'Z' && ((flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0)) {
+                flags |= Config.CASE_MODIFIED;
+                code += 'a' - 'A';
+            }
+            toP += codeToMbc(code, to, toP);
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
+    }
+
+    public int singleByteAsciiOnlyCaseMap(IntHolder flagP, byte[]bytes, IntHolder pp, int end, byte[]to, int toP, int toEnd) {
+        int toStart = toP;
+        int flags = flagP.value;
+
+        while (pp.value < end && toP < toEnd) {
+            int code = bytes[pp.value++] & 0xff;
+
+            if (code >= 'a' && code <= 'z' && ((flags & Config.CASE_UPCASE) != 0)) {
+                flags |= Config.CASE_MODIFIED;
+                code += 'A' - 'a';
+            } else if (code >= 'A' && code <= 'Z' && ((flags & (Config.CASE_DOWNCASE | Config.CASE_FOLD)) != 0)) {
+                flags |= Config.CASE_MODIFIED;
+                code += 'a' - 'A';
+            }
+            to[toP++] = (byte)code;
+            if ((flags & Config.CASE_TITLECASE) != 0) {
+                flags ^= (Config.CASE_UPCASE | Config.CASE_DOWNCASE | Config.CASE_TITLECASE);
+            }
+        }
+        flagP.value = flags;
+        return toP - toStart;
+    }
+
     /* onigenc_get_right_adjust_char_head / ONIGENC_LEFT_ADJUST_CHAR_HEAD */
     public final int rightAdjustCharHead(byte[]bytes, int p, int s, int end) {
         int p_ = leftAdjustCharHead(bytes, p, s, end);
