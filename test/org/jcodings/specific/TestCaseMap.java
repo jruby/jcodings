@@ -1,5 +1,7 @@
 package org.jcodings.specific;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
@@ -79,6 +81,47 @@ public class TestCaseMap {
         for (Encoding enc: list) {
             assertTrue(caseMap(enc, "ß", Config.CASE_UPCASE).equals("SS"));
             assertTrue(caseMap(enc, "ß", Config.CASE_DOWNCASE).equals("ß"));
+        }
+    }
+
+    @Test
+    public void testSharpSWithLimitedOutput() {
+        Encoding[] encodings = {
+            ISO8859_1Encoding.INSTANCE, ISO8859_2Encoding.INSTANCE,
+            ISO8859_3Encoding.INSTANCE, ISO8859_4Encoding.INSTANCE,
+            ISO8859_9Encoding.INSTANCE, ISO8859_10Encoding.INSTANCE,
+            ISO8859_13Encoding.INSTANCE, ISO8859_14Encoding.INSTANCE,
+            ISO8859_15Encoding.INSTANCE, ISO8859_16Encoding.INSTANCE,
+            Windows_1250Encoding.INSTANCE, Windows_1252Encoding.INSTANCE,
+            Windows_1254Encoding.INSTANCE, Windows_1257Encoding.INSTANCE
+        };
+        int[] flags = {
+            Config.CASE_UPCASE, Config.CASE_FOLD,
+            Config.CASE_UPCASE | Config.CASE_TITLECASE
+        };
+        byte[][] expected = {
+            {'S', 'S'}, {'s', 's'}, {'S', 's'}
+        };
+
+        for (Encoding enc : encodings) {
+            for (int i = 0; i < flags.length; i++) {
+                byte[] input = {(byte)0xdf};
+                IntHolder inputP = new IntHolder();
+                IntHolder flagP = new IntHolder();
+                flagP.value = flags[i];
+                byte[] output = new byte[1];
+                assertEquals(0, enc.caseMap(flagP, input, inputP, input.length,
+                                            output, 0, output.length));
+                assertEquals(0, inputP.value);
+
+                inputP.value = 0;
+                flagP.value = flags[i];
+                output = new byte[2];
+                assertEquals(2, enc.caseMap(flagP, input, inputP, input.length,
+                                            output, 0, output.length));
+                assertArrayEquals(expected[i], output);
+                assertEquals(1, inputP.value);
+            }
         }
     }
 

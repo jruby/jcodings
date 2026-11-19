@@ -1,8 +1,10 @@
 package org.jcodings.specific;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.jcodings.Encoding;
+import org.jcodings.IntHolder;
 import org.jcodings.exception.ErrorCodes;
 import org.junit.Test;
 
@@ -41,5 +43,29 @@ public class TestEmacsMule {
             byte[] out = new byte[4];
             assertEquals(c.length, enc.codeToMbc(code, out, 0));
         }
+    }
+
+    @Test
+    public void testCaseFoldWhenLogicalEndSplitsCharacter() {
+        Encoding enc = EmacsMuleEncoding.INSTANCE;
+        byte[] input = {(byte)0x86, (byte)0xcd};
+        byte[] folded = new byte[4];
+        IntHolder p = new IntHolder();
+
+        assertEquals(2, enc.mbcCaseFold(0, input, p, 1, folded));
+        assertEquals(2, p.value);
+        assertArrayEquals(input, new byte[]{folded[0], folded[1]});
+    }
+
+    @Test
+    public void testCaseFoldDoesNotReadPastBackingArray() {
+        Encoding enc = EmacsMuleEncoding.INSTANCE;
+        byte[] input = {(byte)0x86};
+        byte[] folded = new byte[4];
+        IntHolder p = new IntHolder();
+
+        assertEquals(1, enc.mbcCaseFold(0, input, p, 1, folded));
+        assertEquals(1, p.value);
+        assertEquals(input[0], folded[0]);
     }
 }
