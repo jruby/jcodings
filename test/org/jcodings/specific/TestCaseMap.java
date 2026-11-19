@@ -1,7 +1,9 @@
 package org.jcodings.specific;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.List;
 
@@ -79,6 +81,55 @@ public class TestCaseMap {
         for (Encoding enc: list) {
             assertTrue(caseMap(enc, "ß", Config.CASE_UPCASE).equals("SS"));
             assertTrue(caseMap(enc, "ß", Config.CASE_DOWNCASE).equals("ß"));
+        }
+    }
+
+    // Map the whole input with a buffer of input length + 20, refilling it until the input is consumed (like CRuby and JRuby)
+    byte[] caseMapAll(Encoding enc, byte[] from, int flags) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        IntHolder fromP = new IntHolder();
+        IntHolder flagP = new IntHolder();
+        flagP.value = flags;
+        int buffers = 0;
+        while (fromP.value < from.length) {
+            byte[] to = new byte[(from.length - fromP.value) * ++buffers + 20];
+            int len = enc.caseMap(flagP, from, fromP, from.length, to, 0, to.length);
+            out.write(to, 0, len);
+        }
+        return out.toByteArray();
+    }
+
+    static byte[] repeat(String prefix, char c, int n) {
+        byte[] bytes = new byte[prefix.length() + n];
+        for (int i = 0; i < prefix.length(); i++) bytes[i] = (byte) prefix.charAt(i);
+        Arrays.fill(bytes, prefix.length(), bytes.length, (byte) c);
+        return bytes;
+    }
+
+    static byte[] repeat(String s, int n) {
+        byte[] bytes = new byte[s.length() * n];
+        for (int i = 0; i < bytes.length; i++) bytes[i] = (byte) s.charAt(i % s.length());
+        return bytes;
+    }
+
+    @Test
+    public void testSharpSExpansionDoesNotOverflow() throws Exception {
+        List<Encoding> list = Arrays.<Encoding>asList(
+                ISO8859_1Encoding.INSTANCE, ISO8859_2Encoding.INSTANCE, ISO8859_3Encoding.INSTANCE,
+                ISO8859_4Encoding.INSTANCE, ISO8859_9Encoding.INSTANCE, ISO8859_10Encoding.INSTANCE,
+                ISO8859_13Encoding.INSTANCE, ISO8859_14Encoding.INSTANCE, ISO8859_15Encoding.INSTANCE,
+                ISO8859_16Encoding.INSTANCE, Windows_1250Encoding.INSTANCE, Windows_1252Encoding.INSTANCE,
+                Windows_1254Encoding.INSTANCE, Windows_1257Encoding.INSTANCE);
+        for (Encoding enc: list) {
+            for (int n = 1; n <= 64; n++) {
+                byte[] from = repeat("", (char) 0xdf, n);
+                String msg = enc + " " + n;
+                assertArrayEquals(msg, repeat("SS", n), caseMapAll(enc, from, Config.CASE_UPCASE));
+                assertArrayEquals(msg, repeat("ss", n), caseMapAll(enc, from, Config.CASE_DOWNCASE | Config.CASE_FOLD));
+                assertArrayEquals(msg, repeat("SS", n), caseMapAll(enc, from, Config.CASE_UPCASE | Config.CASE_DOWNCASE));
+                byte[] prefixed = caseMapAll(enc, repeat("a", (char) 0xdf, n), Config.CASE_UPCASE);
+                assertArrayEquals(msg, repeat("SS", n), Arrays.copyOfRange(prefixed, 1, prefixed.length));
+            }
         }
     }
 

@@ -35,7 +35,7 @@ public final class ISO8859_15Encoding extends ISOEncoding {
         int toStart = toP;
         int flags = flagP.value;
 
-        while (pp.value < end && toP < toEnd) {
+        while (pp.value < end && toEnd - toP > 1) {
             int code = bytes[pp.value++] & 0xff;
             if (code == SHARP_s) {
                 if ((flags & Config.CASE_UPCASE) != 0) {
