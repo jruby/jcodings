@@ -3,6 +3,7 @@ package org.jcodings.specific;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import org.jcodings.Encoding;
 import org.jcodings.IntHolder;
 import org.junit.Test;
 
@@ -22,6 +23,41 @@ public class TestGB18030 {
                     0, input[i], p, 1, folded));
             assertEquals(lengths[i], p.value);
             assertArrayEquals(input[i], java.util.Arrays.copyOf(folded, lengths[i]));
+        }
+    }
+
+    @Test
+    public void testOtherMultibyteEncodingsWithPerByteLengths() {
+        Encoding[] encodings = {
+            GBKEncoding.INSTANCE,
+            BIG5Encoding.INSTANCE,
+            Big5UAOEncoding.INSTANCE,
+            Big5HKSCSEncoding.INSTANCE,
+            EUCKREncoding.INSTANCE,
+            CP949Encoding.INSTANCE,
+            EUCTWEncoding.INSTANCE,
+            EmacsMuleEncoding.INSTANCE
+        };
+        byte[][] input = {
+            {(byte)0x81, (byte)0x40},
+            {(byte)0xa1, (byte)0x40},
+            {(byte)0xa1, (byte)0x40},
+            {(byte)0xa1, (byte)0x40},
+            {(byte)0xa1, (byte)0xa1},
+            {(byte)0x81, (byte)0x41},
+            {(byte)0xa1, (byte)0xa1},
+            {(byte)0x86, (byte)0xcd}
+        };
+
+        for (int i = 0; i < encodings.length; i++) {
+            byte[] folded = new byte[4];
+            IntHolder p = new IntHolder();
+            assertEquals(input[i].length,
+                    encodings[i].length(input[i], 0, input[i].length));
+            assertEquals(input[i].length,
+                    encodings[i].mbcCaseFold(0, input[i], p, 1, folded));
+            assertEquals(input[i].length, p.value);
+            assertArrayEquals(input[i], java.util.Arrays.copyOf(folded, input[i].length));
         }
     }
 }
