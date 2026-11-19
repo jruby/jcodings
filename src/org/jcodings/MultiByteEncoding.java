@@ -138,12 +138,15 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
             pp.value++;
             return 1;
         } else {
-            int len = length(bytes, p, end);
-            for (int i=0; i<len; i++) {
+            // The logical end can split a multibyte character. Use its nominal
+            // length, limited only by the backing array's physical boundary.
+            int len = Math.max(length(bytes[p]), 1);
+            int copyLen = Math.min(len, bytes.length - p);
+            for (int i=0; i<copyLen; i++) {
                 lower[lowerP++] = bytes[p++];
             }
-            pp.value += len;
-            return len; /* return byte length of converted to lower char */
+            pp.value += copyLen;
+            return copyLen; /* return byte length of converted to lower char */
         }
     }
 
