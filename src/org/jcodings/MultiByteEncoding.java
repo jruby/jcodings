@@ -140,7 +140,8 @@ public abstract class MultiByteEncoding extends AbstractEncoding {
         } else {
             // The logical end can split a multibyte character. Use its nominal
             // length, limited only by the backing array's physical boundary.
-            int len = Math.max(length(bytes[p]), 1);
+            int len = EncLen == null ? length(bytes, p, bytes.length) : length(bytes[p]);
+            if (len < 1) len = 1;
             int copyLen = Math.min(len, bytes.length - p);
             for (int i=0; i<copyLen; i++) {
                 lower[lowerP++] = bytes[p++];
